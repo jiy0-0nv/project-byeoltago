@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.api.router import api_router
+from api.router import api_router
 
 app = FastAPI(title="Project Byeoltago")
 
@@ -19,3 +19,7 @@ app.include_router(api_router)
 @app.get("/")
 def read_root():
     return {"message": "별타고(Byeoltago) 프로젝트입니다."}
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
