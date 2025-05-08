@@ -1,6 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from api.router import api_router
+from app.api.router import api_router
+from app.db.base import engine, Base
+import app.models
 
 app = FastAPI(title="Project Byeoltago")
 
@@ -13,13 +15,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# 테이블 생성
+Base.metadata.create_all(bind=engine)
+
 # 라우터 등록
 app.include_router(api_router)
 
 @app.get("/")
 def read_root():
     return {"message": "별타고(Byeoltago) 프로젝트입니다."}
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)

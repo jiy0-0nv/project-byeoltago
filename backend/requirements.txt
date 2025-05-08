@@ -1,5 +1,9 @@
 fastapi
 uvicorn[standard]
 pydantic
+pydantic[email]
 sqlalchemy
 pymysql
+passlib
+passlib[bcrypt]
+python-dotenv
