@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>별타고 로그인</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      text-align: center;
+      padding-top: 100px;
+       background-image: url("1048641.jpg");
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 100vh;
+  color: white;
+    }
+
+    input {
+      padding: 10px;
+      margin: 10px;
+      font-size: 16px;
+      width: 200px;
+    }
+
+    #bike-animation {
+      display: none;
+      font-size: 48px;
+      position: fixed;
+      top: 40%;
+      left: -100px;
+      animation: moveBike 1s linear forwards;
+      z-index: 1000;
+    }
+
+    @keyframes moveBike {
+      from { left: -100px; }
+      to { left: 110%; }
+    }
+  </style>
+  <script>
+    function handleLogin(event) {
+      event.preventDefault();
+
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+
+      if (username && password) {
+        // 자전거 이펙트 표시
+        const bike = document.getElementById("bike-animation");
+        bike.style.display = "inline";
+
+        // 1초 후 페이지 이동
+        setTimeout(() => {
+          window.location.href = "mapscreen.html";
+        }, 1000);
+      } else {
+        alert("아이디와 비밀번호를 입력해주세요.");
+      }
+    }
+  </script>
+</head>
+<body>
+  <h2>🚴 별타고 로그인</h2>
+
+  <form onsubmit="handleLogin(event)">
+    <input type="text" id="username" placeholder="아이디" required><br>
+    <input type="password" id="password" placeholder="비밀번호" required><br>
+    <input type="submit" value="로그인">
+  </form>
+
+  <!-- 자전거 애니메이션 요소 -->
+  <div id="bike-animation">🚴‍♂️</div>
+</body>
+</html>
