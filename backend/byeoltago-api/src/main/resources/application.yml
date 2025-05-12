@@ -1,0 +1,34 @@
+spring:
+  application:
+    name: byeoltago-api
+  config:
+    activate:
+      on-profile: default
+  
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: #VAULT
+    username: #VAULT
+    password: #VAULT
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    database-platform: org.hibernate.dialect.MySQLDialect
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: false
+        use_sql_comments: true
+  data:
+    redis:
+      host: #VAULT
+      port: #VAULT
+      password: #VAULT
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+    show-common-extensions: true
+    show-extensions: true
