@@ -4,13 +4,19 @@ spring:
   config:
     activate:
       on-profile: default
-  
+    import:
+      - optional:vault://byeoltago/api/datasource
+      - optional:vault://byeoltago/api/redis
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: #VAULT
     username: #VAULT
     password: #VAULT
-
+  cloud:
+    vault:
+      uri: http://ec2-3-26-182-30.ap-southeast-2.compute.amazonaws.com:8200
+      authentication: token
+      token: hvs.CAESIAPGb10pbO4bO4SwhpZGHWj8tNa218F05PMYkDSAHAKZGh4KHGh2cy5sWTFQVXN3dk5aZ2lvSnNFUmE5bkJ0RzM
   jpa:
     hibernate:
       ddl-auto: none
@@ -25,7 +31,6 @@ spring:
       host: #VAULT
       port: #VAULT
       password: #VAULT
-
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
