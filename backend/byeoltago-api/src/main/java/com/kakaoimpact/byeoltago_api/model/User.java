@@ -1,6 +1,9 @@
 package com.kakaoimpact.byeoltago_api.model;
 
 
+import lombok.Data;
+
+@Data
 public class User {
     String id;
     String userId;
@@ -8,7 +11,4 @@ public class User {
     String phoneNumber;
     String email;
 
-    public String getEmail() {
-        return email;
-    }
 }
