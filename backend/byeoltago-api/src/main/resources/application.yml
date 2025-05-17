@@ -7,6 +7,9 @@ spring:
     import:
       - optional:vault://byeoltago/api/datasource
       - optional:vault://byeoltago/api/redis
+      - optional:vault://byeoltago/api/jwt
+  jackson:
+    property-naming-strategy: SNAKE_CASE
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: #VAULT
@@ -31,6 +34,8 @@ spring:
       host: #VAULT
       port: #VAULT
       password: #VAULT
+  jwt:
+    secret: #VAULT
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
