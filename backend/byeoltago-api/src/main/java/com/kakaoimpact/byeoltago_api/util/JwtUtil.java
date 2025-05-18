@@ -12,6 +12,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -33,13 +34,8 @@ public class JwtUtil {
 
     @PostConstruct
     public void init() {
-        // application.properties 등에서 주입받은 문자열 비밀키를 SecretKey 객체로 변환
-        // Keys.hmacShaKeyFor는 안전한 방식으로 SecretKey를 생성합니다.
-        // HS512 알고리즘을 사용하므로 충분히 긴 비밀키를 사용하는 것이 좋습니다.
         if (jwtSecretString == null || jwtSecretString.trim().isEmpty()) {
             logger.error("JWT secret key is not configured. Please set 'jwt.secret' in application properties.");
-            // 애플리케이션을 시작하지 못하게 하거나, 기본 키를 사용하는 등의 처리가 필요할 수 있습니다.
-            // 여기서는 예외를 발생시켜 문제를 즉시 알립니다.
             throw new IllegalArgumentException("JWT secret key ('jwt.secret') is missing or empty in configuration.");
         }
         this.jwtSecretKey = Keys.hmacShaKeyFor(jwtSecretString.getBytes());
@@ -48,11 +44,12 @@ public class JwtUtil {
     /**
      * 사용자 정보와 기본 만료 시간(3시간)을 사용하여 JWT를 생성합니다.
      *
-     * @param username    사용자 식별자 (예: 이메일 또는 ID)
-     * @param authorities 사용자의 권한 목록
+     * @param username 사용자 식별자 (예: 이메일 또는 ID)
      * @return 생성된 JWT 문자열
      */
-    public String generateToken(String username, Collection<? extends GrantedAuthority> authorities) {
+    public String generateToken(String username) {
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
         return generateToken(username, authorities, DEFAULT_TOKEN_VALIDITY_MS);
     }
 
