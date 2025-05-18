@@ -6,13 +6,21 @@ import com.kakaoimpact.byeoltago_api.model.User;
 import com.kakaoimpact.byeoltago_api.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder; // PasswordEncoder 주입 확인
 
@@ -102,4 +110,31 @@ public class UserService {
     }
 
 
+    /**
+     * Spring Security UserDetailsService 구현 메서드.
+     * 사용자 이름(여기서는 이메일)으로 사용자 정보를 로드합니다.
+     * @param email 사용자의 이메일 (로그인 시 사용되는 username)
+     * @return UserDetails 객체
+     * @throws UsernameNotFoundException 해당 이메일의 사용자를 찾을 수 없는 경우
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        User user = userRepository.findUserByEmail(email)
+                .orElseThrow(() -> {
+                    return new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + email);
+                });
+
+        // 사용자의 권한 설정 (User 모델에 roles 필드가 있다면 해당 정보를 사용)
+        // 여기서는 간단히 "ROLE_USER" 권한을 부여합니다.
+        // 실제 애플리케이션에서는 User 엔티티에 Role 정보를 관리하고 가져와야 합니다.
+        List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
+        // 예시: user.getRoles().stream().map(role -> new SimpleGrantedAuthority(role.getName())).collect(Collectors.toList());
+
+        return new org.springframework.security.core.userdetails.User(
+                user.getEmail(),
+                user.getPassword(),
+                authorities // 활성화 여부, 계정 만료 여부 등 추가 설정 가능
+        );
+    }
 }

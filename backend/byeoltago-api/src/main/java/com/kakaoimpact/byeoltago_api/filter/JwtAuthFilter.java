@@ -25,7 +25,7 @@ import java.util.Collection;
 public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
-    private static final String JWT_TOKEN_COOKIE_NAME = "JWT_TOKEN";
+    private static final String JWT_TOKEN_COOKIE_NAME = "byeoltago-jwt";
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
