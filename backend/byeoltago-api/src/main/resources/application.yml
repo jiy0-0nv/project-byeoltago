@@ -22,7 +22,7 @@ spring:
       token: hvs.CAESIAPGb10pbO4bO4SwhpZGHWj8tNa218F05PMYkDSAHAKZGh4KHGh2cy5sWTFQVXN3dk5aZ2lvSnNFUmE5bkJ0RzM
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     database-platform: org.hibernate.dialect.MySQLDialect
     properties:
       hibernate:
