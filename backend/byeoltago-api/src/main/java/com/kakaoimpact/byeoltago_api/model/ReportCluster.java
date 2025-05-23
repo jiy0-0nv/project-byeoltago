@@ -10,7 +10,7 @@ import java.sql.Timestamp;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-class ReportCluster {
+public class ReportCluster {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

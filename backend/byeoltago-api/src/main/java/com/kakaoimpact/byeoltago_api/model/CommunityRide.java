@@ -11,7 +11,7 @@ import java.sql.Timestamp;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-class CommunityRide {
+public class CommunityRide {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
