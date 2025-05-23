@@ -1,6 +1,5 @@
 package com.kakaoimpact.byeoltago_api.model;
 
-
 import jakarta.persistence.*;
 import lombok.*;
 
