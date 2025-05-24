@@ -9,7 +9,7 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-class ReportType {
+public class ReportType {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
