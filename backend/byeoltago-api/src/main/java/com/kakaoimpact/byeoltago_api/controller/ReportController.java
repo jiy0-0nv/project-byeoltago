@@ -32,10 +32,10 @@ public class ReportController {
 
     // 위치 기반 마커 조회 API
     @GetMapping("/markers")
-    public ResponseEntity<List<ReportInfoResponseDto>> getMarkers(@RequestParam float minLat,
-                                                                 @RequestParam float maxLat,
-                                                                 @RequestParam float minLon,
-                                                                 @RequestParam float maxLon) {
+    public ResponseEntity<List<ReportInfoResponseDto>> getMarkers(@RequestParam double minLat,
+                                                                 @RequestParam double maxLat,
+                                                                 @RequestParam double minLon,
+                                                                 @RequestParam double maxLon) {
         return ResponseEntity.ok(reportService.getMarkersInBounds(minLat, maxLat, minLon, maxLon));
     }
 }

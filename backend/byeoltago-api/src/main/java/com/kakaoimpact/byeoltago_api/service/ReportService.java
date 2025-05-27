@@ -5,6 +5,7 @@ import com.kakaoimpact.byeoltago_api.dto.req.ReportRequestDto;
 import com.kakaoimpact.byeoltago_api.model.*;
 import com.kakaoimpact.byeoltago_api.repository.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,6 +14,7 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ReportService {
@@ -22,7 +24,7 @@ public class ReportService {
     private final UserRepository userRepository;
 
     // 클러스터링 기준 거리 (약 5m)
-    private static final float CLUSTER_DISTANCE_THRESHOLD = 0.00005f;
+    private static final double CLUSTER_DISTANCE_THRESHOLD = 5.0;  // 5m
 
     @Transactional
     public Report submitReport(ReportRequestDto request, MultipartFile image) {
@@ -46,8 +48,8 @@ public class ReportService {
         // 3. 클러스터 정보 갱신
         // 가중 평균 방식으로 클러스터의 중심점 업데이트
         int newCount = cluster.getReportCount() + 1;
-        float newLat = (cluster.getLatitude() * cluster.getReportCount() + report.getLatitude()) / newCount;
-        float newLon = (cluster.getLongitude() * cluster.getReportCount() + report.getLongitude()) / newCount;
+        double newLat = round6((cluster.getLatitude() * cluster.getReportCount() + report.getLatitude()) / newCount);
+        double newLon = round6((cluster.getLongitude() * cluster.getReportCount() + report.getLongitude()) / newCount);
 
         cluster.setLatitude(newLat);
         cluster.setLongitude(newLon);
@@ -69,7 +71,7 @@ public class ReportService {
     }
 
     // 마커 조회
-    public List<ReportInfoResponseDto> getMarkersInBounds(float minLat, float maxLat, float minLon, float maxLon) {
+    public List<ReportInfoResponseDto> getMarkersInBounds(double minLat, double maxLat, double minLon, double maxLon) {
         // 지정된 위경도 범위 내 클러스터를 조회
         List<ReportCluster> clusters = clusterRepository.findByLatitudeBetweenAndLongitudeBetween(minLat, maxLat, minLon, maxLon);
         return clusters.stream().map(cluster -> ReportInfoResponseDto.builder()
@@ -92,10 +94,10 @@ public class ReportService {
     private ReportCluster findOrCreateCluster(ReportRequestDto request) {
         // 범위 내 클러스터 목록을 조회
         List<ReportCluster> nearbyClusters = clusterRepository.findByLatitudeBetweenAndLongitudeBetween(
-                request.getLatitude() - CLUSTER_DISTANCE_THRESHOLD,
-                request.getLatitude() + CLUSTER_DISTANCE_THRESHOLD,
-                request.getLongitude() - CLUSTER_DISTANCE_THRESHOLD,
-                request.getLongitude() + CLUSTER_DISTANCE_THRESHOLD
+                request.getLatitude() - 0.01,
+                request.getLatitude() + 0.01,
+                request.getLongitude() - 0.01,
+                request.getLongitude() + 0.01
         );
 
         // 그 중 가장 가까운 클러스터를 선택
@@ -111,14 +113,28 @@ public class ReportService {
                     .longitude(request.getLongitude())
                     .typeId(request.getTypeId())
                     .statusId(1)
-                    .reportCount(1)
+                    .reportCount(0)
                     .build();
             return clusterRepository.save(cluster);
         }
     }
 
-    // 유클리드 거리를 계산하는 함수
-    private float distance(float lat1, float lon1, float lat2, float lon2) {
-        return (float) Math.sqrt(Math.pow(lat1 - lat2, 2) + Math.pow(lon1 - lon2, 2));
+    // 정확한 위경도 거리 계산 (하버사인 공식)
+    private double distance(double lat1, double lon1, double lat2, double lon2) {
+        final int EARTH_RADIUS_M = 6371000;
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLon = Math.toRadians(lon2 - lon1);
+
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
+                        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        return EARTH_RADIUS_M * c;
+    }
+
+    // 소수점 6자리로 반올림
+    private double round6(double value) {
+        return Math.round(value * 1_000_000d) / 1_000_000d;
     }
 }

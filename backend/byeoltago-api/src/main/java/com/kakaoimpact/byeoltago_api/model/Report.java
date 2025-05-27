@@ -24,10 +24,10 @@ public class Report {
     private Long clusterId;
 
     @Column(name = "latitude", nullable = false)
-    private Float latitude;
+    private Double latitude;
 
     @Column(name = "longitude", nullable = false)
-    private Float longitude;
+    private Double longitude;
 
     @Column(name = "reported_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private Timestamp reportedAt;

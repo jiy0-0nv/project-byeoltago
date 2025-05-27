@@ -9,8 +9,8 @@ import lombok.Setter;
 @Builder
 public class ReportInfoResponseDto {
     private Long id;
-    private Float latitude;
-    private Float longitude;
+    private Double latitude;
+    private Double longitude;
     private Integer reportCount;
     private Integer riskLevel;
 }

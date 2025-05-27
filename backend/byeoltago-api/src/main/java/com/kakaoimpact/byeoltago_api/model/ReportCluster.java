@@ -24,10 +24,10 @@ public class ReportCluster {
     private Integer statusId = 1;
 
     @Column(name = "latitude", nullable = false)
-    private Float latitude;
+    private Double latitude;
 
     @Column(name = "longitude", nullable = false)
-    private Float longitude;
+    private Double longitude;
 
     @Column(name = "report_count")
     private Integer reportCount = 1;

@@ -16,10 +16,10 @@ public class ReportRequestDto {
     private Long userId;
 
     @NotNull
-    private Float latitude;
+    private Double latitude;
 
     @NotNull
-    private Float longitude;
+    private Double longitude;
 
     @NotNull
     @JsonProperty("type_id")
