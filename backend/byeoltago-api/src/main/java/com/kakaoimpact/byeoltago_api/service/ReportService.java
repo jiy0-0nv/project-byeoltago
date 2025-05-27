@@ -103,6 +103,7 @@ public class ReportService {
         // 그 중 가장 가까운 클러스터를 선택
         Optional<ReportCluster> matched = nearbyClusters.stream()
                 .filter(c -> distance(request.getLatitude(), request.getLongitude(), c.getLatitude(), c.getLongitude()) < CLUSTER_DISTANCE_THRESHOLD)
+                .filter(c -> c.getTypeId().equals(request.getTypeId()))
                 .findFirst();
 
         if (matched.isPresent()) {
