@@ -43,7 +43,12 @@ public class ReportService {
                 .reportedAt(new Timestamp(System.currentTimeMillis()))
                 .build();
 
-        reportRepository.save(report);
+        try {
+            reportRepository.save(report);
+        } catch (Exception e) {
+            log.error("신고 저장에 실패했습니다.", e);
+            throw new RuntimeException("신고 저장 중 오류가 발생했습니다.");
+        }
 
         // 3. 클러스터 정보 갱신
         // 가중 평균 방식으로 클러스터의 중심점 업데이트

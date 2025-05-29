@@ -1,6 +1,7 @@
 package com.kakaoimpact.byeoltago_api.controller;
 
 import com.kakaoimpact.byeoltago_api.common.Const;
+import com.kakaoimpact.byeoltago_api.common.UserContext;
 import com.kakaoimpact.byeoltago_api.dto.req.ReportRequestDto;
 import com.kakaoimpact.byeoltago_api.dto.req.ReportInfoResponseDto;
 import com.kakaoimpact.byeoltago_api.model.Report;
@@ -9,12 +10,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 @Slf4j
+@Validated
 @RestController
 @RequestMapping( Const.API_BASE_URL + "/reports")
 @RequiredArgsConstructor
@@ -26,6 +29,9 @@ public class ReportController {
     @PostMapping("/report")
     public ResponseEntity<Report> submitReport(@ModelAttribute ReportRequestDto request,
                                                @RequestPart(required = false) MultipartFile image) {
+        Long userId = Long.valueOf(UserContext.getUserId());
+        request.setUserId(userId);
+
         Report result = reportService.submitReport(request, image);
         return ResponseEntity.ok(result);
     }
