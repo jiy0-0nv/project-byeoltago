@@ -12,6 +12,7 @@ import java.util.logging.Logger;
 @Slf4j
 public class IntroController {
 
+    //헬스체크
     @GetMapping("/check")
     public Object check(){
         return ResponseEntity.ok().build();
