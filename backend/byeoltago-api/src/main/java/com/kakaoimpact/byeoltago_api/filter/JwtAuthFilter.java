@@ -1,5 +1,8 @@
 package com.kakaoimpact.byeoltago_api.filter;
 
+import com.kakaoimpact.byeoltago_api.common.UserContext;
+import com.kakaoimpact.byeoltago_api.model.User;
+import com.kakaoimpact.byeoltago_api.repository.UserRepository;
 import com.kakaoimpact.byeoltago_api.util.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -18,6 +21,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Optional;
 
 @Slf4j
 @Component
@@ -25,6 +29,7 @@ import java.util.Collection;
 public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
+    private final UserRepository userRepository;
     private static final String JWT_TOKEN_COOKIE_NAME = "byeoltago-jwt";
 
     @Override
@@ -38,12 +43,15 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 if (jwtUtil.validateToken(token)) {
                     String username = jwtUtil.getUsernameFromToken(token);
                     Collection<? extends GrantedAuthority> authorities = jwtUtil.getAuthoritiesFromToken(token);
-
+                    Optional<User> user = userRepository.findUserByEmail(username);
                     if (username != null) {
                         UsernamePasswordAuthenticationToken authentication =
                                 new UsernamePasswordAuthenticationToken(username, null, authorities);
                         SecurityContextHolder.getContext().setAuthentication(authentication);
                         log.debug("Authenticated user: {}, authorities: {}", username, authorities);
+
+                        // Set user ID in UserContext if user exists
+                        user.ifPresent(u -> UserContext.setUserId(u.getId().toString()));
                     }
                 } else {
                     log.warn("Invalid JWT token received: {}", token);
@@ -53,8 +61,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 SecurityContextHolder.clearContext();
             }
         }
+        try {
+            filterChain.doFilter(request, response);
+        } finally {
+            UserContext.clear();
+        }
 
-        filterChain.doFilter(request, response);
     }
 
     private String extractTokenFromCookies(HttpServletRequest request) {
