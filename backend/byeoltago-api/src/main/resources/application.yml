@@ -17,9 +17,9 @@ spring:
     password: #VAULT
   cloud:
     vault:
-      uri: http://ec2-3-26-182-30.ap-southeast-2.compute.amazonaws.com:8200
+      uri: http://ec2-3-107-188-124.ap-southeast-2.compute.amazonaws.com:8200
       authentication: token
-      token: hvs.CAESIAPGb10pbO4bO4SwhpZGHWj8tNa218F05PMYkDSAHAKZGh4KHGh2cy5sWTFQVXN3dk5aZ2lvSnNFUmE5bkJ0RzM
+      token: hvs.CAESIONMbGm5zNZb3npkrzv_swSp-HOd5w4Xd1WzanfNF48vGh4KHGh2cy5SYnZDRUh4aHlkS0xiakFISnIyN2FkSnA
   jpa:
     hibernate:
       ddl-auto: update
