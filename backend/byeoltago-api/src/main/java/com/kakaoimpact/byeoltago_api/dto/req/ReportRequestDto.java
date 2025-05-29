@@ -12,7 +12,6 @@ import lombok.Builder;
 public class ReportRequestDto {
 
     @NotNull
-    @JsonProperty("user_id")
     private Long userId;
 
     @NotNull
@@ -22,7 +21,6 @@ public class ReportRequestDto {
     private Double longitude;
 
     @NotNull
-    @JsonProperty("type_id")
     private Integer typeId;
 
     private String description;
