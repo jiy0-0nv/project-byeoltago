@@ -1,5 +1,6 @@
 package com.kakaoimpact.byeoltago_api.service;
 
+import com.kakaoimpact.byeoltago_api.dto.req.ReportDetailResponseDto;
 import com.kakaoimpact.byeoltago_api.dto.req.ReportInfoResponseDto;
 import com.kakaoimpact.byeoltago_api.dto.req.ReportRequestDto;
 import com.kakaoimpact.byeoltago_api.model.*;
@@ -15,6 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Slf4j
@@ -98,26 +100,6 @@ public class ReportService {
         return report;
     }
 
-    // 마커 조회
-    public List<ReportInfoResponseDto> getMarkersInBounds(double minLat, double maxLat, double minLon, double maxLon) {
-        // 지정된 위경도 범위 내 클러스터를 조회
-        List<ReportCluster> clusters = clusterRepository.findByLatitudeBetweenAndLongitudeBetween(minLat, maxLat, minLon, maxLon);
-        return clusters.stream().map(cluster -> ReportInfoResponseDto.builder()
-                .id(cluster.getId())
-                .latitude(cluster.getLatitude())
-                .longitude(cluster.getLongitude())
-                .reportCount(cluster.getReportCount())
-                .riskLevel(calculateRiskLevel(cluster.getReportCount()))
-                .build()).toList();
-    }
-
-    // 신고 수에 따라 위험도 계산
-    private int calculateRiskLevel(int count) {
-        if (count >= 6) return 3;
-        if (count >= 3) return 2;
-        return 1;
-    }
-
     // 클러스터를 찾거나 새로 만드는 함수
     private ReportCluster findOrCreateCluster(ReportRequestDto request) {
         // 범위 내 클러스터 목록을 조회
@@ -166,4 +148,58 @@ public class ReportService {
     private double round6(double value) {
         return Math.round(value * 1_000_000d) / 1_000_000d;
     }
+
+    // 마커 조회
+    public List<ReportInfoResponseDto> getMarkersInBounds(double minLat, double maxLat, double minLon, double maxLon) {
+        // 지정된 위경도 범위 내 클러스터를 조회
+        List<ReportCluster> clusters = clusterRepository.findByLatitudeBetweenAndLongitudeBetween(minLat, maxLat, minLon, maxLon);
+
+        return clusters.stream().map(cluster -> ReportInfoResponseDto.builder()
+                .id(cluster.getId())
+                .latitude(cluster.getLatitude())
+                .longitude(cluster.getLongitude())
+                .riskLevel(calculateRiskLevel(cluster.getReportCount()))
+                .reportType(cluster.getTypeId())
+                .build()).toList();
+    }
+
+    // 신고 정보 조회
+    public ReportDetailResponseDto getReportDetails(Long clusterId) {
+        ReportCluster cluster = clusterRepository.findById(clusterId)
+                .orElseThrow(() -> new RuntimeException("클러스터를 찾을 수 없습니다."));
+
+        List<Report> reports = reportRepository.findByClusterId(clusterId);
+
+        List<String> imagePaths = reports.stream()
+                .map(Report::getImagePath)
+                .filter(Objects::nonNull)
+                .toList();
+
+        List<String> descriptions = reports.stream()
+                .map(Report::getDescription)
+                .filter(Objects::nonNull)
+                .toList();
+
+        return ReportDetailResponseDto.builder()
+                .clusterId(cluster.getId())
+                .latitude(cluster.getLatitude())
+                .longitude(cluster.getLongitude())
+                .reportCount(cluster.getReportCount())
+                .riskLevel(calculateRiskLevel(cluster.getReportCount()))
+                .imagePaths(imagePaths)
+                .descriptions(descriptions)
+                .statusId(cluster.getStatusId())
+                .typeId(cluster.getTypeId())
+                .reportedAt(cluster.getLastUpdated())
+                .build();
+    }
+
+    // 신고 수에 따라 위험도 계산 (기준 확인 필요)
+    private int calculateRiskLevel(int count) {
+        if (count >= 6) return 3;
+        if (count >= 3) return 2;
+        return 1;
+    }
+
+    // getReportDetails를 위한 주소 역변환 가능한지 확인하여 추가
 }

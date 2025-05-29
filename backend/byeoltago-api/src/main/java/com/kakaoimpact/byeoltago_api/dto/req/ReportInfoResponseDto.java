@@ -11,6 +11,6 @@ public class ReportInfoResponseDto {
     private Long id;
     private Double latitude;
     private Double longitude;
-    private Integer reportCount;
     private Integer riskLevel;
+    private Integer reportType;
 }

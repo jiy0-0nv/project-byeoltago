@@ -2,6 +2,7 @@ package com.kakaoimpact.byeoltago_api.controller;
 
 import com.kakaoimpact.byeoltago_api.common.Const;
 import com.kakaoimpact.byeoltago_api.common.UserContext;
+import com.kakaoimpact.byeoltago_api.dto.req.ReportDetailResponseDto;
 import com.kakaoimpact.byeoltago_api.dto.req.ReportRequestDto;
 import com.kakaoimpact.byeoltago_api.dto.req.ReportInfoResponseDto;
 import com.kakaoimpact.byeoltago_api.model.Report;
@@ -44,4 +45,11 @@ public class ReportController {
                                                                  @RequestParam double maxLon) {
         return ResponseEntity.ok(reportService.getMarkersInBounds(minLat, maxLat, minLon, maxLon));
     }
+
+    @GetMapping("/reports/{clusterId}/details")
+    public ResponseEntity<ReportDetailResponseDto> getReportDetails(@PathVariable Long clusterId) {
+        ReportDetailResponseDto details = reportService.getReportDetails(clusterId);
+        return ResponseEntity.ok(details);
+    }
+
 }
