@@ -25,7 +25,7 @@ jobs:
 
     - name: Decode private key
       run: |
-        echo "${{ secrets.EC2_KEY_B64 }}" | base64 -d > my-key.pem
+        echo "${{ secrets.EC2_KEY }}" | base64 -d > my-key.pem
         chmod 600 my-key.pem
 
     - name: Copy JAR to EC2
