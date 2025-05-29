@@ -41,4 +41,7 @@ public class Report {
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
+    @Column(name = "image_path", length = 500)
+    private String imagePath;
+
 }

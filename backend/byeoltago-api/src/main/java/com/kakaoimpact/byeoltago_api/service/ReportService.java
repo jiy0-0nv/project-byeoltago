@@ -10,6 +10,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
@@ -28,19 +31,42 @@ public class ReportService {
 
     @Transactional
     public Report submitReport(ReportRequestDto request, MultipartFile image) {
-        // 1. 기존 클러스터 탐색 또는 생성
+        // 기존 클러스터 탐색 또는 생성
         ReportCluster cluster = findOrCreateCluster(request);
 
-        // 2. 신고 정보 저장 (Report)
+        // 유저 아이디
+        long currentUserId = request.getUserId();
+        // 타임스탬프
+        long currentTime = System.currentTimeMillis();
+        // 이미지 경로
+        String imagePath = null;
+
+        // 이미지 업로드 처리
+        if (image != null && !image.isEmpty()) {
+            try {
+                String filename = "report_" + currentUserId + "_" + currentTime + ".jpg";
+                Path savePath = Path.of("/uploads/reports", filename);
+                Files.createDirectories(savePath.getParent());
+                image.transferTo(savePath.toFile());
+                log.info("이미지 저장 완료: {}", savePath);
+                imagePath = savePath.toString();
+            } catch (IOException e) {
+                log.error("이미지 저장 실패", e);
+                throw new RuntimeException("이미지 업로드 중 오류가 발생했습니다.");
+            }
+        }
+
+        // 신고 정보 저장 (Report)
         Report report = Report.builder()
-                .userId(request.getUserId())
+                .userId(currentUserId)
                 .clusterId(cluster.getId())
                 .latitude(request.getLatitude())
                 .longitude(request.getLongitude())
                 .typeId(request.getTypeId())
                 .statusId(1) // 초기 상태값
                 .description(request.getDescription())
-                .reportedAt(new Timestamp(System.currentTimeMillis()))
+                .reportedAt(new Timestamp(currentTime))
+                .imagePath(imagePath)
                 .build();
 
         try {
@@ -50,7 +76,7 @@ public class ReportService {
             throw new RuntimeException("신고 저장 중 오류가 발생했습니다.");
         }
 
-        // 3. 클러스터 정보 갱신
+        // 클러스터 정보 갱신
         // 가중 평균 방식으로 클러스터의 중심점 업데이트
         int newCount = cluster.getReportCount() + 1;
         double newLat = round6((cluster.getLatitude() * cluster.getReportCount() + report.getLatitude()) / newCount);
@@ -63,10 +89,7 @@ public class ReportService {
 
         clusterRepository.save(cluster);
 
-        // 4. 이미지 업로드 처리 (추후 추가..)
-        // if (image != null && !image.isEmpty()) {}
-
-        // 5. 포인트 지급
+        // 포인트 지급
         userRepository.findById(request.getUserId()).ifPresent(user -> {
             user.setPoints(user.getPoints() + 1000);
             userRepository.save(user);

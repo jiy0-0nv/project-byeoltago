@@ -30,4 +30,6 @@ public class ReportRequestDto {
     private Integer typeId;
 
     private String description;
+
+    private String imagePath;
 }
