@@ -42,3 +42,8 @@ springdoc:
     operations-sorter: method
     show-common-extensions: true
     show-extensions: true
+logging:
+  level:
+    com.kakaoimpact.byeoltago_api: debug
+file:
+  upload-dir: uploads/reports
