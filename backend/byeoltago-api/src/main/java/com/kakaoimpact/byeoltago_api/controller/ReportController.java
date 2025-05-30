@@ -46,7 +46,8 @@ public class ReportController {
         return ResponseEntity.ok(reportService.getMarkersInBounds(minLat, maxLat, minLon, maxLon));
     }
 
-    @GetMapping("/reports/{clusterId}/details")
+    // 상세 정보 조회 API
+    @GetMapping("/{clusterId}/details")
     public ResponseEntity<ReportDetailResponseDto> getReportDetails(@PathVariable Long clusterId) {
         ReportDetailResponseDto details = reportService.getReportDetails(clusterId);
         return ResponseEntity.ok(details);

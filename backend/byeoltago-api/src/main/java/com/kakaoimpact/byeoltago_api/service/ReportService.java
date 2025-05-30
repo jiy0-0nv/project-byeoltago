@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Objects;
@@ -47,14 +48,14 @@ public class ReportService {
         if (image != null && !image.isEmpty()) {
             try {
                 String filename = "report_" + currentUserId + "_" + currentTime + ".jpg";
-                Path savePath = Path.of("/uploads/reports", filename);
-                Files.createDirectories(savePath.getParent());
+                Path uploadRoot = Paths.get("uploads/reports");
+                Files.createDirectories(uploadRoot);
+                Path savePath = uploadRoot.resolve(filename);
                 image.transferTo(savePath.toFile());
                 log.info("이미지 저장 완료: {}", savePath);
                 imagePath = savePath.toString();
             } catch (IOException e) {
                 log.error("이미지 저장 실패", e);
-                throw new RuntimeException("이미지 업로드 중 오류가 발생했습니다.");
             }
         }
 
@@ -65,7 +66,7 @@ public class ReportService {
                 .latitude(request.getLatitude())
                 .longitude(request.getLongitude())
                 .typeId(request.getTypeId())
-                .statusId(1) // 초기 상태값
+                .statusId(1)
                 .description(request.getDescription())
                 .reportedAt(new Timestamp(currentTime))
                 .imagePath(imagePath)

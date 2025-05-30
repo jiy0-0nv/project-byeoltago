@@ -45,3 +45,5 @@ springdoc:
 logging:
   level:
     com.kakaoimpact.byeoltago_api: debug
+file:
+  upload-dir: uploads/reports
