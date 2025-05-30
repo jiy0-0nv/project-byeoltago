@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>도로 신고</title>
+  <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=ca66c24bcf740dae018b8f1511d02475"></script>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background-color: #f7f7f7;
+      display: flex;
+      justify-content: center;
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 390px;
+      height: 100%;
+      background-color: #f7f7f7;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      display:flex;
+      flex-direction: column;
+      position: relative;
+      overflow-y: auto;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    /* 상태바 이미지 */
+    .status-bar {
+      width: 100%;
+      height: 24px;
+      background-color: transparent;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 2000;
+    }
+
+    .status-bar img.status-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px;
+      background: white;
+      border-bottom: 1px solid #ddd;
+      margin-top: 24px; /* 상태바 높이만큼 띄우기 */
+    }
+
+    header h1 {
+      font-size: 18px;
+      margin: 0;
+    }
+
+    header .right {
+      color: #efc327;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    #map {
+      width: 100%;
+      height: 300px;
+    }
+
+    .section {
+      background: white;
+      margin: 12px;
+      padding: 16px;
+      border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+
+    .section-title {
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px; /* 기존 10px → 간격 살짝 줄임 */
+  justify-content: center; /* 중앙 정렬 */
+}
+
+.choice {
+  width: 45%;  /* 기존: 180px → 화면 비율로 설정 */
+  background: #f8f6ea;
+  border-color: #efc327;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  text-align: center;
+  padding: 8px;  /* 기존 10px → padding 줄임 */
+  cursor: pointer;
+  transition: 0.3s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+.choice img {
+  width: 70px; /* 기존 max-width:100px → 더 작게 */
+  height: auto;
+  margin-bottom: 6px; /* 간격 살짝 줄임 */
+  border-radius: 6px;
+  object-fit: cover;
+}
+
+.choice div {
+  font-size: 13px; /* 글자 크기 소폭 줄임 */
+}
+
+
+    .choice.active {
+      border-color:#efc327;
+;
+      background: #efc327;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+
+    <!-- ✅ 상태바 이미지 -->
+    <div class="status-bar">
+      <img src="imgs/Statusbar.png" alt="상태바" class="status-img">
+    </div>
+
+    <!-- ✅ 상단 헤더 -->
+    <header>
+      <div>☰</div>
+      <h1>새로운 위험구간 신고</h1>
+       <div class="right" onclick="goNextPage()">다음</div>
+    </header>
+
+    <!-- ✅ 지도 -->
+    <div id="map"></div>
+
+    <!-- ✅ 도로 결함 선택 -->
+    <div class="section">
+      <div class="section-title"> 어떤 종류의 위험구간이었는지 골라주세요.</div>
+      <div class="choices">
+        <div class="choice" onclick="selectChoice(this)">
+          <img src="imgs/reportdamage1.jpeg" alt="포트홀/울퉁불퉁함">
+          <div>포트홀/울퉁불퉁함</div>
+        </div>
+        <div class="choice" onclick="selectChoice(this)">
+          <img src="imgs/reportdamage2.jpg" alt="미끄러움">
+          <div>미끄러움</div>
+        </div>
+        <div class="choice" onclick="selectChoice(this)">
+          <img src="imgs/reportdamage3.jpg" alt="차량 주의">
+          <div>차량 주의</div>
+        </div>
+        <!-- 공사 구간 -->
+        <div class="choice" onclick="selectChoice(this)">
+        <img src="imgs/reportdamage4.jpg" alt="공사 구간">
+        <div>공사 구간</div>
+        </div>
+<!-- 직접 기입 -->
+        <div class="choice" onclick="selectChoice(this)">
+        <img src="imgs/reportdamage5.jpg" alt="직접 기입">
+        <div>직접 기입</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+<script src='js/report.js'></script>
+<script>
+  // 지도가 로딩된 후 실행되도록 window.onload 또는 callback 안에서 실행
+  window.onload = function () {
+    const container = document.getElementById('map'); // 지도를 담을 영역
+    const options = {
+      center: new kakao.maps.LatLng(37.56461040983631, 126.93610015875485), // 지도 중심좌표
+      level: 3
+    };
+
+    const map = new kakao.maps.Map(container, options); // 지도 생성
+
+    // ✅ 도착 지점 좌표
+    const destinationPosition = new kakao.maps.LatLng(37.56461040983631, 126.93610015875485);
+
+    // ✅ 깃발 아이콘 설정
+    const markerImage = new kakao.maps.MarkerImage(
+  "imgs/flag.png",                    // ✅ 사용자 이미지 경로
+  new kakao.maps.Size(20, 20),        // ✅ 이미지 크기 (적절히 조정)
+  { offset: new kakao.maps.Point(20, 40) }  // ✅ 기준점 (하단 중앙)
+);
+
+
+    // ✅ 도착지 마커 생성
+    const destinationMarker = new kakao.maps.Marker({
+      map: map,
+      position: destinationPosition,
+      image: markerImage
+    });
+  };
+</script>
+</body>
+</html>
+

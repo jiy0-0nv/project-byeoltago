@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>별타고 주행 화면 </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=ca66c24bcf740dae018b8f1511d02475"></script>
+  <link rel="stylesheet" href="css/mapstyle.css">
+</head>
+<body>
+  <div class="app-container">
+  <div class="status-bar">
+  <img src="imgs/Statusbar.png" alt="상태바 이미지">
+</div>
+<!-- 툴바 -->
+    <button id="menu-toggle">☰</button>
+    <div id="sidebar">
+      <h3>🏠 홈</h3>
+      <div class="menu-item">💬 커뮤니티</div>
+      <div class="menu-item">🙋 내 정보</div>
+    </div>
+<div class="logo-area">
+  <img src="imgs/logo.png" alt="별타고 로고" class="logo-img">
+</div>
+
+
+    <!-- 지도 -->
+    <div id="map-container">
+      <div id="map"></div>
+      <button class="map-button report-btn" onclick="reportNow()">즉시 신고</button>
+      <button class="map-button select-button" onclick="goSelectLocation()">위치 선택</button>
+    </div>
+
+    <!-- 슬라이딩 카드 -->
+    <div id="info-card">
+      <div class="handle"></div>
+      <h3>
+  <img src="imgs/marker-pin-04.png" alt="경고 아이콘" class="icon-img">
+  서강로 주변 골목
+</h3>
+      <p>서강로 주변 골목들에 도로 결함 및 포트홀이 다수 발생했고, 우천으로 인해 주변이 매우 미끄럽습니다.</p>
+      <div class="images">
+        <img src="imgs/pothole2.jpg" alt="위험1">
+      </div>
+    </div>
+  </div>
+<script src="js/mapfinish.js"></script>
+</body>
+</html>
