@@ -2,107 +2,141 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>별타고 - 로그인</title>
+  <title>별타고</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(to right, #1d2671, #c33764);
+      margin: 0;
+      padding: 0;
+      background-color: #ffffff;
+      color: white;
+    }
+
+    .status-bar {
+      width: 100%;
+      height: auto;
       display: flex;
       justify-content: center;
+      background-color: white; 
+      padding-top: 5px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 2000;
+    }
+
+    .status-bar img {
+      height: 42px;
+    }
+
+    .login-section {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
       align-items: center;
-      height: 100vh;
-      margin: 0;
-      color: #fff;
+      padding-top: 40px;
     }
 
-    .login-container {
-      background-color: rgba(0, 0, 0, 0.4);
-      padding: 40px;
-      border-radius: 20px;
-      box-shadow: 0 8px 16px rgba(0,0,0,0.3);
-      width: 100%;
-      max-width: 400px;
-      text-align: center;
+    .logo-img {
+      width: 150px;
+      margin-bottom: 30px;
     }
 
-    .login-container h2 {
-      margin-bottom: 24px;
-      font-size: 28px;
-    }
-
-    input[type="text"],
-    input[type="password"] {
-      width: 100%;
-      padding: 12px;
-      margin: 10px 0;
-      border: none;
+    .login-box {
+      background-color: transparent;
+      padding: 20px;
       border-radius: 10px;
-      outline: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    input {
+      padding: 10px;
+      margin: 10px 0;
       font-size: 16px;
-    }
-
-    .password-wrapper {
-      position: relative;
-    }
-
-    .password-wrapper span {
-      position: absolute;
-      right: 12px;
-      top: 50%;
-      transform: translateY(-50%);
-      cursor: pointer;
+      width: 220px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
     }
 
     input[type="submit"] {
-      width: 100%;
-      padding: 12px;
-      background-color: #00c9a7;
-      color: white;
-      font-size: 18px;
-      font-weight: bold;
+      background-color: #f4ca1b;
+      color: black;
       border: none;
-      border-radius: 10px;
+      font-weight: bold;
       cursor: pointer;
-      margin-top: 15px;
-      transition: background-color 0.3s ease;
+      width: 220px;
     }
 
-    input[type="submit"]:hover {
-      background-color: #00b396;
-    }
-
-    .footer-text {
-      margin-top: 20px;
+    .signup-link {
+      margin-top: 12px;
       font-size: 14px;
-      opacity: 0.8;
+      color: #888;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    #bike-animation {
+      display: none;
+      position: fixed;
+      top: 40%;
+      left: -100px;
+      animation: moveBike 1s linear forwards;
+      z-index: 1000;
+    }
+
+    #bike-animation img {
+      width: 70px;
+      height: auto;
+    }
+
+    @keyframes moveBike {
+      from { left: -100px; }
+      to { left: 110%; }
     }
   </style>
+
+  <script>
+    function handleLogin(event) {
+      event.preventDefault();
+
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+
+      if (username && password) {
+        const bike = document.getElementById("bike-animation");
+        bike.style.display = "inline";
+
+        setTimeout(() => {
+          window.location.href = "mapdrive.html";
+        }, 1000);
+      } else {
+        alert("아이디와 비밀번호를 입력해주세요.");
+      }
+    }
+  </script>
 </head>
 <body>
-  <div class="login-container">
-    <h2>🚲 별타고 로그인</h2>
-    <form action="mapscreen.html" method="post">
-      <input type="text" name="username" placeholder="아이디" required>
+  <div class="status-bar">
+    <img src="imgs/Statusbar.png" alt="상태바 이미지">
+  </div>
 
-      <div class="password-wrapper">
-        <input type="password" name="password" id="password" placeholder="비밀번호" required>
-        <span id="togglePassword">👁</span>
-      </div>
+  <div class="login-section">
+    <img src="imgs/logo.png" alt="별타고 로고" class="logo-img">
 
+    <form onsubmit="handleLogin(event)" class="login-box">
+      <input type="text" id="username" placeholder="아이디" required>
+      <input type="password" id="password" placeholder="비밀번호" required>
       <input type="submit" value="로그인">
+      <a href="signup.html" class="signup-link">새 계정 만들기</a>
     </form>
   </div>
 
-  <script>
-    const toggle = document.getElementById("togglePassword");
-    const pwd = document.getElementById("password");
-
-    toggle.addEventListener("click", () => {
-      const type = pwd.getAttribute("type") === "password" ? "text" : "password";
-      pwd.setAttribute("type", type);
-      toggle.textContent = type === "password" ? "👁" : "🙈";
-    });
-  </script>
+  <div id="bike-animation">
+    <img src="imgs/logo2.png" alt="애니메이션 로고">
+  </div>
 </body>
 </html>
