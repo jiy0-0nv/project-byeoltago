@@ -23,8 +23,7 @@ body {
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
   background-color: white;
   position: relative;
-  overflow-x: hidden;
-  overflow-y: auto;
+  overflow: hidden;
 }
 
 .logo-area {
@@ -41,66 +40,111 @@ body {
 }
 
 #map-container {
-  flex: 1;
   position: relative;
   width: 100%;
   height: 500px;
-  border-radius: 0;
-  overflow: hidden;
-  margin-left: 0;
-  padding-left: 0;
 }
 
 #map {
   width: 100%;
   height: 100%;
-  margin-left: 0;
-  padding-left: 0;
 }
 
-/* 공통 버튼 스타일 */
-.map-button {
+/* ✅ 주행 종료 버튼 */
+.map-button.end-btn {
   position: absolute;
   bottom: 20px;
-  font-size: 16px;
-  font-weight: bold;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  z-index: 2;
-  padding: 10px 0;
-  text-align: center;
-}
-
-/* ✅ 중앙 정렬된 넓은 주행 시작 버튼 */
-.start-btn {
   left: 5%;
   width: 90%;
+  padding: 10px 0;
   font-size: 16px;
-  font-family: 'Pretendard-Regular', 'Segoe UI', sans-serif;
-  background-color: #efc327;
+  font-weight: bold;
+  font-family: 'Pretendard-Regular', sans-serif;
+  border: none;
+  border-radius: 10px;
+  background-color: #ef4f35;
   color: white;
+  cursor: pointer;
+  z-index: 2;
 }
 
-/* ❌ 신고 버튼 완전히 제거됨 (report-btn 삭제됨) */
-
-/* (기존 코드 유지) */
-.select-button {
-  left: 60px;
-  background-color: #6dbf2f;
+/* ✅ 신고 오버레이 */
+#report-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 3000;
+  flex-direction: column;
+  text-align: center;
   color: white;
+  font-family: 'Pretendard-Regular', sans-serif;
 }
 
-#clickLatlng {
-  margin-top: 10px;
+/* 오버레이 닫기 버튼 */
+#close-overlay {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  color: white;
+  cursor: pointer;
+}
+
+/* 오버레이 내용 */
+.overlay-content .tap-img {
+  width: 80px;
+  margin-bottom: 20px;
+}
+
+.overlay-content p {
   font-size: 16px;
-  background-color: #ffffff;
-  padding: 8px 16px;
-  border-radius: 8px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.overlay-content .highlight {
+  color: #ffd700;
+  font-weight: bold;
+}
+
+/* ✅ 신고 완료 팝업 */
+#report-popup {
+  position: absolute;
+  top: 35%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
   color: #333;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  padding: 16px 24px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  z-index: 4000;
+  font-family: 'Pretendard-Regular', sans-serif;
 }
 
+#report-popup p {
+  margin-top: 10px;
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.check-icon {
+  width: 40px;
+  height: 40px;
+}
+
+/* ✅ 사이드바 */
 #sidebar {
   position: absolute;
   top: 0;
@@ -114,10 +158,12 @@ body {
   transition: left 0.3s ease;
   z-index: 999;
 }
+
 #sidebar.open {
   left: 0;
 }
 
+/* ✅ 햄버거 메뉴 버튼 */
 #menu-toggle {
   position: absolute;
   top: 28px;
@@ -133,6 +179,7 @@ body {
   cursor: pointer;
 }
 
+/* ✅ 슬라이딩 정보 카드 */
 #info-card {
   position: absolute;
   bottom: -300px;
@@ -182,6 +229,7 @@ body {
   border-radius: 8px;
 }
 
+/* 아이콘 공통 */
 .icon-img {
   height: 20px;
   width: 20px;
@@ -189,6 +237,7 @@ body {
   margin-right: 6px;
 }
 
+/* 사이드바 메뉴 */
 .menu-item {
   display: flex;
   align-items: center;

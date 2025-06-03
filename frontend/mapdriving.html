@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>별타고 주행 화면</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=ca66c24bcf740dae018b8f1511d02475"></script>
+  <link rel="stylesheet" href="css/mapdriving.css">
+</head>
+<body>
+  <div class="app-container">
+
+    <!-- 툴바 -->
+    <button id="menu-toggle">☰</button>
+    <div id="sidebar">
+      <h3>🏠 홈</h3>
+      <div class="menu-item">
+        <img src="imgs/communityicon.png" alt="커뮤니티 아이콘" class="menu-icon">
+        커뮤니티
+      </div>
+      <div class="menu-item">내비게이션</div>
+    </div>
+
+    <div class="logo-area">
+      <img src="imgs/logo.png" alt="별타고 로고" class="logo-img">
+    </div>
+
+    <!-- 지도 -->
+    <div id="map-container">
+      <div id="map"></div>
+
+      <!-- ✅ 주행 종료 버튼 -->
+      <button class="map-button end-btn" onclick="endRide()">주행 종료</button>
+
+      <!-- ✅ 신고 오버레이 -->
+      <div id="report-overlay" onclick="detectDoubleTap(event)">
+        <button id="close-overlay" onclick="closeOverlay(event)">✕</button>
+        <div class="overlay-content">
+          <img src="imgs/doubletap.png" alt="두 번 터치" class="tap-img">
+          <p>도로 결함을 신고하고 싶다면<br><span class="highlight">화면을 두 번 터치</span> 해주세요!</p>
+        </div>
+      </div>
+
+      <!-- ✅ 신고 완료 팝업 -->
+      <div id="report-popup">
+        <img src="imgs/check.png" alt="체크 아이콘" class="check-icon">
+        <p>신고가 완료되었습니다!</p>
+      </div>
+    </div>
+
+    <!-- 슬라이딩 카드 -->
+    <div id="info-card">
+      <div class="handle"></div>
+      <h3>
+        <img src="imgs/marker-pin-04.png" alt="경고 아이콘" class="icon-img">
+        서강로 주변 골목
+      </h3>
+      <p>서강로 주변 골목들에 도로 결함 및 포트홀이 다수 발생했고, 우천으로 인해 주변이 매우 미끄럽습니다.</p>
+      <div class="images">
+        <img src="imgs/pothole2.jpg" alt="위험1">
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function endRide() {
+      alert("주행을 종료합니다.");
+    }
+
+    // 닫기 버튼
+    function closeOverlay(e) {
+      e.stopPropagation(); // 오버레이 클릭 이벤트 방지
+      document.getElementById("report-overlay").style.display = "none";
+    }
+
+    // 더블탭 감지
+    let lastTap = 0;
+    function detectDoubleTap(e) {
+      const now = new Date().getTime();
+      const timeSince = now - lastTap;
+
+      if (timeSince < 400 && timeSince > 0) {
+        handleReport();
+        document.getElementById("report-overlay").style.display = "none";
+      }
+
+      lastTap = now;
+    }
+
+    function handleReport() {
+      const popup = document.getElementById("report-popup");
+      popup.style.display = "flex";
+
+      setTimeout(() => {
+        popup.style.display = "none";
+      }, 2000);
+    }
+  </script>
+  <script src="js/mapdrive.js"></script>
+</body>
+</html>
