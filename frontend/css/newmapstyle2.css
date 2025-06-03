@@ -27,7 +27,6 @@ body {
   overflow-y: auto;
 }
 
-/* ✅ 로고 위치를 위로 올림 */
 .logo-area {
   display: flex;
   justify-content: center;
@@ -59,47 +58,29 @@ body {
   padding-left: 0;
 }
 
-.map-button {
+/* ✅ 중앙 넓은 주행 종료 버튼 */
+.map-button.end-btn {
   position: absolute;
   bottom: 20px;
-  padding: 12px 18px;
-  font-size: 14px;
-  font-weight: bold;
+  left: 5%;
+  width: 90%;
+  padding: 10px 0;
+  font-size: 16px;
+  font-family: 'Pretendard-Regular', 'Segoe UI', sans-serif;
   border: none;
   border-radius: 10px;
+  background-color: #ef4f35;
+  color: white;
   cursor: pointer;
   z-index: 2;
 }
 
-.start-btn {
-  left: 60px;
-  background-color: #27efd1;
-  color: white;
-}
-
-.report-btn {
-  right: 20px;
-  background-color: #f44336;
-  color: white;
-}
-
+/* 기존 버튼 제거 (선택/신고 등) */
+.report-btn,
 .select-button {
-  left: 60px;
-  background-color: #6dbf2f;
-  color: white;
+  display: none !important;
 }
 
-#clickLatlng {
-  margin-top: 10px;
-  font-size: 16px;
-  background-color: #ffffff;
-  padding: 8px 16px;
-  border-radius: 8px;
-  color: #333;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-}
-
-/* ✅ 사이드바 */
 #sidebar {
   position: absolute;
   top: 0;
@@ -113,11 +94,11 @@ body {
   transition: left 0.3s ease;
   z-index: 999;
 }
+
 #sidebar.open {
   left: 0;
 }
 
-/* ✅ 햄버거 버튼 위치 보정 */
 #menu-toggle {
   position: absolute;
   top: 28px;

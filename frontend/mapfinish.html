@@ -10,13 +10,14 @@
 <body>
   <div class="app-container">
 
-    <!-- 상태바 제거됨 -->
-
     <!-- 툴바 -->
     <button id="menu-toggle">☰</button>
     <div id="sidebar">
       <h3>🏠 홈</h3>
-      <div class="menu-item">💬커뮤니티</div>
+      <div class="menu-item">
+        <img src="imgs/communityicon.png" alt="커뮤니티 아이콘" class="menu-icon">
+        커뮤니티
+      </div>
       <div class="menu-item">내비게이션</div>
     </div>
 
@@ -27,8 +28,8 @@
     <!-- 지도 -->
     <div id="map-container">
       <div id="map"></div>
-      <button class="map-button report-btn" onclick="reportNow()">즉시 신고</button>
-      <button class="map-button select-button" onclick="goSelectLocation()">위치 선택</button>
+      <!-- ✅ 중앙 넓은 주행 종료 버튼 -->
+      <button class="map-button end-btn" onclick="endRide()">주행 종료</button>
     </div>
 
     <!-- 슬라이딩 카드 -->
@@ -44,6 +45,13 @@
       </div>
     </div>
   </div>
+
   <script src="js/mapfinish.js"></script>
+  <script>
+    function endRide() {
+      alert("주행을 종료합니다.");
+      // 필요시 다른 동작 추가
+    }
+  </script>
 </body>
 </html>
