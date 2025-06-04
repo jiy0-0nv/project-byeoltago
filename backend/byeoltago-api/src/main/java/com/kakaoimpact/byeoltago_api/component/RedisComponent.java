@@ -21,6 +21,9 @@ public class RedisComponent {
 
     /**
      * 사용자 ID를 키로, 현재 시간을 해시 키로, 좌표를 해시 값으로 저장합니다.
+     * 이 메서드는 다음 두 가지 경우 모두에 사용할 수 있습니다:
+     * 1. 키(user_id)가 아직 존재하지 않는 경우: 새로운 해시를 생성합니다.
+     * 2. 키(user_id)가 이미 존재하는 경우: 새로운 해시 키(timestamp)로 항목을 추가합니다.
      * 
      * @param userId 사용자 ID
      * @param coordinates 좌표 객체
@@ -30,6 +33,27 @@ public class RedisComponent {
         String timestamp = getCurrentTimestamp();
         userCoordinatesRedisTemplate.opsForHash().put(userId, timestamp, coordinates);
         return timestamp;
+    }
+
+    /**
+     * 사용자 ID에 해당하는 모든 좌표 데이터를 삭제합니다.
+     *
+     * @param userId 사용자 ID
+     * @return 삭제 성공 여부
+     */
+    public Boolean deleteAllUserCoordinates(String userId) {
+        return userCoordinatesRedisTemplate.delete(userId);
+    }
+
+    /**
+     * 사용자 ID에 해당하는 키를 Redis에서 삭제합니다.
+     * 이 메서드는 해당 사용자의 모든 좌표 데이터를 삭제합니다.
+     *
+     * @param userId 사용자 ID
+     * @return 삭제 성공 여부
+     */
+    public Boolean deleteUserKey(String userId) {
+        return userCoordinatesRedisTemplate.delete(userId);
     }
 
     /**
@@ -85,13 +109,5 @@ public class RedisComponent {
         return userCoordinatesRedisTemplate.opsForHash().entries(userId);
     }
 
-    /**
-     * 사용자 ID에 해당하는 모든 좌표 데이터를 삭제합니다.
-     * 
-     * @param userId 사용자 ID
-     * @return 삭제 성공 여부
-     */
-    public Boolean deleteAllUserCoordinates(String userId) {
-        return userCoordinatesRedisTemplate.delete(userId);
-    }
+    
 }
