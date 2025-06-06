@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>도로 신고하기</title>
+  <link rel="stylesheet" href="css/afterreport.css" />
+</head>
+<body>
+  <div class="app-container">
+    
+    <!-- ✅ 상태바 이미지 -->
+    <div class="status-bar">
+      <img src="imgs/Statusbar.png" alt="상태바 이미지" />
+    </div>
+
+    <!-- ✅ 헤더 -->
+    <header class="header">
+      <span class="back-btn">←</span>
+      <h1>위험구간 신고하기</h1>
+    </header>
+
+    <!-- ✅ 사진 업로드 -->
+    <div class="photo-upload">
+      <label for="photo-input" class="upload-box">
+        <span class="plus">＋</span>
+        <span>도로 사진 올리기 (선택사항)</span>
+      </label>
+      <input type="file" id="photo-input" accept="image/*" hidden />
+    </div>
+
+    <!-- ✅ 위치 및 장소 변경 -->
+    <div class="location-row">
+      <div class="location-icon">
+  <img src="imgs/location.png" alt="위치 아이콘">
+</div>
+<span id="location-text">현재 위치</span>
+      <button class="location-change-btn">장소변경</button>
+    </div>
+
+    <!-- ✅ 설명 입력 -->
+    <div class="description-box">
+      <textarea placeholder="도로 문제에 대해 설명해주세요."></textarea>
+    </div>
+
+    <!-- ✅ 신고하기 버튼 -->
+    <button class="submit-btn" disabled>신고하기</button>
+
+  </div>
+
+  <script src="js/afterreport.js"></script>
+</body>
+</html>
