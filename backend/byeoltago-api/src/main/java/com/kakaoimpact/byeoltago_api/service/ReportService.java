@@ -48,7 +48,7 @@ public class ReportService {
         if (image != null && !image.isEmpty()) {
             try {
                 String filename = "report_" + currentUserId + "_" + currentTime + ".jpg";
-                Path uploadRoot = Paths.get("uploads/reports");
+                Path uploadRoot = Paths.get(System.getProperty("user.dir"), "uploads", "reports");
                 Files.createDirectories(uploadRoot);
                 Path savePath = uploadRoot.resolve(filename);
                 image.transferTo(savePath.toFile());
