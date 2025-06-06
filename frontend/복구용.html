@@ -1,0 +1,30 @@
+.status-bar {
+  width: 100%;
+  height: auto;
+  display: flex;
+  justify-content: center;
+  background-color: white; 
+  padding-top: 5px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 2000;
+}
+
+.status-bar img {
+  height: 42px; /* 적절한 크기 */
+}
+
+
+<h3>🚨 첨단남길 주변도로</h3>
+
+const mapOption = {
+      center: new kakao.maps.LatLng(37.56461497907903, 126.9360888554345),
+      level: 4
+    };
+    const map = new kakao.maps.Map(mapContainer, mapOption);
+
+    const marker = new kakao.maps.Marker({
+      position: map.getCenter()
+    });
+    marker.setMap(map);

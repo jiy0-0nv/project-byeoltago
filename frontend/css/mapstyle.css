@@ -1,30 +1,62 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-  <meta charset="UTF-8">
-  <title>별타고</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=ca66c24bcf740dae018b8f1511d02475"></script>
-  <style>
     body {
-      font-family: 'Segoe UI', sans-serif;
       margin: 0;
       padding: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      height:100%;
       background-color: #f5f5f5;
+      display: flex;
+      justify-content: center;
+    }
+    .logo-area {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 38px;
+  padding: 10px 0;
+}
+
+.logo-img {
+  height: 40px; /* 필요시 너비 조절 */
+  object-fit: contain;
+}
+    .app-container {
+      width: 100%;
+      max-width: 390px;
+      height: 100%; /*100 vh로 바꾸면 이전처럼 */
+      margin: 0 auto;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+      background-color: white;
+      position: relative;
+      overflow: hidden;
+      font-family: 'Segoe UI', sans-serif;
     }
 
+  .status-bar {
+  width: 100%;
+  height: auto;
+  display: flex;
+  justify-content: center;
+  background-color: white; 
+  padding-top: 5px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 2000;
+}
+
+.status-bar img {
+  height: 42px; /* 적절한 크기 */
+}
+
     h2 {
-      margin-top: 20px;
+      margin-top: 28px;
+      text-align: center;
     }
 
     #map-container {
+      flex:1;
       position: relative;
       width: 100%;
       height: 500px;
-      margin-top: 10px;
       border-radius: 0;
       overflow: hidden;
     }
@@ -45,10 +77,16 @@
       cursor: pointer;
       z-index: 2;
     }
-
+.icon-img {
+  height: 20px;
+  width: 20px;
+  vertical-align: middle;
+  margin-right: 6px;
+}
     .start-btn {
       left: 60px;
-      background-color: #00c9a7;
+      background-color: #27efd1
+    ;
       color: white;
     }
 
@@ -57,7 +95,13 @@
       background-color: #f44336;
       color: white;
     }
-
+    .select-button {
+      left: 60px;
+      background-color: #6dbf2f 
+    ;
+      color: white;
+    }
+    
     #clickLatlng {
       margin-top: 10px;
       font-size: 16px;
@@ -69,12 +113,12 @@
     }
 
     #sidebar {
-      position: fixed;
+      position: absolute;
       top: 0;
-      left: -200px;
-      width: 200px;
+      left: -130px;
+      width: 110px;
       height: 100%;
-      background-color: #b2b4ad;
+      background-color: #f8f8f8;
       color: white;
       padding: 20px;
       box-shadow: 2px 0 5px rgba(0,0,0,0.3);
@@ -102,14 +146,14 @@
     }
 
     #menu-toggle {
-      position: fixed;
+      position: absolute;
       top: 40%;
-      left: 3px;
+      left: -5px;
       transform: translateY(20%);
       width: 36px;
       height: 36px;
       background-color: #efc327;
-      color: rgb(250, 246, 246);
+      color: white;
       font-size: 20px;
       border: none;
       border-radius: 6px;
@@ -117,9 +161,8 @@
       cursor: pointer;
     }
 
-    /* 슬라이딩 카드 */
     #info-card {
-      position: fixed;
+      position: absolute;
       bottom: -300px;
       left: 0;
       right: 0;
@@ -166,37 +209,3 @@
       object-fit: cover;
       border-radius: 8px;
     }
-  </style>
-</head>
-<body>
-
-  <!-- 툴바 -->
-  <button id="menu-toggle">☰</button>
-  <div id="sidebar">
-    <h3>📋 메뉴</h3>
-    <div class="menu-item">💬 커뮤니티</div>
-    <div class="menu-item">🙋 내 정보</div>
-  </div>
-
-  <h2>🚴 별타고</h2>
-
-  <!-- 지도 -->
-  <div id="map-container">
-    <div id="map"></div>
-    <button class="map-button start-btn" onclick="startRide()">주행 시작</button>
-    <button class="map-button report-btn" onclick="reportNow()">신고</button>
-  </div>
-
-  <!-- 슬라이딩 카드 -->
-  <div id="info-card">
-    <div class="handle"></div>
-    <h3>🚨 첨단남길 주변도로</h3>
-    <p>첨단남길 주변도로에 포트홀이 위치해 있고 주변이 매우 미끄럽습니다</p>
-    <div class="images">
-      <img src="imgs/pothole1.jpg" alt="위험1">
-    </div>
-  </div>
-
-<script src="mapscreen.js"></script>
-</body>
-</html>

@@ -1,14 +1,20 @@
-    const mapContainer = document.getElementById('map');
-    const mapOption = {
-      center: new kakao.maps.LatLng(33.450701, 126.570667),
-      level: 4
-    };
-    const map = new kakao.maps.Map(mapContainer, mapOption);
+const mapContainer = document.getElementById('map');
+  const mapCenter = new kakao.maps.LatLng(37.56163583847079,126.93377113568499);
 
-    const marker = new kakao.maps.Marker({
-      position: map.getCenter()
-    });
-    marker.setMap(map);
+// 마커 좌표 (지도 중심보다 남서쪽으로 약간 떨어진 곳)
+const markerPosition = new kakao.maps.LatLng(37.56458786656103,126.93606622186019 );
+
+// 지도 생성
+const map = new kakao.maps.Map(mapContainer, {
+  center: mapCenter,
+  level: 4
+});
+
+// 마커 생성
+const marker = new kakao.maps.Marker({
+  position: markerPosition
+});
+marker.setMap(map);
 
     kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
       const latlng = mouseEvent.latLng;
@@ -17,7 +23,7 @@
         `클릭한 위치의 위도는 ${latlng.getLat().toFixed(5)} 이고, 경도는 ${latlng.getLng().toFixed(5)} 입니다`;
     });
 
-    function placeCustomDangerMarkers(count = 15) {
+    function placeCustomDangerMarkers(count = 7) { //마커 생성 수 조정가능 
       const bounds = map.getBounds();
       const sw = bounds.getSouthWest();
       const ne = bounds.getNorthEast();
@@ -25,7 +31,6 @@
       const icons = [
         "imgs/marker-pin-01.png", // 초록
         "imgs/marker-pin-02.png", // 주황
-        "imgs/marker-pin-03.png"  // 빨강
       ];
 
       for (let i = 0; i < count; i++) {
@@ -46,7 +51,7 @@
         });
 
         // 빨간색 마커만 이벤트 연결
-        if (icon.includes("marker-pin-03.png")) {
+        if (icon.includes("marker-pin-04.png")) {
           kakao.maps.event.addListener(marker, 'click', function () {
             document.getElementById("info-card").classList.add("show");
           });
@@ -64,8 +69,14 @@ document.querySelector('#info-card .handle').addEventListener('click', function 
       alert("주행을 시작합니다. 안전 운전하세요!");
     }
 
+    function startRide() {
+      window.location.href="finish"
+    }
+    function goSelectLocation() {
+      window.location.href="report2.html"
+    }
     function reportNow() {
-  window.location.href="report.html";
+  window.location.href="report2.html";
 };
   
 

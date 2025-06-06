@@ -1,0 +1,82 @@
+@font-face {
+      font-family: 'Pretendard-Regular';
+      src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
+      font-weight: 400;
+      font-style: normal;
+    }
+
+    body {
+      font-family: 'Pretendard-Regular', 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #ffffff;
+      color: white;
+    }
+
+    .login-section {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding-top: 0; /* 상태바 제거했으므로 여백도 제거 */
+    }
+
+    .logo-img {
+      width: 150px;
+      margin-bottom: 30px;
+    }
+
+    .login-box {
+      background-color: transparent;
+      padding: 20px;
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    input {
+      padding: 10px;
+      margin: 10px 0;
+      font-size: 16px;
+      width: 220px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    input[type="submit"] {
+      background-color: #efc327;
+      color: black;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+      width: 220px;
+    }
+
+    .signup-link {
+      margin-top: 12px;
+      font-size: 14px;
+      color: #888;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    #bike-animation {
+      display: none;
+      position: fixed;
+      top: 40%;
+      left: -100px;
+      animation: moveBike 1s linear forwards;
+      z-index: 1000;
+    }
+
+    #bike-animation img {
+      width: 70px;
+      height: auto;
+    }
+
+    @keyframes moveBike {
+      from { left: -100px; }
+      to { left: 110%; }
+    }

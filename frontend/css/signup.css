@@ -1,0 +1,86 @@
+   @font-face {
+      font-family: 'Pretendard-Regular';
+      src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
+      font-weight: 400;
+      font-style: normal;
+    } 
+    body {
+      font-family: 'Pretendard-Regular','Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #ffffff;
+      color: white;
+    }
+
+    .signup-section {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding-top: 0; /* 상태바 제거로 패딩 제거 */
+      box-sizing: border-box;
+    }
+
+    .logo-img {
+      width: 120px;
+      margin-bottom: 20px;
+    }
+
+    .signup-box {
+      background-color: transparent;
+      padding: 20px;
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"] {
+      padding: 10px;
+      margin: 8px 0;
+      font-size: 16px;
+      width: 240px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    input[type="submit"] {
+      background-color: #efc327;
+      color: black;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+      width: 240px;
+      padding: 10px;
+      margin-top: 16px;
+    }
+
+    label {
+      color: black;
+      font-size: 14px;
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+    }
+
+    #bike-animation {
+      display: none;
+      position: fixed;
+      top: 40%;
+      left: -100px;
+      animation: moveBike 1s linear forwards;
+      z-index: 1000;
+    }
+
+    #bike-animation img {
+      width: 70px;
+      height: auto;
+    }
+
+    @keyframes moveBike {
+      from { left: -100px; }
+      to { left: 110%; }
+    }
