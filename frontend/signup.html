@@ -97,9 +97,31 @@
       from { left: -100px; }
       to { left: 110%; }
     }
+
+    .warning-message {
+      color: red;
+      font-size: 12px;
+      margin-top: -5px;
+      margin-bottom: 8px;
+      display: none;
+      width: 240px;
+      text-align: left;
+    }
   </style>
 
   <script>
+    function validateUsernameInput(event) {
+      const input = event.target.value;
+      const warning = document.getElementById('username-warning');
+      const isValid = /^[a-zA-Z0-9]*$/.test(input);
+
+      if (!isValid) {
+        warning.style.display = 'block';
+      } else {
+        warning.style.display = 'none';
+      }
+    }
+
     function handleSignup(event) {
       event.preventDefault();
 
@@ -109,6 +131,12 @@
       const confirmPassword = document.getElementById('confirm-password').value;
       const phone = document.getElementById('phone').value;
       const agree = document.getElementById('agree').checked;
+      const warning = document.getElementById('username-warning');
+
+      if (!/^[a-zA-Z0-9]+$/.test(username)) {
+        warning.style.display = 'block';
+        return;
+      }
 
       if (email && username && password && confirmPassword && phone && agree) {
         if (password !== confirmPassword) {
@@ -134,7 +162,8 @@
     <img src="imgs/logo.png" alt="별타고 로고" class="logo-img">
     <form onsubmit="handleSignup(event)" class="signup-box">
       <input type="email" id="email" placeholder="이메일" required>
-      <input type="text" id="username" placeholder="새 아이디" required>
+      <input type="text" id="username" placeholder="새 아이디" required oninput="validateUsernameInput(event)">
+      <div id="username-warning" class="warning-message">영어 대소문자와 숫자만 입력 가능합니다.</div>
       <input type="password" id="password" placeholder="새 비밀번호" required>
       <input type="password" id="confirm-password" placeholder="비밀번호 확인" required>
       <input type="tel" id="phone" placeholder="전화번호" required>
