@@ -64,8 +64,8 @@
 
   <script>
     function endRide() {
-      alert("주행을 종료합니다.");
-    }
+  window.location.href = "mapfinish.html";
+}
 
     // 닫기 버튼
     function closeOverlay(e) {
@@ -89,10 +89,15 @@
 
     function handleReport() {
       const popup = document.getElementById("report-popup");
+      const overlay = document.getElementById("report-overlay");
+
+      // 신고 완료 팝업 표시
       popup.style.display = "flex";
 
+      // 2초 후 팝업 닫고 오버레이 다시 표시
       setTimeout(() => {
         popup.style.display = "none";
+        overlay.style.display = "flex";
       }, 2000);
     }
   </script>

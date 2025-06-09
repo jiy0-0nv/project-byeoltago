@@ -2,190 +2,207 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
+  <title>주행 후 신고화면</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>도로 신고</title>
-  <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=ca66c24bcf740dae018b8f1511d02475"></script>
+  <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=ca66c24bcf740dae018b8f1511d02475&libraries=services,drawing"></script>
   <style>
-    html, body {
+    @font-face {
+  font-family: 'Pretendard-Regular';
+  src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+}
+    body {
       margin: 0;
-      padding: 0;
-      height: 100%;
+      font-family:'Pretendard-Regular', sans-serif;
       background-color: #f7f7f7;
-      display: flex;
-      justify-content: center;
     }
 
     .app-container {
-      width: 100%;
-      max-width: 390px;
-      height: 100%;
-      background-color: #f7f7f7;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
       display: flex;
       flex-direction: column;
+      height: 100vh;
+    }
+
+    #map-container {
       position: relative;
-      overflow-y: auto;
-      font-family: 'Segoe UI', sans-serif;
-    }
-
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 16px;
-      background: white;
-      border-bottom: 1px solid #ddd;
-      /* 상태바 제거에 따라 margin-top 삭제 */
-    }
-
-    header h1 {
-      font-size: 18px;
-      margin: 0;
-    }
-
-    header .right {
-      color: #efc327;
-      font-weight: bold;
-      cursor: pointer;
+      height: 50%;
     }
 
     #map {
       width: 100%;
-      height: 300px;
+      height: 100%;
     }
 
-    .section {
-      background: white;
-      margin: 12px;
-      padding: 16px;
-      border-radius: 12px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-    }
-
-    .section-title {
-      font-weight: bold;
-      margin-bottom: 10px;
-    }
-
-    .choices {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      justify-content: center;
-    }
-
-    .choice {
-      width: 45%;
-      background: #53d919;
-      border-color: #efc327;
-      border: 2px solid transparent;
-      border-radius: 10px;
-      text-align: center;
-      padding: 8px;
+    .map-button {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #ff5757;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      font-size: 16px;
+      border-radius: 20px;
       cursor: pointer;
-      transition: 0.3s;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      box-sizing: border-box;
     }
 
-    .choice img {
-      width: 70px;
-      height: auto;
-      margin-bottom: 6px;
+    #report-info {
+      padding: 15px;
+      background: white;
+      box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
+    }
+
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #eee;
+      padding: 10px 0;
+    }
+
+    .info-row:last-child {
+      border-bottom: none;
+    }
+
+    .info-label {
+      display: flex;
+      align-items: center;
+      font-weight: bold;
+    }
+
+    .info-label img {
+      width: 20px;
+      height: 20px;
+      margin-right: 8px;
+    }
+
+    .photo-preview .info-label img {
+      width: 20px;
+      height: 20px;
+      margin-right: 8px;
+    }
+
+    select {
+      padding: 5px;
       border-radius: 6px;
+      font-size: 14px;
+    }
+
+    .photo-preview img {
+      width: 60px;
+      height: 60px;
+      border-radius: 8px;
       object-fit: cover;
     }
 
-    .choice div {
-      font-size: 13px;
+    .arrow-button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
     }
 
-    .choice.active {
-      border-color: #efc327;
-      background: #efc327;
+    .arrow-button img {
+      width: 24px;
+      height: 24px;
     }
   </style>
 </head>
 <body>
   <div class="app-container">
+    <!-- 지도 영역 -->
+    <div id="map-container">
+      <div id="map"></div>
+      <button class="map-button" onclick="endRide()">주행 종료</button>
+    </div>
 
-    <!-- ✅ 상단 헤더 -->
-    <header>
-      <div>☰</div>
-      <h1>새로운 위험구간 신고</h1>
-      <div class="right" onclick="goNextPage()">다음</div>
-    </header>
+    <!-- 신고 정보 카드 -->
+    <div id="report-info">
+      <div class="info-row">
+        <div class="info-label">
+          <img src="imgs/pin.png" alt="위치">
+          위치
+        </div>
+        <div class="info-value">
+          <select id="location-select">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+          </select>
+        </div>
+      </div>
 
-    <!-- ✅ 지도 -->
-    <div id="map"></div>
+      <div class="info-row">
+        <div class="info-label">
+          <img src="imgs/damagetype.png" alt="결함">
+          결함 종류
+        </div>
+        <div class="info-value">
+          <button class="arrow-button" onclick="goToDamagePage()">
+            <img src="imgs/choice.png" alt="선택화살표">
+          </button>
+        </div>
+      </div>
 
-    <!-- ✅ 도로 결함 선택 -->
-    <div class="section">
-      <div class="section-title">어떤 종류의 위험구간이었는지 골라주세요.</div>
-      <div class="choices">
-        <div class="choice" onclick="selectChoice(this)">
-          <img src="imgs/option1.svg" alt="차도와 구분 어려움">
-          <div>차도와 구분 어려움</div>
+      <div class="info-row photo-preview">
+        <div class="info-label">
+          <img src="imgs/cameraimage.png" alt="사진">
+          사진(선택사항)
         </div>
-        <div class="choice" onclick="selectChoice(this)">
-          <img src="imgs/option1.svg" alt="도로 융기">
-          <div>도로 융기</div>
-        </div>
-        <div class="choice" onclick="selectChoice(this)">
-          <img src="imgs/option3.svg" alt="도로 파임">
-          <div>도로 파임</div>
-        </div>
-        <div class="choice" onclick="selectChoice(this)">
-          <img src="imgs/option4.svg" alt="불법 주차">
-          <div>불법 주차</div>
-        </div>
-        <div class="choice" onclick="selectChoice(this)">
-          <img src="imgs/option5.svg" alt="공사 구간">
-          <div>공사 구간</div>
-        </div>
-        <div class="choice" onclick="selectChoice(this)">
-          <img src="imgs/option6.svg" alt="직접 입력">
-          <div>직접 입력</div>
+        <div class="info-value">
+          <img src="imgs/pothole2.jpg" alt="위험 이미지">
         </div>
       </div>
     </div>
-
   </div>
 
-  <script src="js/report.js"></script>
   <script>
-    window.onload = function () {
-      const container = document.getElementById('map');
-      const options = {
-        center: new kakao.maps.LatLng(37.56461040983631, 126.93610015875485),
-        level: 3
-      };
-      const map = new kakao.maps.Map(container, options);
-
-      const destinationPosition = new kakao.maps.LatLng(37.56461040983631, 126.93610015875485);
-      const markerImage = new kakao.maps.MarkerImage(
-        "imgs/flag.png",
-        new kakao.maps.Size(20, 20),
-        { offset: new kakao.maps.Point(20, 40) }
-      );
-
-      const destinationMarker = new kakao.maps.Marker({
-        map: map,
-        position: destinationPosition,
-        image: markerImage
-      });
+    const container = document.getElementById('map');
+    const options = {
+      center: new kakao.maps.LatLng(37.5495, 126.9425),
+      level: 4
     };
+    const map = new kakao.maps.Map(container, options);
 
-    function goNextPage() {
-  window.location.href = "afterreport.html";
-      // 실제 구현 시 페이지 이동 로직 삽입
+    const path = [
+      new kakao.maps.LatLng(37.5495, 126.9425),
+      new kakao.maps.LatLng(37.5505, 126.944),
+      new kakao.maps.LatLng(37.5515, 126.946),
+      new kakao.maps.LatLng(37.5525, 126.947)
+    ];
+
+    const polyline = new kakao.maps.Polyline({
+      path: path,
+      strokeWeight: 5,
+      strokeColor: '#FF6600',
+      strokeOpacity: 0.8,
+      strokeStyle: 'solid'
+    });
+    polyline.setMap(map);
+
+    function addNumberMarker(position, number) {
+      const markerContent = `<div style="background:#f1c40f; color:#fff; padding:4px 8px; border-radius:20px; font-weight:bold;">${number}</div>`;
+      const customOverlay = new kakao.maps.CustomOverlay({
+        position: position,
+        content: markerContent,
+        yAnchor: 1
+      });
+      customOverlay.setMap(map);
     }
 
-    function selectChoice(el) {
-      document.querySelectorAll('.choice').forEach(item => item.classList.remove('active'));
-      el.classList.add('active');
+    path.forEach((pos, idx) => {
+      addNumberMarker(pos, idx + 1);
+    });
+
+    function endRide() {
+      alert("주행을 종료합니다.");
+    }
+
+    function goToDamagePage() {
+      window.location.href = "report.html";
     }
   </script>
 </body>

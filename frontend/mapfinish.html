@@ -18,9 +18,13 @@
         <img src="imgs/communityicon.png" alt="커뮤니티 아이콘" class="menu-icon">
         커뮤니티
       </div>
-      <div class="menu-item">내비게이션</div>
+      <div class="menu-item">사용 방법</div>
+      <div class="menu-item">
+    <img src="imgs/mypage.png" alt="마이페이지 아이콘" class="menu-icon">
+    내 정보
+  </div>
     </div>
-
+    
     <div class="logo-area">
       <img src="imgs/logo.png" alt="별타고 로고" class="logo-img">
     </div>
@@ -29,7 +33,7 @@
     <div id="map-container">
       <div id="map"></div>
       <!-- ✅ 중앙 넓은 주행 종료 버튼 -->
-      <button class="map-button end-btn" onclick="endRide()">주행 종료</button>
+      <button class="map-button end-btn" onclick="endRide()">신고 화면으로 이동</button>
     </div>
 
     <!-- 슬라이딩 카드 -->
@@ -49,9 +53,8 @@
   <script src="js/mapfinish.js"></script>
   <script>
     function endRide() {
-      alert("주행을 종료합니다.");
-      // 필요시 다른 동작 추가
-    }
+        window.location.href = "report.html";
+}
   </script>
 </body>
 </html>

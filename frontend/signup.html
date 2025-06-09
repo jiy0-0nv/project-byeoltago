@@ -39,7 +39,8 @@
 
     input[type="text"],
     input[type="email"],
-    input[type="password"] {
+    input[type="password"],
+    input[type="tel"] {
       padding: 10px;
       margin: 8px 0;
       font-size: 16px;
@@ -96,18 +97,53 @@
       from { left: -100px; }
       to { left: 110%; }
     }
+
+    .warning-message {
+      color: red;
+      font-size: 12px;
+      margin-top: -5px;
+      margin-bottom: 8px;
+      display: none;
+      width: 240px;
+      text-align: left;
+    }
   </style>
 
   <script>
+    function validateUsernameInput(event) {
+      const input = event.target.value;
+      const warning = document.getElementById('username-warning');
+      const isValid = /^[a-zA-Z0-9]*$/.test(input);
+
+      if (!isValid) {
+        warning.style.display = 'block';
+      } else {
+        warning.style.display = 'none';
+      }
+    }
+
     function handleSignup(event) {
       event.preventDefault();
 
       const email = document.getElementById('email').value;
       const username = document.getElementById('username').value;
       const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirm-password').value;
+      const phone = document.getElementById('phone').value;
       const agree = document.getElementById('agree').checked;
+      const warning = document.getElementById('username-warning');
 
-      if (email && username && password && agree) {
+      if (!/^[a-zA-Z0-9]+$/.test(username)) {
+        warning.style.display = 'block';
+        return;
+      }
+
+      if (email && username && password && confirmPassword && phone && agree) {
+        if (password !== confirmPassword) {
+          alert("비밀번호가 일치하지 않습니다.");
+          return;
+        }
+
         const bike = document.getElementById("bike-animation");
         bike.style.display = "inline";
 
@@ -126,8 +162,11 @@
     <img src="imgs/logo.png" alt="별타고 로고" class="logo-img">
     <form onsubmit="handleSignup(event)" class="signup-box">
       <input type="email" id="email" placeholder="이메일" required>
-      <input type="text" id="username" placeholder="새 아이디" required>
+      <input type="text" id="username" placeholder="새 아이디" required oninput="validateUsernameInput(event)">
+      <div id="username-warning" class="warning-message">영어 대소문자와 숫자만 입력 가능합니다.</div>
       <input type="password" id="password" placeholder="새 비밀번호" required>
+      <input type="password" id="confirm-password" placeholder="비밀번호 확인" required>
+      <input type="tel" id="phone" placeholder="전화번호" required>
       <label><input type="checkbox" id="agree"> 개인정보 수집 및 이용에 동의합니다.</label>
       <input type="submit" value="회원가입">
       <a href="login.html" class="login-link">이미 계정이 있으신가요?</a>
