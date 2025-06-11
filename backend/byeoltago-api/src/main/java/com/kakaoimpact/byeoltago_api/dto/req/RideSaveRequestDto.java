@@ -7,7 +7,6 @@ import lombok.Setter;
 
 import java.sql.Timestamp;
 
-// RideSaveRequestDto.java
 @Getter
 @Setter
 @NoArgsConstructor

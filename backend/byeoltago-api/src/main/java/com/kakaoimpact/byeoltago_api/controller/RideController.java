@@ -2,6 +2,7 @@ package com.kakaoimpact.byeoltago_api.controller;
 
 import com.kakaoimpact.byeoltago_api.common.Const;
 import com.kakaoimpact.byeoltago_api.common.UserContext;
+import com.kakaoimpact.byeoltago_api.dto.req.RideInfoResponseDto;
 import com.kakaoimpact.byeoltago_api.dto.req.RideSaveRequestDto;
 import com.kakaoimpact.byeoltago_api.service.RideService;
 import lombok.RequiredArgsConstructor;
