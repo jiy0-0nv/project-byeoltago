@@ -47,3 +47,6 @@ logging:
     com.kakaoimpact.byeoltago_api: debug
 file:
   upload-dir: uploads/reports
+custom:
+  cors:
+    frontend-url:  https://d1fkbh5rwn7h6q.cloudfront.net
