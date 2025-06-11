@@ -1,3 +1,5 @@
+import { API_BASE_URL } from './config.js';
+
 function handleLogin(event) {
     event.preventDefault();
 
@@ -9,7 +11,7 @@ function handleLogin(event) {
         return;
     }
 
-    fetch("http://43.203.245.224:8080/api/v1/auth/login", {
+    fetch(`${API_BASE_URL}/auth/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
