@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 @Slf4j
 @RestController
 @RequestMapping(Const.API_BASE_URL + "/auth")
@@ -56,7 +58,7 @@ public class AuthController {
 
             response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
-            return ResponseEntity.ok("로그인 성공. 토큰이 쿠키에 설정되었습니다.");
+            return ResponseEntity.ok(Map.of("message", "로그인 성공", "status", "OK"));
 
         } catch (BadCredentialsException e) {
             log.warn("Login failed for email {}: Invalid credentials", loginRequestDto.getEmail());
