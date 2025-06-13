@@ -182,12 +182,11 @@
 
   <script>
     const container = document.getElementById('map');
-    const options = {
-      center: new kakao.maps.LatLng(37.5495, 126.9425),
-      level: 4
-    };
-    const map = new kakao.maps.Map(container, options);
 
+    // 마커 위치 배열 가져오기
+    const markerPositions = JSON.parse(localStorage.getItem('drivingMarkers') || '[]');
+
+    // 경로 포인트 (기존 코드 유지)
     const path = [
       new kakao.maps.LatLng(37.5495, 126.9425),
       new kakao.maps.LatLng(37.5505, 126.944),
@@ -195,6 +194,41 @@
       new kakao.maps.LatLng(37.5525, 126.947)
     ];
 
+    // 모든 좌표 포인트 (경로 + 마커)
+    const allPoints = [...path];
+
+    // 마커 위치를 allPoints 배열에 추가
+    markerPositions.forEach(pos => {
+      allPoints.push(new kakao.maps.LatLng(pos.lat, pos.lng));
+    });
+
+    // 중심점 계산
+    let centerLat = 0;
+    let centerLng = 0;
+
+    if (allPoints.length > 0) {
+      // 모든 좌표의 평균 계산
+      allPoints.forEach(point => {
+        centerLat += point.getLat();
+        centerLng += point.getLng();
+      });
+
+      centerLat /= allPoints.length;
+      centerLng /= allPoints.length;
+    } else {
+      // 기본 중심점 (마커가 없는 경우)
+      centerLat = 37.5495;
+      centerLng = 126.9425;
+    }
+
+    // 지도 생성
+    const options = {
+      center: new kakao.maps.LatLng(centerLat, centerLng),
+      level: 4 // 초기 줌 레벨, 나중에 조정됨
+    };
+    const map = new kakao.maps.Map(container, options);
+
+    // 경로 그리기
     const polyline = new kakao.maps.Polyline({
       path: path,
       strokeWeight: 5,
@@ -204,6 +238,7 @@
     });
     polyline.setMap(map);
 
+    // 경로 포인트에 번호 마커 추가
     function addNumberMarker(position, number) {
       const markerContent = `<div style="background:#f1c40f; color:#fff; padding:4px 8px; border-radius:20px; font-weight:bold;">${number}</div>`;
       const customOverlay = new kakao.maps.CustomOverlay({
@@ -217,6 +252,57 @@
     path.forEach((pos, idx) => {
       addNumberMarker(pos, idx + 1);
     });
+
+    // 주행 중 생성된 마커 표시
+    function displayDrivingMarkers() {
+      // 마커 이미지 설정
+      const pinImage = new kakao.maps.MarkerImage(
+        "imgs/flag.png", // 깃발 이미지 사용
+        new kakao.maps.Size(40, 40),
+        { offset: new kakao.maps.Point(20, 40) }
+      );
+
+      // 각 위치에 마커 생성
+      markerPositions.forEach(position => {
+        const latlng = new kakao.maps.LatLng(position.lat, position.lng);
+
+        // 마커 생성
+        const marker = new kakao.maps.Marker({
+          position: latlng,
+          map: map,
+          image: pinImage
+        });
+
+        // 순서 번호 표시 (position.seq가 있는 경우에만)
+        if (position.seq !== undefined) {
+          // 마커 위에 순서 번호 표시
+          const markerContent = `<div style="background:#f1c40f; color:#fff; padding:4px 8px; border-radius:20px; font-weight:bold;">${position.seq}</div>`;
+          const customOverlay = new kakao.maps.CustomOverlay({
+            position: latlng,
+            content: markerContent,
+            yAnchor: 1
+          });
+          customOverlay.setMap(map);
+        }
+      });
+    }
+
+    // 마커 표시
+    displayDrivingMarkers();
+
+    // 모든 마커가 보이도록 지도 영역 설정
+    if (allPoints.length > 1) {
+      // 모든 좌표를 포함하는 영역 생성
+      const bounds = new kakao.maps.LatLngBounds();
+
+      // 모든 좌표를 영역에 추가
+      allPoints.forEach(point => {
+        bounds.extend(point);
+      });
+
+      // 영역에 맞게 지도 확대/축소 및 중심 이동
+      map.setBounds(bounds);
+    }
 
     function endRide() {
       alert("주행을 종료합니다.");

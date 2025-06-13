@@ -104,6 +104,10 @@ function createMap(center) {
       { offset: new kakao.maps.Point(20, 40) }
     );
 
+    // 마커 위치 저장 및 순서 번호 가져오기
+    const markerPositions = JSON.parse(localStorage.getItem('drivingMarkers') || '[]');
+    const seqNumber = markerPositions.length + 1; // 새 마커의 순서 번호
+
     // 새 마커 생성
     const newPin = new kakao.maps.Marker({
       position: latlng,
@@ -113,6 +117,15 @@ function createMap(center) {
 
     // 마커 위치 저장
     saveMarkerPosition(latlng);
+
+    // 마커 위에 순서 번호 표시
+    const markerContent = `<div style="background:#f1c40f; color:#fff; padding:4px 8px; border-radius:20px; font-weight:bold;">${seqNumber}</div>`;
+    const customOverlay = new kakao.maps.CustomOverlay({
+      position: latlng,
+      content: markerContent,
+      yAnchor: 1
+    });
+    customOverlay.setMap(map);
 
     // 신고 완료 팝업 표시 (팝업 요소가 존재하는 경우에만)
     const popup = document.getElementById("report-popup");
@@ -195,10 +208,11 @@ function saveMarkerPosition(latlng) {
   // localStorage에서 기존 마커 위치 배열 가져오기
   let markerPositions = JSON.parse(localStorage.getItem('drivingMarkers') || '[]');
 
-  // 새 마커 위치 추가
+  // 새 마커 위치 추가 (순서 번호 포함)
   markerPositions.push({
     lat: latlng.getLat(),
-    lng: latlng.getLng()
+    lng: latlng.getLng(),
+    seq: markerPositions.length + 1 // 순서 번호 추가 (1부터 시작)
   });
 
   // 업데이트된 배열 저장

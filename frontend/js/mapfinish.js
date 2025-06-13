@@ -151,11 +151,24 @@ function displayDrivingMarkers() {
   markerPositions.forEach(position => {
     const latlng = new kakao.maps.LatLng(position.lat, position.lng);
 
+    // 마커 생성
     const marker = new kakao.maps.Marker({
       position: latlng,
       map: map,
       image: pinImage
     });
+
+    // 순서 번호 표시 (position.seq가 있는 경우에만)
+    if (position.seq !== undefined) {
+      // 마커 위에 순서 번호 표시
+      const markerContent = `<div style="background:#f1c40f; color:#fff; padding:4px 8px; border-radius:20px; font-weight:bold;">${position.seq}</div>`;
+      const customOverlay = new kakao.maps.CustomOverlay({
+        position: latlng,
+        content: markerContent,
+        yAnchor: 1
+      });
+      customOverlay.setMap(map);
+    }
   });
 }
 
