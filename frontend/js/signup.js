@@ -40,7 +40,7 @@ function handleSignup(event) {
     return;
   }
 
-  fetch(`${API_BASE_URL}/auth/register`, {
+  fetch(`${API_BASE_URL}/users/register`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
