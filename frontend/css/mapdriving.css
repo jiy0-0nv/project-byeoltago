@@ -270,3 +270,19 @@ body {
   height: 20px;
   object-fit: contain;
 }
+
+#center-user-button {
+  position: absolute;
+  bottom: 60px;
+  left: 20px;
+  z-index: 10;
+  background-color: #fff;
+  border: 2px solid #3498db;
+  color: #3498db;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 20px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+}

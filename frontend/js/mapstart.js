@@ -4,7 +4,11 @@ const mapContainer = document.getElementById('map');
 const defaultCenter = new kakao.maps.LatLng(37.55445080992788, 126.93453008736239);
 let map;
 let lastBounds = null;
-const BOUNDS_CHANGE_THRESHOLD = 0.001; // 위경도 기준 약 100m
+const BOUNDS_CHANGE_THRESHOLD = 0.002; // 위경도 기준 약 200m
+
+let watchId = null;
+let userMarker = null;
+let autoTracking = true;
 
 // 위치 기반 지도 초기화
 function initializeMap() {
@@ -15,6 +19,7 @@ function initializeMap() {
         const lng = position.coords.longitude;
         const userCenter = new kakao.maps.LatLng(lat, lng);
         createMap(userCenter);
+        startTracking(); // 위치 추적 시작
       },
       (error) => {
         console.warn('위치 정보 가져오기 실패:', error);
@@ -23,7 +28,7 @@ function initializeMap() {
       {
         enableHighAccuracy: true,
         timeout: 5000,
-        maximumAge: 0
+        maximumAge: 5000
       }
     );
   } else {
@@ -51,8 +56,62 @@ function createMap(center) {
   };
   map = new kakao.maps.Map(mapContainer, mapOption);
 
+  // 지도 이동 시 자동 추적 중단
+  kakao.maps.event.addListener(map, 'dragstart', () => {
+    autoTracking = false;
+  });
+
   placeDangerMarkers(); // 마커 생성
   kakao.maps.event.addListener(map, 'idle', placeDangerMarkers);
+}
+
+// 위치 추적 시작
+function startTracking() {
+  if (!navigator.geolocation) return;
+
+  watchId = navigator.geolocation.watchPosition(
+    (position) => {
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
+      const latlng = new kakao.maps.LatLng(lat, lng);
+
+      // 기존 마커 제거
+      if (userMarker) userMarker.setMap(null);
+
+      // 현재 위치 마커 생성 (파란 점)
+      userMarker = new kakao.maps.Circle({
+        center: latlng,
+        radius: 10,
+        strokeWeight: 0,
+        fillColor: '#3498db',
+        fillOpacity: 0.9,
+        map: map
+      });
+
+      if (autoTracking) {
+        map.setCenter(latlng);
+      }
+    },
+    (error) => console.error('위치 추적 실패:', error),
+    {
+      enableHighAccuracy: true,
+      maximumAge: 5000,
+      timeout: 5000
+    }
+  );
+}
+
+function centerUserLocation() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const latlng = new kakao.maps.LatLng(pos.coords.latitude, pos.coords.longitude);
+        map.setCenter(latlng);
+      },
+      (err) => console.warn("위치 가져오기 실패:", err),
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  }
 }
 
 // 기존 랜덤 마커 생성 제거 후 DB 연동으로 대체
@@ -148,16 +207,8 @@ function shouldRefetchMarkers(newBounds) {
 
 // 상세 정보 표시
 function showReportDetails(detail) {
-  const card = document.getElementById("info-card");
-  card.classList.add("show");
-  card.querySelector("#report-title").innerText = `유형: ${detail.typeId}`;
-  card.querySelector("#report-desc").innerText = detail.descriptions?.[0] || "설명이 없습니다";
+  
 }
-
-// 슬라이딩 카드 닫기
-document.querySelector('#info-card .handle').addEventListener('click', function () {
-  document.getElementById('info-card').classList.remove('show');
-});
 
 // 사이드바 토글
 const menuToggle = document.getElementById("menu-toggle");
@@ -168,3 +219,4 @@ menuToggle.addEventListener("click", () => {
 
 // 지도 초기화 실행
 initializeMap();
+window.centerUserLocation = centerUserLocation;
