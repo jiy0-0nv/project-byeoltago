@@ -450,7 +450,7 @@ document.getElementById("menu-toggle").addEventListener("click", () => {
 
 // 주행 종료 이동
 function endRide() {
-  window.location.href = "mapfinish.html";
+  window.location.href = "report.html";
 }
 
 // 뒤로 가기

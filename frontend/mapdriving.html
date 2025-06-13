@@ -56,7 +56,15 @@
     <div id="map-container">
       <div id="map"></div>
 
-      <button id="center-user-button" onclick="centerUserLocation()">📍</button>
+      <button id="center-user-button" onclick="centerUserLocation()" class="circle-button">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon">
+          <circle cx="12" cy="12" r="10" />
+          <line x1="12" y1="6" x2="12" y2="8" />
+          <line x1="12" y1="16" x2="12" y2="18" />
+          <line x1="6" y1="12" x2="8" y2="12" />
+          <line x1="16" y1="12" x2="18" y2="12" />
+        </svg>
+      </button>
 
       <!-- 주행 종료 버튼 -->
       <button class="map-button end-btn" onclick="endRide()">주행 종료</button>
