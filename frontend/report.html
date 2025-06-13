@@ -202,55 +202,6 @@
       allPoints.push(new kakao.maps.LatLng(pos.lat, pos.lng));
     });
 
-    // 중심점 계산
-    let centerLat = 0;
-    let centerLng = 0;
-
-    // localStorage에서 마지막 마커 위치 가져오기
-    const lastMarkerLat = localStorage.getItem('lastMarkerLat');
-    const lastMarkerLng = localStorage.getItem('lastMarkerLng');
-
-    if (lastMarkerLat && lastMarkerLng) {
-      // 마지막 마커 위치를 중심점으로 사용
-      centerLat = parseFloat(lastMarkerLat);
-      centerLng = parseFloat(lastMarkerLng);
-    } else if (allPoints.length > 0) {
-      // 마지막 마커 위치가 없는 경우, 모든 좌표의 평균 계산
-      allPoints.forEach(point => {
-        centerLat += point.getLat();
-        centerLng += point.getLng();
-      });
-
-      centerLat /= allPoints.length;
-      centerLng /= allPoints.length;
-    } else {
-      // 기본 중심점 (마커가 없는 경우)
-      centerLat = 37.5495;
-      centerLng = 126.9425;
-    }
-
-    // 지도 생성
-    // localStorage에서 저장된 지도 레벨 가져오기
-    const savedMapLevel = localStorage.getItem('mapLevel');
-    const defaultLevel = 4;
-    const mapLevel = savedMapLevel ? parseInt(savedMapLevel) : defaultLevel;
-
-    const options = {
-      center: new kakao.maps.LatLng(centerLat, centerLng),
-      level: mapLevel // 저장된 줌 레벨 사용
-    };
-    const map = new kakao.maps.Map(container, options);
-
-    // 경로 그리기
-    const polyline = new kakao.maps.Polyline({
-      path: path,
-      strokeWeight: 5,
-      strokeColor: '#FF6600',
-      strokeOpacity: 0.8,
-      strokeStyle: 'solid'
-    });
-    polyline.setMap(map);
-
     // 경로 포인트에 번호 마커 추가
     function addNumberMarker(position, number) {
       const markerContent = `<div style="background:#f1c40f; color:#fff; padding:4px 8px; border-radius:20px; font-weight:bold;">${number}</div>`;
@@ -261,10 +212,6 @@
       });
       customOverlay.setMap(map);
     }
-
-    path.forEach((pos, idx) => {
-      addNumberMarker(pos, idx + 1);
-    });
 
     // 주행 중 생성된 마커 표시
     function displayDrivingMarkers() {
@@ -300,27 +247,102 @@
       });
     }
 
-    // 마커 표시
-    displayDrivingMarkers();
+    // 기본 중심점 (위치 정보를 가져오지 못하는 경우 사용)
+    let centerLat = 37.5495;
+    let centerLng = 126.9425;
+    let map;
 
-    // 모든 마커가 보이도록 지도 영역 설정
-    if (allPoints.length > 1) {
-      // 모든 좌표를 포함하는 영역 생성
-      const bounds = new kakao.maps.LatLngBounds();
+    // 지도 생성 함수
+    function createMap(lat, lng) {
+      centerLat = lat;
+      centerLng = lng;
 
-      // 모든 좌표를 영역에 추가
-      allPoints.forEach(point => {
-        bounds.extend(point);
+      // localStorage에서 저장된 지도 레벨 가져오기
+      const savedMapLevel = localStorage.getItem('mapLevel');
+      const mapLevel = 4;
+
+      const options = {
+        center: new kakao.maps.LatLng(centerLat, centerLng),
+        level: mapLevel // 저장된 줌 레벨 사용
+      };
+      const map = new kakao.maps.Map(container, options);
+
+      // 현재 위치 마커 생성
+      const currentLocationMarker = new kakao.maps.Marker({
+        position: new kakao.maps.LatLng(centerLat, centerLng),
+        map: map
       });
 
-      // 중심점만 조정하고 줌 레벨은 유지
-      map.setCenter(bounds.getCenter());
+      // 현재 위치 마커 스타일 변경
+      const currentLocationImage = new kakao.maps.MarkerImage(
+        "imgs/marker-pin-03.png", // 현재 위치를 표시할 마커 이미지
+        new kakao.maps.Size(40, 40),
+        { offset: new kakao.maps.Point(20, 40) }
+      );
+      currentLocationMarker.setImage(currentLocationImage);
 
-      // 저장된 줌 레벨이 없는 경우에만 bounds에 맞게 조정
-      if (!savedMapLevel) {
-        map.setBounds(bounds, 50);
+      // 경로 그리기
+      const polyline = new kakao.maps.Polyline({
+        path: path,
+        strokeWeight: 5,
+        strokeColor: '#FF6600',
+        strokeOpacity: 0.8,
+        strokeStyle: 'solid'
+      });
+      polyline.setMap(map);
+
+      // 경로 포인트에 번호 마커 추가
+      path.forEach((pos, idx) => {
+        addNumberMarker(pos, idx + 1);
+      });
+
+      // 주행 중 생성된 마커 표시
+      displayDrivingMarkers();
+
+      // 모든 마커가 보이도록 지도 영역 설정
+      if (allPoints.length > 1) {
+        // 모든 좌표를 포함하는 영역 생성
+        const bounds = new kakao.maps.LatLngBounds();
+
+        // 모든 좌표를 영역에 추가
+        allPoints.forEach(point => {
+          bounds.extend(point);
+        });
+
+        // 중심점만 조정하고 줌 레벨은 유지
+        map.setCenter(bounds.getCenter());
+
+        // 저장된 줌 레벨이 없는 경우에만 bounds에 맞게 조정
+        if (!savedMapLevel) {
+          map.setBounds(bounds, 50);
+        }
       }
     }
+
+    // 현재 위치 가져오기
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          // 현재 위치로 지도 생성
+          createMap(position.coords.latitude, position.coords.longitude);
+        },
+        (error) => {
+          console.warn('위치 정보 가져오기 실패:', error);
+          // 위치 정보를 가져오지 못한 경우 기본 위치로 지도 생성
+          createMap(centerLat, centerLng);
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 5000,
+          maximumAge: 0
+        }
+      );
+    } else {
+      console.warn('이 브라우저는 Geolocation을 지원하지 않습니다.');
+      // Geolocation을 지원하지 않는 경우 기본 위치로 지도 생성
+      createMap(centerLat, centerLng);
+    }
+
 
     function endRide() {
       alert("주행을 종료합니다.");

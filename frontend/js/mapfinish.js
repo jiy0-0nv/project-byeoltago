@@ -193,5 +193,12 @@ function displayDrivingMarkers() {
   });
 }
 
+// 주행 종료 → report.html로 이동
+function endRide() {
+  // 마지막 마커 위치와 현재 지도 레벨 저장
+  saveLastMarkerAndLevel();
+  window.location.href = "report.html";
+}
+
 // 지도 초기화 실행
 initializeMap();
