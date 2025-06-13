@@ -2,6 +2,9 @@ import { API_BASE_URL } from './config.js';
 
 const mapContainer = document.getElementById('map');
 const defaultCenter = new kakao.maps.LatLng(37.55445080992788, 126.93453008736239);
+
+const geocoder = new kakao.maps.services.Geocoder();
+
 let map;
 let lastBounds = null;
 const BOUNDS_CHANGE_THRESHOLD = 0.002; // 위경도 기준 약 200m
@@ -133,28 +136,18 @@ function placeDangerMarkers() {
     .then(markers => {
       markers.forEach(marker => {
         const position = new kakao.maps.LatLng(marker.latitude, marker.longitude);
-        const pngPath = getIconByRiskLevel(marker.risk_level, marker.report_type);
-        const svgPath = pngPath.replace('.png', '.svg');
+        const imgPath = getIconByRiskLevel(marker.risk_level, marker.report_type);
   
         const testImg = new Image();
-        testImg.src = pngPath;
+        testImg.src = imgPath;
   
         testImg.onload = () => {
           const markerImage = new kakao.maps.MarkerImage(
-            pngPath,
+            imgPath,
             new kakao.maps.Size(40, 40),
             { offset: new kakao.maps.Point(20, 40) }
           );
           createKakaoMarker(position, markerImage, marker.id);
-        };
-  
-        testImg.onerror = () => {
-          const fallbackImage = new kakao.maps.MarkerImage(
-            svgPath,
-            new kakao.maps.Size(40, 40),
-            { offset: new kakao.maps.Point(20, 40) }
-          );
-          createKakaoMarker(position, fallbackImage, marker.id);
         };
       });
     })
@@ -188,7 +181,12 @@ function getIconByRiskLevel(level, type) {
     case 3: color = "red"; break;
     default: color = "green";
   }
-  return `imgs/${color}${type}.png`;
+  if (type == 6) {
+    return `imgs/${color}6.svg`;
+  }
+  else {
+    return `imgs/${color}${type}.png`;
+  }
 }
 
 function shouldRefetchMarkers(newBounds) {
@@ -206,8 +204,164 @@ function shouldRefetchMarkers(newBounds) {
 }
 
 // 상세 정보 표시
+let currentSlide = 0;
+
 function showReportDetails(detail) {
+  const titleEl = document.getElementById("modal-title");
+  const dateEl = document.getElementById("modal-date");
+  const descEl = document.getElementById("modal-description");
+  const imageEl = document.getElementById("modal-images");
+  const iconEl = document.getElementById("modal-icon");
+  const modalEl = document.getElementById("report-modal");
+  const overlayEl = document.getElementById("modal-overlay");
+
+  // 역지오코딩: 좌표 → 주소
+  const coord = new kakao.maps.LatLng(detail.latitude, detail.longitude);
+  const geocoder = new kakao.maps.services.Geocoder();
+  geocoder.coord2Address(coord.getLng(), coord.getLat(), function(result, status) {
+    if (status === kakao.maps.services.Status.OK && result[0]) {
+      const roadAddr = result[0].road_address?.address_name;
+      const jibunAddr = result[0].address?.address_name;
+      titleEl.textContent = roadAddr || jibunAddr || "위치 정보 없음";
+    } else {
+      titleEl.textContent = "주소 불러오기 실패";
+    }
+  });
+
+  // 날짜 표시
+  if (detail.reported_at) {
+    dateEl.textContent = `마지막 신고: ${formatDate(detail.reported_at)}`;
+  } else {
+    dateEl.textContent = '';
+  }
+
+  const statusMap = {
+    0: "확인중",
+    1: "접수됨",
+    2: "처리 중",
+    3: "처리 완료",
+    4: "반려됨"
+  };
+  const typeMap = {
+    1: "차도와 구분 어려움",
+    2: "도로 융기",
+    3: "도로 파임",
+    4: "불법 주차",
+    5: "공사 구간",
+    6: "기타 위험 요소"
+  };
+
+  const statusText = statusMap[detail.status_id] ?? "상태 미정";
+  const typeText = typeMap[detail.type_id] ?? "유형 미정";
+  const reportCount = detail.report_count ?? 0;
+  let reportClass = 'pill-default';
+  if (reportCount <= 3) reportClass = 'pill-green';
+  else if (reportCount <= 5) reportClass = 'pill-yellow';
+  else reportClass = 'pill-red';
+
+  let statusClass = 'pill-default';
+  if (detail.status_id == 4) statusClass = 'pill-gray';
+  else if (detail.status_id == 1 || detail.status_id == 2) statusClass = 'pill-blue';
+  else if (detail.status_id == 3) statusClass = 'pill-green';
+
+  descEl.innerHTML = `
+    <div class="pill-container">
+      <div class="pill ${reportClass}">${reportCount}회 신고됨</div>
+      <div class="pill pill-default">${typeText}</div>
+      <div class="pill ${statusClass}">${statusText}</div>
+    </div>
+    ${Array.isArray(detail.descriptions) ? detail.descriptions.join('<br>') : ''}
+  `;
+
+  imageEl.innerHTML = "";
+  // 이미지 캐러셀 동적 생성
+  if (Array.isArray(detail.imagePaths) && detail.imagePaths.length > 0) {
+    renderCarousel(detail.imagePaths);
+  } else {
+    imageEl.innerHTML = "<p style='color:#888; font-size: 14px;'>이미지가 제공되지 않았습니다.</p>";
+  }
+
+  const iconPath = getIconByRiskLevel(detail.risk_level, detail.type_id);
+  iconEl.src = iconPath;
+
+  overlayEl.classList.add("show");
+  modalEl.classList.add("show");
+
+  overlayEl.addEventListener("click", function (e) {
+    const modalContent = document.querySelector(".modal-content");
+    if (!modalContent.contains(e.target)) {
+      overlayEl.classList.remove("show");
+      modalEl.classList.remove("show");
+    }
+  });
   
+}
+
+function formatDate(isoString) {
+  const utc = new Date(isoString);
+
+  // UTC → KST(+9)
+  const kst = new Date(utc.getTime() + 9 * 60 * 60 * 1000);
+
+  const yyyy = kst.getFullYear();
+  const mm = String(kst.getMonth() + 1).padStart(2, '0');
+  const dd = String(kst.getDate()).padStart(2, '0');
+  const hh = String(kst.getHours()).padStart(2, '0');
+  const mi = String(kst.getMinutes()).padStart(2, '0');
+  return `${yyyy}.${mm}.${dd} ${hh}:${mi}`;
+}
+
+function renderCarousel(images) {
+  const modalImages = document.getElementById("modal-images");
+  modalImages.innerHTML = ""; // 초기화
+  currentSlide = 0;
+
+  // 캐러셀 컨테이너 생성
+  const carousel = document.createElement("div");
+  carousel.className = "carousel";
+
+  const prevBtn = document.createElement("button");
+  prevBtn.id = "carousel-prev";
+  prevBtn.innerHTML = "&#8592;";
+
+  const nextBtn = document.createElement("button");
+  nextBtn.id = "carousel-next";
+  nextBtn.innerHTML = "&#8594;";
+
+  const track = document.createElement("div");
+  track.id = "carousel-track";
+  track.className = "carousel-track";
+
+  images.forEach(path => {
+    const img = document.createElement("img");
+    img.src = path;
+    track.appendChild(img);
+  });
+
+  carousel.appendChild(prevBtn);
+  carousel.appendChild(track);
+  carousel.appendChild(nextBtn);
+  modalImages.appendChild(carousel);
+
+  // 이벤트
+  prevBtn.addEventListener("click", () => {
+    currentSlide = Math.max(0, currentSlide - 1);
+    updateCarousel();
+  });
+  nextBtn.addEventListener("click", () => {
+    currentSlide = Math.min(track.children.length - 1, currentSlide + 1);
+    updateCarousel();
+  });
+
+  updateCarousel();
+}
+
+function updateCarousel() {
+  const track = document.getElementById("carousel-track");
+  if (track) {
+    const slideWidth = 210;
+    track.style.transform = `translateX(-${currentSlide * slideWidth}px)`;
+  }
 }
 
 // 사이드바 토글
@@ -220,3 +374,15 @@ menuToggle.addEventListener("click", () => {
 // 지도 초기화 실행
 initializeMap();
 window.centerUserLocation = centerUserLocation;
+
+document.getElementById("carousel-prev").addEventListener("click", () => {
+  currentSlide = Math.max(0, currentSlide - 1);
+  updateCarousel();
+});
+
+document.getElementById("carousel-next").addEventListener("click", () => {
+  const track = document.getElementById("carousel-track");
+  const totalSlides = track.children.length;
+  currentSlide = Math.min(totalSlides - 1, currentSlide + 1);
+  updateCarousel();
+});
