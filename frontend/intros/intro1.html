@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>첫 화면</title>
+  <style>
+    @font-face {
+  font-family: 'Pretendard-Regular';
+  src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+}
+    body {
+      margin: 0;
+      background-color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-family: 'Pretendard-Regular', sans-serif;
+    }
+    .logo {
+      width: 180px;
+      margin-bottom: 16px;
+      transition: opacity 1s ease;
+    }
+    .subtitle {
+      font-size: 20px;
+      color: #555;
+      transition: opacity 1s ease;
+    }
+    .fade-out {
+      opacity: 0;
+    }
+  </style>
+  <script>
+    // 일정시간 후 다음화면이동 
+    setTimeout(function() {
+      window.location.href = "intro2.html";
+    }, 3000);
+    setTimeout(() => {
+      document.getElementById('logo').classList.add('fade-out');
+      document.getElementById('subtitle').classList.add('fade-out');
+    }, 2000);
+  </script>
+</head>
+<body>
+  <img src="../imgs/logo.png" alt="별타고 로고" class="logo" id="logo" />
+  <div class="subtitle" id="subtitle">안전한 자전거 주행을 위한 서비스</div>
+</body>
+</html>
+
