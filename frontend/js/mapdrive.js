@@ -4,6 +4,8 @@ const mapContainer = document.getElementById('map');
 const defaultCenter = new kakao.maps.LatLng(37.55445080992788, 126.93453008736239);
 let map;
 let marker;
+let lastBounds = null;
+const BOUNDS_CHANGE_THRESHOLD = 0.001; // 위경도 기준 약 100m
 
 // 위치 기반 지도 초기화
 function initializeMap() {
@@ -141,12 +143,16 @@ function createMap(center) {
     }
   });
 
-  placeCustomDangerMarkers(); // 마커 생성
+  placeDangerMarkers(); // 마커 생성
+  kakao.maps.event.addListener(map, 'idle', placeDangerMarkers);
 }
 
 // 기존 랜덤 마커 생성 제거 후 DB 연동으로 대체
-function placeCustomDangerMarkers() {
+function placeDangerMarkers() {
   const bounds = map.getBounds();
+  if (!shouldRefetchMarkers(bounds)) return;
+  lastBounds = bounds;
+
   const sw = bounds.getSouthWest();
   const ne = bounds.getNorthEast();
 
@@ -193,6 +199,20 @@ function getIconByRiskLevel(level) {
     case 3: return "imgs/yellow3.png";
     default: return "imgs/green5.png";
   }
+}
+
+function shouldRefetchMarkers(newBounds) {
+  if (!lastBounds) return true;
+
+  const oldSW = lastBounds.getSouthWest();
+  const oldNE = lastBounds.getNorthEast();
+  const newSW = newBounds.getSouthWest();
+  const newNE = newBounds.getNorthEast();
+
+  const latChange = Math.abs(oldSW.getLat() - newSW.getLat()) + Math.abs(oldNE.getLat() - newNE.getLat());
+  const lngChange = Math.abs(oldSW.getLng() - newSW.getLng()) + Math.abs(oldNE.getLng() - newNE.getLng());
+
+  return latChange > BOUNDS_CHANGE_THRESHOLD || lngChange > BOUNDS_CHANGE_THRESHOLD;
 }
 
 // 상세 정보 표시
