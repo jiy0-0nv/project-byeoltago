@@ -228,54 +228,12 @@ document.querySelector('#info-card .handle').addEventListener('click', function 
   document.getElementById('info-card').classList.remove('show');
 });
 
-// 주행 시작 → mapfinish.html로 이동
-function startRide() {
-  window.location.href = "mapdriving.html";
-}
-
-function goToWalkerReport() {
-  window.location.href = "walkerreport.html";
-}
-
-// 마지막 마커 위치와 지도 레벨 저장 함수
-function saveLastMarkerAndLevel() {
-  // localStorage에서 마커 위치 배열 가져오기
-  const markerPositions = JSON.parse(localStorage.getItem('drivingMarkers') || '[]');
-
-  // 마커가 있는 경우 마지막 마커 위치 저장
-  if (markerPositions.length > 0) {
-    const lastMarker = markerPositions[markerPositions.length - 1];
-    localStorage.setItem('lastMarkerLat', lastMarker.lat);
-    localStorage.setItem('lastMarkerLng', lastMarker.lng);
-  }
-
-  // 현재 지도 레벨 저장
-  const currentLevel = map.getLevel();
-  localStorage.setItem('mapLevel', currentLevel);
-}
-
 // 사이드바 토글
 const menuToggle = document.getElementById("menu-toggle");
 const sidebar = document.getElementById("sidebar");
 menuToggle.addEventListener("click", () => {
   sidebar.classList.toggle("open");
 });
-
-// 마커 위치 저장 함수
-function saveMarkerPosition(latlng) {
-  // localStorage에서 기존 마커 위치 배열 가져오기
-  let markerPositions = JSON.parse(localStorage.getItem('drivingMarkers') || '[]');
-
-  // 새 마커 위치 추가 (순서 번호 포함)
-  markerPositions.push({
-    lat: latlng.getLat(),
-    lng: latlng.getLng(),
-    seq: markerPositions.length + 1 // 순서 번호 추가 (1부터 시작)
-  });
-
-  // 업데이트된 배열 저장
-  localStorage.setItem('drivingMarkers', JSON.stringify(markerPositions));
-}
 
 // 지도 초기화 실행
 initializeMap();

@@ -25,7 +25,7 @@
 
     <!-- 툴바 -->
     <button id="menu-toggle">☰</button>
-    <button class="back-btn" onclick="goBack()">←</button>
+    <button class="back-btn">←</button>
 
     <!-- 사이드바 -->
     <div id="sidebar">
@@ -55,8 +55,8 @@
 
       <!-- 버튼 두 개를 나란히 정렬 -->
       <div class="button-row">
-        <button class="map-button start-btn" onclick="startRide()">주행 시작</button>
-        <button class="map-button report-btn" onclick="goToWalkerReport()">도로 신고</button>
+        <button class="map-button start-btn">주행 시작</button>
+        <button class="map-button report-btn">도로 신고</button>
       </div>
     </div>
 
@@ -75,7 +75,7 @@
 
   </div>
 
-  <script type="module" src="js/mapdrive.js"></script>
+  <script type="module" src="js/mapstart.js"></script>
   <script>
     function goBack() {
       window.history.back();
