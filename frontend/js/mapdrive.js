@@ -149,10 +149,12 @@ function placeCustomDangerMarkers(count = 30) {
   const ne = bounds.getNorthEast();
 
   const icons = [
-    "imgs/marker-pin-01.png", // 초록
-    "imgs/marker-pin-02.png", // 주황
-    "imgs/marker-pin-03.png", // 빨강
-    "imgs/marker-pin-04.png"  // 빨강2
+    "imgs/green2.png", // 초록
+    "imgs/green5.png", 
+    "imgs/red2.png", // 빨강
+    "imgs/red4.png",
+    "imgs/yellow3.png",
+    "imgs/yellow1.png" 
   ];
 
   for (let i = 0; i < count; i++) {
@@ -188,7 +190,7 @@ document.querySelector('#info-card .handle').addEventListener('click', function 
 
 // 주행 시작 → mapfinish.html로 이동
 function startRide() {
-  window.location.href = "mapfinish.html";
+  window.location.href = "mapdriving.html";
 }
 
 // 신고 → report2.html로 이동
