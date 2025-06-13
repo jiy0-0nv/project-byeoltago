@@ -7,6 +7,7 @@
   <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=ca66c24bcf740dae018b8f1511d02475&libraries=services"></script>
   <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
   <script>
+    window.localStorage.clear(); // 로컬 스토리지 초기화
     Kakao.init("ca66c24bcf740dae018b8f1511d02475");
     if (!Kakao.isInitialized()) {
       console.error("Kakao init failed!");
@@ -41,8 +42,7 @@
     <!-- 지도 -->
     <div id="map-container">
       <div id="map"></div>
-      <!-- ✅ 신고 버튼 제거됨 -->
-      <!-- ✅ 주행 시작 버튼만 넓게, 중앙 배치 -->
+      <!-- 주행 시작 버튼만 넓게, 중앙 배치 -->
       <button class="map-button start-btn" onclick="startRide()">주행 시작</button>
     </div>
 
@@ -60,7 +60,7 @@
     </div>
   </div>
 
-  <script src="js/mapdrive.js"></script>
+  <script type="module" src="js/mapdrive.js"></script>
   <script>
     function goBack() {
       window.history.back();
