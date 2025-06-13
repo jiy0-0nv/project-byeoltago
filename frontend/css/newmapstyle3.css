@@ -240,12 +240,10 @@ body {
 
 #center-user-button {
   position: absolute;
-  bottom: 60px;
+  bottom: 70px;
   left: 20px;
   z-index: 10;
   background-color: #fff;
-  border: 2px solid #3498db;
-  color: #3498db;
   border-radius: 50%;
   width: 40px;
   height: 40px;
@@ -388,4 +386,24 @@ body {
 .pill-default {
   background-color: #f0f0f0;
   color: #333;
+}
+
+.circle-button {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.circle-button:hover {
+  background: #f0f0f0;
+}
+.icon {
+  width: 24px;
+  height: 24px;
 }
