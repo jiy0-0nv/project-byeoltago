@@ -167,7 +167,7 @@ body {
 #menu-toggle {
   position: absolute;
   top: 28px;
-  left: -18px;
+  left: 10px;
   width: 36px;
   height: 36px;
   background-color: #efc327;
