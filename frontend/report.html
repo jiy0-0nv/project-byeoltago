@@ -301,7 +301,10 @@
       });
 
       // 영역에 맞게 지도 확대/축소 및 중심 이동
-      map.setBounds(bounds);
+      map.setBounds(bounds, 50); // 50픽셀의 패딩 추가
+
+      // 추가로 한 단계 더 축소하여 모든 마커가 확실히 보이도록 함
+      map.setLevel(map.getLevel() + 1);
     }
 
     function endRide() {
