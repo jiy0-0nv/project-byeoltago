@@ -33,5 +33,5 @@ public class ReportRequestDto {
 
     private String imagePath;
 
-    private long timestamp;
+    private Long timestamp;
 }
