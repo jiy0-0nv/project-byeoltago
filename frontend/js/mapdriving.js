@@ -56,15 +56,6 @@ function createMap(center) {
     }, 3000);
   }
 
-  kakao.maps.event.addListener(map, 'click', (e) => {
-    const latlng = e.latLng;
-    marker.setPosition(latlng);
-    const latlngText = document.getElementById('clickLatlng');
-    if (latlngText) {
-      latlngText.innerText = `클릭한 위치의 위도는 ${latlng.getLat().toFixed(5)} 이고, 경도는 ${latlng.getLng().toFixed(5)} 입니다`;
-    }
-  });
-
   kakao.maps.event.addListener(map, 'dblclick', () => {
     if (!navigator.geolocation) return;
   
@@ -146,7 +137,7 @@ function placeDangerMarkers() {
     .then(markers => {
       markers.forEach(marker => {
         const markerImage = new kakao.maps.MarkerImage(
-          getIconByRiskLevel(marker.riskLevel),
+          getIconByRiskLevel(marker.risk_level, marker.report_type),
           new kakao.maps.Size(40, 40),
           { offset: new kakao.maps.Point(20, 40) }
         );
@@ -171,14 +162,23 @@ function placeDangerMarkers() {
     .catch(err => console.error("마커 불러오기 실패:", err));
 }
 
-// 위험도에 따른 아이콘 매핑 함수
-function getIconByRiskLevel(level) {
+// 아이콘 매핑 함수
+function getIconByRiskLevel(level, type) {
+  let color;
   switch (level) {
-    case 1: return "imgs/green2.png";
-    case 2: return "imgs/yellow1.png";
-    case 3: return "imgs/yellow3.png";
-    default: return "imgs/green5.png";
+    case 1:
+      color = "green";
+      break;
+    case 2:
+      color = "yellow";
+      break;
+    case 3:
+      color = "red";
+      break;
+    default:
+      return "imgs/green6.png"
   }
+  return `imgs/${color}${type}.png`;
 }
 
 function shouldRefetchMarkers(newBounds) {
