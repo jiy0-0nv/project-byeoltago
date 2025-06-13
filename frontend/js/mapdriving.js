@@ -6,7 +6,11 @@ const defaultCenter = new kakao.maps.LatLng(37.55445080992788, 126.9345300873623
 let map;
 let marker;
 let lastBounds = null;
-const BOUNDS_CHANGE_THRESHOLD = 0.001; // 위경도 기준 약 100m
+const BOUNDS_CHANGE_THRESHOLD = 0.002; // 위경도 기준 약 200m
+
+let watchId = null;
+let userMarker = null;
+let autoTracking = true;
 
 // 지도 초기화 함수
 function initializeMap() {
@@ -16,9 +20,10 @@ function initializeMap() {
         const lat = position.coords.latitude;
         const lng = position.coords.longitude;
         createMap(new kakao.maps.LatLng(lat, lng));
+        startTracking(); // 위치 추적 시작
       },
       () => createMap(defaultCenter),
-      { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+      { enableHighAccuracy: true, timeout: 5000, maximumAge: 5000 }
     );
   } else {
     createMap(defaultCenter);
@@ -38,31 +43,9 @@ function createMap(center) {
     disableDoubleClickZoom: true
   });
 
-  marker = new kakao.maps.Marker({ position: center });
-  marker.setMap(map);
-
-  if (isDrivingPage) {
-    setInterval(() => {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            const newCenter = new kakao.maps.LatLng(position.coords.latitude, position.coords.longitude);
-            map.setCenter(newCenter);
-            marker.setPosition(newCenter);
-          },
-          () => console.warn('위치 업데이트 실패')
-        );
-      }
-    }, 3000);
-  }
-
-  kakao.maps.event.addListener(map, 'click', (e) => {
-    const latlng = e.latLng;
-    marker.setPosition(latlng);
-    const latlngText = document.getElementById('clickLatlng');
-    if (latlngText) {
-      latlngText.innerText = `클릭한 위치의 위도는 ${latlng.getLat().toFixed(5)} 이고, 경도는 ${latlng.getLng().toFixed(5)} 입니다`;
-    }
+  // 지도 이동 시 자동 추적 중단
+  kakao.maps.event.addListener(map, 'dragstart', () => {
+    autoTracking = false;
   });
 
   kakao.maps.event.addListener(map, 'dblclick', () => {
@@ -98,6 +81,9 @@ function createMap(center) {
           yAnchor: 1
         }).setMap(map);
   
+        autoTracking = true; // 자동 추적 활성화
+        startTracking();
+
         const popup = document.getElementById("report-popup");
         if (popup) {
           popup.style.display = "flex";
@@ -107,12 +93,61 @@ function createMap(center) {
       (err) => {
         console.warn("현재 위치 가져오기 실패", err);
       },
-      { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+      { enableHighAccuracy: true, timeout: 5000, maximumAge: 5000 }
     );
   });
   
   placeDangerMarkers(); // 마커 생성
   kakao.maps.event.addListener(map, 'idle', placeDangerMarkers);
+}
+
+// 위치 추적 시작
+function startTracking() {
+  if (!navigator.geolocation) return;
+
+  watchId = navigator.geolocation.watchPosition(
+    (position) => {
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
+      const latlng = new kakao.maps.LatLng(lat, lng);
+
+      // 기존 마커 제거
+      if (userMarker) userMarker.setMap(null);
+
+      // 현재 위치 마커 생성 (파란 점)
+      userMarker = new kakao.maps.Circle({
+        center: latlng,
+        radius: 5,
+        strokeWeight: 0,
+        fillColor: '#3498db',
+        fillOpacity: 0.9,
+        map: map
+      });
+
+      if (autoTracking) {
+        map.setCenter(latlng);
+      }
+    },
+    (error) => console.error('위치 추적 실패:', error),
+    {
+      enableHighAccuracy: true,
+      maximumAge: 5000,
+      timeout: 5000
+    }
+  );
+}
+
+function centerUserLocation() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const latlng = new kakao.maps.LatLng(pos.coords.latitude, pos.coords.longitude);
+        map.setCenter(latlng);
+      },
+      (err) => console.warn("위치 가져오기 실패:", err),
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  }
 }
 
 // 마커 위치 저장
@@ -145,40 +180,63 @@ function placeDangerMarkers() {
     .then(res => res.json())
     .then(markers => {
       markers.forEach(marker => {
-        const markerImage = new kakao.maps.MarkerImage(
-          getIconByRiskLevel(marker.riskLevel),
-          new kakao.maps.Size(40, 40),
-          { offset: new kakao.maps.Point(20, 40) }
-        );
-
-        const kakaoMarker = new kakao.maps.Marker({
-          position: new kakao.maps.LatLng(marker.latitude, marker.longitude),
-          map: map,
-          image: markerImage
-        });
-
-        kakao.maps.event.addListener(kakaoMarker, 'click', () => {
-          fetch(`${API_BASE_URL}/reports/${marker.id}/details`, {
-            method: 'GET',
-            credentials: 'include' // 쿠키를 포함하여 요청
-          })
-            .then(res => res.json())
-            .then(showReportDetails)
-            .catch(err => console.error("상세 정보 조회 실패:", err));
-        });
+        const position = new kakao.maps.LatLng(marker.latitude, marker.longitude);
+        const pngPath = getIconByRiskLevel(marker.risk_level, marker.report_type);
+        const svgPath = pngPath.replace('.png', '.svg');
+  
+        const testImg = new Image();
+        testImg.src = pngPath;
+  
+        testImg.onload = () => {
+          const markerImage = new kakao.maps.MarkerImage(
+            pngPath,
+            new kakao.maps.Size(40, 40),
+            { offset: new kakao.maps.Point(20, 40) }
+          );
+          createKakaoMarker(position, markerImage, marker.id);
+        };
+  
+        testImg.onerror = () => {
+          const fallbackImage = new kakao.maps.MarkerImage(
+            svgPath,
+            new kakao.maps.Size(40, 40),
+            { offset: new kakao.maps.Point(20, 40) }
+          );
+          createKakaoMarker(position, fallbackImage, marker.id);
+        };
       });
     })
     .catch(err => console.error("마커 불러오기 실패:", err));
 }
 
-// 위험도에 따른 아이콘 매핑 함수
-function getIconByRiskLevel(level) {
+function createKakaoMarker(position, markerImage, reportId) {
+  const kakaoMarker = new kakao.maps.Marker({
+    position,
+    map,
+    image: markerImage
+  });
+
+  kakao.maps.event.addListener(kakaoMarker, 'click', () => {
+    fetch(`${API_BASE_URL}/reports/${reportId}/details`, {
+      method: 'GET',
+      credentials: 'include'
+    })
+      .then(res => res.json())
+      .then(showReportDetails)
+      .catch(err => console.error("상세 정보 조회 실패:", err));
+  });
+}
+
+// 아이콘 매핑 함수
+function getIconByRiskLevel(level, type) {
+  let color;
   switch (level) {
-    case 1: return "imgs/green2.png";
-    case 2: return "imgs/yellow1.png";
-    case 3: return "imgs/yellow3.png";
-    default: return "imgs/green5.png";
+    case 1: color = "green"; break;
+    case 2: color = "yellow"; break;
+    case 3: color = "red"; break;
+    default: color = "green";
   }
+  return `imgs/${color}${type}.png`;
 }
 
 function shouldRefetchMarkers(newBounds) {
@@ -206,7 +264,7 @@ window.addEventListener("load", () => {
   setTimeout(() => {
     const overlay = document.getElementById("report-overlay");
     if (overlay) overlay.style.display = "none";
-  }, 5000);
+  }, 3000); // 3초
 });
 
 // 더블탭 감지
@@ -263,3 +321,5 @@ document.getElementById("map-container")?.addEventListener("touchend", detectDou
 
 // 주행 종료 버튼
 document.querySelector('.map-button.end-btn')?.addEventListener("click", endRide);
+
+window.centerUserLocation = centerUserLocation;
