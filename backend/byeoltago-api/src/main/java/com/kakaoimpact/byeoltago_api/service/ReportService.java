@@ -40,9 +40,9 @@ public class ReportService {
         // 유저 아이디
         long currentUserId = request.getUserId();
         // 타임스탬프
-        long currentTime = request.getTimestamp();
+        Long currentTime = request.getTimestamp();
         if (currentTime == null) {
-            currentTime = System.currentTimeMillis();  // 현재 시간으로 설정
+            currentTime = System.currentTimeMillis(); // 현재 시간으로 설정
         }
         // 이미지 경로
         String imagePath = null;
