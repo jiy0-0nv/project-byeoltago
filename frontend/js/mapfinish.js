@@ -120,11 +120,32 @@ function startRide() {
 }
 
 function goSelectLocation() {
-  window.location.href = "report2.html";
+  // 마지막 마커 위치와 현재 지도 레벨 저장
+  saveLastMarkerAndLevel();
+  window.location.href = "reportselect.html";
 }
 
 function reportNow() {
-  window.location.href = "report2.html";
+  // 마지막 마커 위치와 현재 지도 레벨 저장
+  saveLastMarkerAndLevel();
+  window.location.href = "reportselect.html";
+}
+
+// 마지막 마커 위치와 지도 레벨 저장 함수
+function saveLastMarkerAndLevel() {
+  // localStorage에서 마커 위치 배열 가져오기
+  const markerPositions = JSON.parse(localStorage.getItem('drivingMarkers') || '[]');
+
+  // 마커가 있는 경우 마지막 마커 위치 저장
+  if (markerPositions.length > 0) {
+    const lastMarker = markerPositions[markerPositions.length - 1];
+    localStorage.setItem('lastMarkerLat', lastMarker.lat);
+    localStorage.setItem('lastMarkerLng', lastMarker.lng);
+  }
+
+  // 현재 지도 레벨 저장
+  const currentLevel = map.getLevel();
+  localStorage.setItem('mapLevel', currentLevel);
 }
 
 

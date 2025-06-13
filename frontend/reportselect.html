@@ -59,13 +59,33 @@
   <script>
     window.onload = function () {
       const container = document.getElementById('map');
+
+      // localStorage에서 마지막 마커 위치와 지도 레벨 가져오기
+      const lastMarkerLat = localStorage.getItem('lastMarkerLat');
+      const lastMarkerLng = localStorage.getItem('lastMarkerLng');
+      const mapLevel = localStorage.getItem('mapLevel');
+
+      // 기본값 설정
+      const defaultLat = 37.56461040983631;
+      const defaultLng = 126.93610015875485;
+      const defaultLevel = 3;
+
+      // 마지막 마커 위치가 있으면 해당 위치 사용, 없으면 기본값 사용
+      const centerLat = lastMarkerLat ? parseFloat(lastMarkerLat) : defaultLat;
+      const centerLng = lastMarkerLng ? parseFloat(lastMarkerLng) : defaultLng;
+
+      // 지도 레벨이 있으면 해당 레벨 사용, 없으면 기본값 사용
+      const level = mapLevel ? parseInt(mapLevel) : defaultLevel;
+
       const options = {
-        center: new kakao.maps.LatLng(37.56461040983631, 126.93610015875485),
-        level: 3
+        center: new kakao.maps.LatLng(centerLat, centerLng),
+        level: level
       };
+
       const map = new kakao.maps.Map(container, options);
 
-      const destinationPosition = new kakao.maps.LatLng(37.56461040983631, 126.93610015875485);
+      // 마커 위치 설정 (마지막 마커 위치 또는 기본값)
+      const destinationPosition = new kakao.maps.LatLng(centerLat, centerLng);
       const markerImage = new kakao.maps.MarkerImage(
         "imgs/flag.png",
         new kakao.maps.Size(20, 20),
