@@ -186,6 +186,9 @@
     // 마커 위치 배열 가져오기
     const markerPositions = JSON.parse(localStorage.getItem('drivingMarkers') || '[]');
 
+    // 디버깅: 마커 위치 배열 확인
+    console.log('마커 위치 배열:', markerPositions);
+
     // 경로 포인트 (기존 코드 유지)
     const path = [
       new kakao.maps.LatLng(37.5495, 126.9425),
@@ -202,19 +205,22 @@
       allPoints.push(new kakao.maps.LatLng(pos.lat, pos.lng));
     });
 
-    // 경로 포인트에 번호 마커 추가
-    function addNumberMarker(position, number) {
+    // 경로 포인트에 번호 마커 추가 (map 객체가 필요하므로 createMap 내에서 호출됨)
+    function addNumberMarker(position, number, mapObj) {
       const markerContent = `<div style="background:#f1c40f; color:#fff; padding:4px 8px; border-radius:20px; font-weight:bold;">${number}</div>`;
       const customOverlay = new kakao.maps.CustomOverlay({
         position: position,
         content: markerContent,
         yAnchor: 1
       });
-      customOverlay.setMap(map);
+      customOverlay.setMap(mapObj);
     }
 
     // 주행 중 생성된 마커 표시
-    function displayDrivingMarkers() {
+    function displayDrivingMarkers(mapObj) {
+      // 디버깅: displayDrivingMarkers 함수 호출됨
+      console.log('displayDrivingMarkers 함수 호출됨, 마커 수:', markerPositions.length);
+
       // 마커 이미지 설정
       const pinImage = new kakao.maps.MarkerImage(
         "imgs/flag.png", // 깃발 이미지 사용
@@ -226,10 +232,13 @@
       markerPositions.forEach(position => {
         const latlng = new kakao.maps.LatLng(position.lat, position.lng);
 
+        // 디버깅: 각 마커 위치 로그
+        console.log('마커 생성:', position);
+
         // 마커 생성
         const marker = new kakao.maps.Marker({
           position: latlng,
-          map: map,
+          map: mapObj,
           image: pinImage
         });
 
@@ -242,7 +251,7 @@
             content: markerContent,
             yAnchor: 1
           });
-          customOverlay.setMap(map);
+          customOverlay.setMap(mapObj);
         }
       });
     }
@@ -257,15 +266,13 @@
       centerLat = lat;
       centerLng = lng;
 
-      // localStorage에서 저장된 지도 레벨 가져오기
-      const savedMapLevel = localStorage.getItem('mapLevel');
       const mapLevel = 4;
 
       const options = {
         center: new kakao.maps.LatLng(centerLat, centerLng),
         level: mapLevel // 저장된 줌 레벨 사용
       };
-      const map = new kakao.maps.Map(container, options);
+      map = new kakao.maps.Map(container, options);
 
       // 현재 위치 마커 생성
       const currentLocationMarker = new kakao.maps.Marker({
@@ -293,11 +300,11 @@
 
       // 경로 포인트에 번호 마커 추가
       path.forEach((pos, idx) => {
-        addNumberMarker(pos, idx + 1);
+        addNumberMarker(pos, idx + 1, map);
       });
 
       // 주행 중 생성된 마커 표시
-      displayDrivingMarkers();
+      displayDrivingMarkers(map);
 
       // 모든 마커가 보이도록 지도 영역 설정
       if (allPoints.length > 1) {
