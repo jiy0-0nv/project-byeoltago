@@ -94,7 +94,7 @@ function createMap(center) {
 
     // 핀 이미지 설정
     const pinImage = new kakao.maps.MarkerImage(
-      "imgs/marker-pin-03.png", // 빨간색 핀 이미지 사용
+      "imgs/flag.png", // 깃발 이미지 사용
       new kakao.maps.Size(40, 40),
       { offset: new kakao.maps.Point(20, 40) }
     );
