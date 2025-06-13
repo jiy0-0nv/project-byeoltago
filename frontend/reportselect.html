@@ -13,9 +13,10 @@
 
     <!-- ✅ 상단 헤더 -->
     <header>
-      <div>☰</div>
+      <button class="back-btn" onclick="goBack()">←</button>
       <h1>새로운 위험구간 신고</h1>
       <div class="right" onclick="goNextPage()">선택완료</div>
+      <div class="menu-icon">☰</div>
     </header>
 
     <!-- ✅ 지도 -->
@@ -102,6 +103,10 @@
   localStorage.setItem("selectedDamageImg", damageImg);
 
   window.location.href = "selectmade.html"; // 선택지 반영해줌
+}
+
+function goBack() {
+  window.history.back();
 }
   </script>
 </body>

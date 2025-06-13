@@ -9,9 +9,10 @@
 </head>
 
 <body>
+  <button class="back-btn" onclick="goBack()">←</button>
   <div class="signup-section">
     <img src="imgs/logo.png" alt="별타고 로고" class="logo-img">
-    
+
     <form class="signup-box">
       <input type="email" id="email" placeholder="이메일" required autocomplete="off">
       <input type="password" id="password" placeholder="새 비밀번호" required autocomplete="new-password">
@@ -30,5 +31,11 @@
   <div id="bike-animation">
     <img src="imgs/logo2.png" alt="애니메이션 로고">
   </div>
+
+  <script>
+    function goBack() {
+      window.history.back();
+    }
+  </script>
 </body>
 </html>

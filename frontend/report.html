@@ -109,12 +109,32 @@
       width: 24px;
       height: 24px;
     }
+
+    /* 뒤로 가기 버튼 */
+    .back-btn {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      width: 36px;
+      height: 36px;
+      background-color: #efc327;
+      color: white;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      z-index: 3000;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
   </style>
 </head>
 <body>
   <div class="app-container">
     <!-- 지도 영역 -->
     <div id="map-container">
+      <button class="back-btn" onclick="goBack()">←</button>
       <div id="map"></div>
       <button class="map-button" onclick="endRide()">주행 종료</button>
     </div>
@@ -204,6 +224,10 @@
 
     function goToDamagePage() {
       window.location.href = "report.html";
+    }
+
+    function goBack() {
+      window.history.back();
     }
   </script>
 </body>

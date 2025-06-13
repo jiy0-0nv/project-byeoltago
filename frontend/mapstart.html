@@ -19,6 +19,7 @@
   <div class="app-container">
     <!-- 툴바 -->
     <button id="menu-toggle">☰</button>
+    <button class="back-btn" onclick="goBack()">←</button>
 
     <div id="sidebar">
       <h3>🏠 홈</h3>
@@ -60,5 +61,14 @@
   </div>
 
   <script src="js/mapdrive.js"></script>
+  <script>
+    function goBack() {
+      window.history.back();
+    }
+
+    function startRide() {
+      window.location.href = "mapdriving.html";
+    }
+  </script>
 </body>
 </html>

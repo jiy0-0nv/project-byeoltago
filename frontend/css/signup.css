@@ -106,3 +106,22 @@
       from { left: -100px; }
       to { left: 110%; }
     }
+
+    /* 뒤로 가기 버튼 */
+    .back-btn {
+      position: absolute;
+      top: 20px;
+      left: 10px;
+      width: 36px;
+      height: 36px;
+      background-color: #efc327;
+      color: white;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      z-index: 3000;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }

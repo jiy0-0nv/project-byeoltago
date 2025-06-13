@@ -13,6 +13,7 @@
 
     <!-- 툴바 -->
     <button id="menu-toggle">☰</button>
+    <button class="back-btn" onclick="goBack()">←</button>
     <div id="sidebar">
       <h3>🏠 홈</h3>
       <div class="menu-item">
@@ -25,7 +26,7 @@
     내 정보
   </div>
     </div>
-    
+
     <div class="logo-area">
       <img src="imgs/logo.png" alt="별타고 로고" class="logo-img">
     </div>
@@ -55,7 +56,11 @@
   <script>
     function endRide() {
         window.location.href = "report.html";
-}
+    }
+
+    function goBack() {
+      window.history.back();
+    }
   </script>
 </body>
 </html>
