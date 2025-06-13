@@ -4,7 +4,14 @@
   <meta charset="UTF-8">
   <title>별타고 주행 화면</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=ca66c24bcf740dae018b8f1511d02475"></script>
+  <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=ca66c24bcf740dae018b8f1511d02475&libraries=services"></script>
+  <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+  <script>
+    Kakao.init("ca66c24bcf740dae018b8f1511d02475");
+    if (!Kakao.isInitialized()) {
+      console.error("Kakao init failed!");
+    }
+  </script>
   <link rel="stylesheet" href="css/newmapstyle3.css">
 </head>
 <body>
