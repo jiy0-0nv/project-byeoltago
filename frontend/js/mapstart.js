@@ -73,51 +73,64 @@ function placeDangerMarkers() {
     .then(res => res.json())
     .then(markers => {
       markers.forEach(marker => {
-        const markerImage = new kakao.maps.MarkerImage(
-          getIconByRiskLevel(marker.risk_level, marker.report_type),
-          new kakao.maps.Size(40, 40),
-          { offset: new kakao.maps.Point(20, 40) }
-        );
-
-        const kakaoMarker = new kakao.maps.Marker({
-          position: new kakao.maps.LatLng(marker.latitude, marker.longitude),
-          map: map,
-          image: markerImage
-        });
-
-        kakao.maps.event.addListener(kakaoMarker, 'click', () => {
-          fetch(`${API_BASE_URL}/reports/${marker.id}/details`, {
-            method: 'GET',
-            credentials: 'include' // 쿠키를 포함하여 요청
-          })
-            .then(res => res.json())
-            .then(showReportDetails)
-            .catch(err => console.error("상세 정보 조회 실패:", err));
-        });
+        const position = new kakao.maps.LatLng(marker.latitude, marker.longitude);
+        const pngPath = getIconByRiskLevel(marker.risk_level, marker.report_type);
+        const svgPath = pngPath.replace('.png', '.svg');
+  
+        const testImg = new Image();
+        testImg.src = pngPath;
+  
+        testImg.onload = () => {
+          const markerImage = new kakao.maps.MarkerImage(
+            pngPath,
+            new kakao.maps.Size(40, 40),
+            { offset: new kakao.maps.Point(20, 40) }
+          );
+          createKakaoMarker(position, markerImage, marker.id);
+        };
+  
+        testImg.onerror = () => {
+          const fallbackImage = new kakao.maps.MarkerImage(
+            svgPath,
+            new kakao.maps.Size(40, 40),
+            { offset: new kakao.maps.Point(20, 40) }
+          );
+          createKakaoMarker(position, fallbackImage, marker.id);
+        };
       });
     })
     .catch(err => console.error("마커 불러오기 실패:", err));
+}
+
+function createKakaoMarker(position, markerImage, reportId) {
+  const kakaoMarker = new kakao.maps.Marker({
+    position,
+    map,
+    image: markerImage
+  });
+
+  kakao.maps.event.addListener(kakaoMarker, 'click', () => {
+    fetch(`${API_BASE_URL}/reports/${reportId}/details`, {
+      method: 'GET',
+      credentials: 'include'
+    })
+      .then(res => res.json())
+      .then(showReportDetails)
+      .catch(err => console.error("상세 정보 조회 실패:", err));
+  });
 }
 
 // 아이콘 매핑 함수
 function getIconByRiskLevel(level, type) {
   let color;
   switch (level) {
-    case 1:
-      color = "green";
-      break;
-    case 2:
-      color = "yellow";
-      break;
-    case 3:
-      color = "red";
-      break;
-    default:
-      return "imgs/green6.png"
+    case 1: color = "green"; break;
+    case 2: color = "yellow"; break;
+    case 3: color = "red"; break;
+    default: color = "green";
   }
   return `imgs/${color}${type}.png`;
 }
-
 
 function shouldRefetchMarkers(newBounds) {
   if (!lastBounds) return true;
