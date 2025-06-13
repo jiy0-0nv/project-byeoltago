@@ -54,6 +54,9 @@ function createMap(center) {
 
   // 위험 마커 생성
   placeCustomDangerMarkers();
+
+  // 주행 중 생성된 마커 표시
+  displayDrivingMarkers();
 }
 
 // 지도 클릭 이벤트 리스너 추가
@@ -131,6 +134,30 @@ const sidebar = document.getElementById("sidebar");
 menuToggle.addEventListener("click", () => {
   sidebar.classList.toggle("open");
 });
+
+// 주행 중 생성된 마커 표시 함수
+function displayDrivingMarkers() {
+  // localStorage에서 마커 위치 배열 가져오기
+  const markerPositions = JSON.parse(localStorage.getItem('drivingMarkers') || '[]');
+
+  // 마커 이미지 설정
+  const pinImage = new kakao.maps.MarkerImage(
+    "imgs/flag.png", // 깃발 이미지 사용
+    new kakao.maps.Size(40, 40),
+    { offset: new kakao.maps.Point(20, 40) }
+  );
+
+  // 각 위치에 마커 생성
+  markerPositions.forEach(position => {
+    const latlng = new kakao.maps.LatLng(position.lat, position.lng);
+
+    const marker = new kakao.maps.Marker({
+      position: latlng,
+      map: map,
+      image: pinImage
+    });
+  });
+}
 
 // 지도 초기화 실행
 initializeMap();

@@ -36,6 +36,11 @@ function createMap(center) {
   const isDrivingPage = window.location.pathname.includes('mapdriving.html');
   const zoomLevel = isDrivingPage ? 1 : 4;
 
+  // 주행 시작 시 이전 마커 데이터 초기화
+  if (isDrivingPage) {
+    localStorage.removeItem('drivingMarkers');
+  }
+
   const mapOption = {
     center: center,
     level: zoomLevel,  // 주행 시작 시 최대 배율로 확대 (level 1이 가장 확대된 상태)
@@ -105,6 +110,9 @@ function createMap(center) {
       map: map,
       image: pinImage
     });
+
+    // 마커 위치 저장
+    saveMarkerPosition(latlng);
 
     // 신고 완료 팝업 표시 (팝업 요소가 존재하는 경우에만)
     const popup = document.getElementById("report-popup");
@@ -181,6 +189,21 @@ const sidebar = document.getElementById("sidebar");
 menuToggle.addEventListener("click", () => {
   sidebar.classList.toggle("open");
 });
+
+// 마커 위치 저장 함수
+function saveMarkerPosition(latlng) {
+  // localStorage에서 기존 마커 위치 배열 가져오기
+  let markerPositions = JSON.parse(localStorage.getItem('drivingMarkers') || '[]');
+
+  // 새 마커 위치 추가
+  markerPositions.push({
+    lat: latlng.getLat(),
+    lng: latlng.getLng()
+  });
+
+  // 업데이트된 배열 저장
+  localStorage.setItem('drivingMarkers', JSON.stringify(markerPositions));
+}
 
 // 지도 초기화 실행
 initializeMap();
