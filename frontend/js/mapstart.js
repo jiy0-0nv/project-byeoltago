@@ -213,7 +213,8 @@ function showReportDetails(detail) {
   const imageEl = document.getElementById("modal-images");
   const iconEl = document.getElementById("modal-icon");
   const modalEl = document.getElementById("report-modal");
-  
+  const overlayEl = document.getElementById("modal-overlay");
+
   // 역지오코딩: 좌표 → 주소
   const coord = new kakao.maps.LatLng(detail.latitude, detail.longitude);
   const geocoder = new kakao.maps.services.Geocoder();
@@ -229,7 +230,7 @@ function showReportDetails(detail) {
 
   // 날짜 표시
   if (detail.reported_at) {
-    dateEl.textContent = `${formatDate(detail.reported_at)} 신고됨`;
+    dateEl.textContent = `마지막 신고: ${formatDate(detail.reported_at)}`;
   } else {
     dateEl.textContent = '';
   }
@@ -252,22 +253,24 @@ function showReportDetails(detail) {
 
   const statusText = statusMap[detail.status_id] ?? "상태 미정";
   const typeText = typeMap[detail.type_id] ?? "유형 미정";
+  const reportCount = detail.report_count ?? 0;
+  let reportClass = 'pill-default';
+  if (reportCount <= 3) reportClass = 'pill-green';
+  else if (reportCount <= 5) reportClass = 'pill-yellow';
+  else reportClass = 'pill-red';
 
-  // 상태 배지 클래스 매핑
-  const statusClassMap = {
-    1: "badge-grey",
-    2: "badge-orange",
-    3: "badge-green",
-    4: "badge-red"
-  };
-  const statusBadge = `<span class="status-badge ${statusClassMap[detail.statusId]}">${statusText}</span>`;
+  let statusClass = 'pill-default';
+  if (detail.status_id == 4) statusClass = 'pill-gray';
+  else if (detail.status_id == 1 || detail.status_id == 2) statusClass = 'pill-blue';
+  else if (detail.status_id == 3) statusClass = 'pill-green';
 
-  // 신고 횟수 + 설명 등
   descEl.innerHTML = `
-  신고 횟수: ${detail.report_count ?? 0}<br>
-  유형: ${typeText}<br>
-  처리 상태: ${statusText}<br>
-  ${Array.isArray(detail.descriptions) ? detail.descriptions.join('<br>') : ''}
+    <div class="pill-container">
+      <div class="pill ${reportClass}">${reportCount}회 신고됨</div>
+      <div class="pill pill-default">${typeText}</div>
+      <div class="pill ${statusClass}">${statusText}</div>
+    </div>
+    ${Array.isArray(detail.descriptions) ? detail.descriptions.join('<br>') : ''}
   `;
 
   imageEl.innerHTML = "";
@@ -281,7 +284,17 @@ function showReportDetails(detail) {
   const iconPath = getIconByRiskLevel(detail.risk_level, detail.type_id);
   iconEl.src = iconPath;
 
+  overlayEl.classList.add("show");
   modalEl.classList.add("show");
+
+  overlayEl.addEventListener("click", function (e) {
+    const modalContent = document.querySelector(".modal-content");
+    if (!modalContent.contains(e.target)) {
+      overlayEl.classList.remove("show");
+      modalEl.classList.remove("show");
+    }
+  });
+  
 }
 
 function formatDate(isoString) {
