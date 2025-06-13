@@ -31,9 +31,15 @@ function initializeMap() {
 
 // 지도 생성 함수
 function createMap(center) {
+  // 현재 페이지가 mapdriving.html인 경우 최대 배율(level 1)로 설정
+  // 그 외의 경우 기본 배율(level 4)로 설정
+  const isDrivingPage = window.location.pathname.includes('mapdriving.html');
+  const zoomLevel = isDrivingPage ? 1 : 4;
+
   const mapOption = {
     center: center,
-    level: 4
+    level: zoomLevel,  // 주행 시작 시 최대 배율로 확대 (level 1이 가장 확대된 상태)
+    disableDoubleClickZoom: true  // 더블클릭 줌 기능 비활성화
   };
   map = new kakao.maps.Map(mapContainer, mapOption);
 
@@ -44,8 +50,43 @@ function createMap(center) {
   kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
     const latlng = mouseEvent.latLng;
     marker.setPosition(latlng);
-    document.getElementById('clickLatlng').innerText =
-      `클릭한 위치의 위도는 ${latlng.getLat().toFixed(5)} 이고, 경도는 ${latlng.getLng().toFixed(5)} 입니다`;
+
+    // clickLatlng 요소가 존재하는 경우에만 업데이트
+    const clickLatlngElement = document.getElementById('clickLatlng');
+    if (clickLatlngElement) {
+      clickLatlngElement.innerText =
+        `클릭한 위치의 위도는 ${latlng.getLat().toFixed(5)} 이고, 경도는 ${latlng.getLng().toFixed(5)} 입니다`;
+    }
+  });
+
+  // 더블클릭 이벤트 리스너 추가 - 핀 생성
+  kakao.maps.event.addListener(map, 'dblclick', function(mouseEvent) {
+    const latlng = mouseEvent.latLng;
+
+    // 핀 이미지 설정
+    const pinImage = new kakao.maps.MarkerImage(
+      "imgs/marker-pin-03.png", // 빨간색 핀 이미지 사용
+      new kakao.maps.Size(40, 40),
+      { offset: new kakao.maps.Point(20, 40) }
+    );
+
+    // 새 마커 생성
+    const newPin = new kakao.maps.Marker({
+      position: latlng,
+      map: map,
+      image: pinImage
+    });
+
+    // 신고 완료 팝업 표시 (팝업 요소가 존재하는 경우에만)
+    const popup = document.getElementById("report-popup");
+    if (popup) {
+      popup.style.display = "flex";
+
+      // 2초 후 팝업 닫기
+      setTimeout(() => {
+        popup.style.display = "none";
+      }, 2000);
+    }
   });
 
   placeCustomDangerMarkers(); // 마커 생성
