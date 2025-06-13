@@ -13,10 +13,10 @@
     
     <form class="signup-box">
       <input type="email" id="email" placeholder="이메일" required autocomplete="off">
-      <input type="text" id="username" placeholder="새 아이디" required oninput="validateUsernameInput(event)" autocomplete="off" inputmode="text">
-      <div id="username-warning" class="warning-message">영어 대소문자와 숫자만 입력 가능합니다.</div>
       <input type="password" id="password" placeholder="새 비밀번호" required autocomplete="new-password">
       <input type="password" id="confirm-password" placeholder="비밀번호 확인" required autocomplete="new-password">
+      <input type="text" id="username" placeholder="닉네임" required autocomplete="off" inputmode="text">
+      <div id="username-warning" class="warning-message">한글, 영어 대소문자, 숫자만 입력 가능하며 2자 이상 100자 이하여야 합니다.</div>
       <input type="tel" id="phone" placeholder="전화번호" required>
       <label><input type="checkbox" id="agree"> 개인정보 수집 및 이용에 동의합니다.</label>
       <input type="submit" value="회원가입">
