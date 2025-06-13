@@ -3,7 +3,7 @@ const defaultCenter = new kakao.maps.LatLng(37.55445080992788, 126.9345300873623
 let map;
 let marker;
 
-// 위치 기반 지도 초기화
+// 지도 초기화 및 실시간 위치 추적
 function initializeMap() {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(
@@ -12,6 +12,7 @@ function initializeMap() {
         const lng = position.coords.longitude;
         const userCenter = new kakao.maps.LatLng(lat, lng);
         createMap(userCenter);
+        trackUserPosition(); // 위치 추적 시작
       },
       (error) => {
         console.warn('위치 정보 가져오기 실패:', error);
@@ -31,24 +32,35 @@ function initializeMap() {
 
 // 지도 생성 함수
 function createMap(center) {
-  const mapOption = {
+  map = new kakao.maps.Map(mapContainer, {
     center: center,
     level: 4
-  };
-  map = new kakao.maps.Map(mapContainer, mapOption);
+  });
 
-  // 클릭 위치 마커
+  // 초기 위치 마커 생성
   marker = new kakao.maps.Marker({ position: center });
   marker.setMap(map);
 
-  kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
-    const latlng = mouseEvent.latLng;
-    marker.setPosition(latlng);
-    document.getElementById('clickLatlng').innerText =
-      `클릭한 위치의 위도는 ${latlng.getLat().toFixed(5)} 이고, 경도는 ${latlng.getLng().toFixed(5)} 입니다`;
-  });
+  placeCustomDangerMarkers(); // 커스텀 마커 표시
+}
 
-  placeCustomDangerMarkers(); // 마커 생성
+// 실시간 위치 추적하여 마커 갱신
+function trackUserPosition() {
+  navigator.geolocation.watchPosition(
+    (position) => {
+      const newPos = new kakao.maps.LatLng(position.coords.latitude, position.coords.longitude);
+      marker.setPosition(newPos);
+      map.panTo(newPos); // 지도도 이동
+    },
+    (error) => {
+      console.error("위치 추적 실패:", error);
+    },
+    {
+      enableHighAccuracy: true,
+      maximumAge: 0,
+      timeout: 10000
+    }
+  );
 }
 
 // 커스텀 위험 마커 생성
@@ -83,7 +95,7 @@ function placeCustomDangerMarkers(count = 30) {
 
     // 빨간 마커만 클릭 시 info-card 표시
     if (icon.includes("marker-pin-04.png")) {
-      kakao.maps.event.addListener(marker, 'click', function () {
+      kakao.maps.event.addListener(marker, 'click', () => {
         document.getElementById("info-card").classList.add("show");
       });
     }
@@ -105,12 +117,4 @@ function reportNow() {
   window.location.href = "report2.html";
 }
 
-// 사이드바 토글
-const menuToggle = document.getElementById("menu-toggle");
-const sidebar = document.getElementById("sidebar");
-menuToggle.addEventListener("click", () => {
-  sidebar.classList.toggle("open");
-});
-
-// 지도 초기화 실행
 initializeMap();
