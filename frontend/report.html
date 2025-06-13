@@ -222,9 +222,14 @@
     }
 
     // 지도 생성
+    // localStorage에서 저장된 지도 레벨 가져오기
+    const savedMapLevel = localStorage.getItem('mapLevel');
+    const defaultLevel = 4;
+    const mapLevel = savedMapLevel ? parseInt(savedMapLevel) : defaultLevel;
+
     const options = {
       center: new kakao.maps.LatLng(centerLat, centerLng),
-      level: 4 // 초기 줌 레벨, 나중에 조정됨
+      level: mapLevel // 저장된 줌 레벨 사용
     };
     const map = new kakao.maps.Map(container, options);
 
@@ -300,11 +305,13 @@
         bounds.extend(point);
       });
 
-      // 영역에 맞게 지도 확대/축소 및 중심 이동
-      map.setBounds(bounds, 50); // 50픽셀의 패딩 추가
+      // 중심점만 조정하고 줌 레벨은 유지
+      map.setCenter(bounds.getCenter());
 
-      // 추가로 한 단계 더 축소하여 모든 마커가 확실히 보이도록 함
-      map.setLevel(map.getLevel() + 1);
+      // 저장된 줌 레벨이 없는 경우에만 bounds에 맞게 조정
+      if (!savedMapLevel) {
+        map.setBounds(bounds, 50);
+      }
     }
 
     function endRide() {
