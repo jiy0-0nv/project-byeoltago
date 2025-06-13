@@ -29,8 +29,8 @@ marker.setMap(map);
       const ne = bounds.getNorthEast();
 
       const icons = [
-        "imgs/marker-pin-01.png", // 초록
-        "imgs/marker-pin-02.png", // 주황
+        "imgs/green2.png", // 초록
+        "imgs/yellow5.png", // 주황
       ];
 
       for (let i = 0; i < count; i++) {
