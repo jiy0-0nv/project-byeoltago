@@ -206,8 +206,16 @@
     let centerLat = 0;
     let centerLng = 0;
 
-    if (allPoints.length > 0) {
-      // 모든 좌표의 평균 계산
+    // localStorage에서 마지막 마커 위치 가져오기
+    const lastMarkerLat = localStorage.getItem('lastMarkerLat');
+    const lastMarkerLng = localStorage.getItem('lastMarkerLng');
+
+    if (lastMarkerLat && lastMarkerLng) {
+      // 마지막 마커 위치를 중심점으로 사용
+      centerLat = parseFloat(lastMarkerLat);
+      centerLng = parseFloat(lastMarkerLng);
+    } else if (allPoints.length > 0) {
+      // 마지막 마커 위치가 없는 경우, 모든 좌표의 평균 계산
       allPoints.forEach(point => {
         centerLat += point.getLat();
         centerLng += point.getLng();
