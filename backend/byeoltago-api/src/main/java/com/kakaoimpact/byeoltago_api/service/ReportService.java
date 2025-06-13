@@ -198,7 +198,7 @@ public class ReportService {
     // 신고 수에 따라 위험도 계산 (기준 확인 필요)
     private int calculateRiskLevel(int count) {
         if (count >= 6) return 3;
-        if (count >= 3) return 2;
+        if (count >= 4) return 2;
         return 1;
     }
 
