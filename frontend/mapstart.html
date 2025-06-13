@@ -10,6 +10,7 @@
   <!-- Kakao JavaScript SDK -->
   <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
   <script>
+    window.localStorage.clear(); // 로컬 스토리지 초기화
     Kakao.init("ca66c24bcf740dae018b8f1511d02475");
     if (!Kakao.isInitialized()) {
       console.error("Kakao init failed!");
@@ -74,8 +75,7 @@
 
   </div>
 
-  <!-- 지도 및 인터랙션 스크립트 -->
-  <script src="js/mapdrive.js"></script>
+  <script type="module" src="js/mapdrive.js"></script>
   <script>
     function goBack() {
       window.history.back();

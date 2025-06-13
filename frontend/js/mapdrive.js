@@ -1,3 +1,5 @@
+import { API_BASE_URL } from './config.js';
+
 const mapContainer = document.getElementById('map');
 const defaultCenter = new kakao.maps.LatLng(37.55445080992788, 126.93453008736239);
 let map;
@@ -142,45 +144,63 @@ function createMap(center) {
   placeCustomDangerMarkers(); // 마커 생성
 }
 
-// 커스텀 위험 마커 생성
-function placeCustomDangerMarkers(count = 30) {
+// 기존 랜덤 마커 생성 제거 후 DB 연동으로 대체
+function placeCustomDangerMarkers() {
   const bounds = map.getBounds();
   const sw = bounds.getSouthWest();
   const ne = bounds.getNorthEast();
 
-  const icons = [
-    "imgs/green2.png", // 초록
-    "imgs/green5.png", 
-    "imgs/red2.png", // 빨강
-    "imgs/red4.png",
-    "imgs/yellow3.png",
-    "imgs/yellow1.png" 
-  ];
+  const url = `${API_BASE_URL}/reports/markers?minLat=${sw.getLat()}&maxLat=${ne.getLat()}&minLon=${sw.getLng()}&maxLon=${ne.getLng()}`;
 
-  for (let i = 0; i < count; i++) {
-    const lat = Math.random() * (ne.getLat() - sw.getLat()) + sw.getLat();
-    const lng = Math.random() * (ne.getLng() - sw.getLng()) + sw.getLng();
-    const icon = icons[Math.floor(Math.random() * icons.length)];
+  fetch(url, {
+    method: 'GET',
+    credentials: 'include' // 쿠키를 포함하여 요청
+  })
+    .then(res => res.json())
+    .then(markers => {
+      markers.forEach(marker => {
+        const markerImage = new kakao.maps.MarkerImage(
+          getIconByRiskLevel(marker.riskLevel),
+          new kakao.maps.Size(40, 40),
+          { offset: new kakao.maps.Point(20, 40) }
+        );
 
-    const markerImage = new kakao.maps.MarkerImage(
-      icon,
-      new kakao.maps.Size(40, 40),
-      { offset: new kakao.maps.Point(20, 40) }
-    );
+        const kakaoMarker = new kakao.maps.Marker({
+          position: new kakao.maps.LatLng(marker.latitude, marker.longitude),
+          map: map,
+          image: markerImage
+        });
 
-    const marker = new kakao.maps.Marker({
-      position: new kakao.maps.LatLng(lat, lng),
-      map: map,
-      image: markerImage
-    });
-
-    // 빨간 마커만 클릭 시 info-card 표시
-    if (icon.includes("marker-pin-04.png")) {
-      kakao.maps.event.addListener(marker, 'click', function () {
-        document.getElementById("info-card").classList.add("show");
+        kakao.maps.event.addListener(kakaoMarker, 'click', () => {
+          fetch(`${API_BASE_URL}/reports/${marker.id}/details`, {
+            method: 'GET',
+            credentials: 'include' // 쿠키를 포함하여 요청
+          })
+            .then(res => res.json())
+            .then(showReportDetails)
+            .catch(err => console.error("상세 정보 조회 실패:", err));
+        });
       });
-    }
+    })
+    .catch(err => console.error("마커 불러오기 실패:", err));
+}
+
+// 위험도에 따른 아이콘 매핑 함수
+function getIconByRiskLevel(level) {
+  switch (level) {
+    case 1: return "imgs/green2.png";
+    case 2: return "imgs/yellow1.png";
+    case 3: return "imgs/yellow3.png";
+    default: return "imgs/green5.png";
   }
+}
+
+// 상세 정보 표시
+function showReportDetails(detail) {
+  const card = document.getElementById("info-card");
+  card.classList.add("show");
+  card.querySelector("#report-title").innerText = `유형: ${detail.typeId}`;
+  card.querySelector("#report-desc").innerText = detail.descriptions?.[0] || "설명이 없습니다";
 }
 
 // 슬라이딩 카드 닫기
