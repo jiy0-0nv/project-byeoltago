@@ -84,25 +84,25 @@ body {
 #sidebar {
   position: absolute;
   top: 0;
-  left: -999px;
+  right: -999px;
   width: 110px;
   height: 100%;
   background-color: #f8f8f8;
   color: black;
   padding: 20px;
-  box-shadow: 2px 0 5px rgba(0,0,0,0.3);
-  transition: left 0.3s ease;
+  box-shadow: -2px 0 5px rgba(0,0,0,0.3);
+  transition: right 0.3s ease;
   z-index: 999;
 }
 
 #sidebar.open {
-  left: 0;
+  right: 0;
 }
 
 #menu-toggle {
   position: absolute;
   top: 28px;
-  left: -18px;
+  right: 10px;
   width: 36px;
   height: 36px;
   background-color: #efc327;
@@ -112,6 +112,25 @@ body {
   border-radius: 6px;
   z-index: 3000;
   cursor: pointer;
+}
+
+/* ✅ 뒤로 가기 버튼 */
+.back-btn {
+  position: absolute;
+  top: 28px;
+  left: 10px;
+  width: 36px;
+  height: 36px;
+  background-color: #efc327;
+  color: white;
+  font-size: 16px;
+  border: none;
+  border-radius: 6px;
+  z-index: 3000;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 #info-card {

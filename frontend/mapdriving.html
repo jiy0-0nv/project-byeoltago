@@ -6,12 +6,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=ca66c24bcf740dae018b8f1511d02475"></script>
   <link rel="stylesheet" href="css/mapdriving.css">
+  <link rel="icon" href="imgs\logo2.png" type="image/x-icon">
 </head>
 <body>
   <div class="app-container">
 
     <!-- 툴바 -->
     <button id="menu-toggle">☰</button>
+    <button class="back-btn" onclick="goBack()">←</button>
     <div id="sidebar">
       <h3>🏠 홈</h3>
       <div class="menu-item">
@@ -43,8 +45,7 @@
 
       <!-- ✅ 신고 완료 팝업 -->
       <div id="report-popup">
-        <img src="imgs/check.png" alt="체크 아이콘" class="check-icon">
-        <p>신고가 완료되었습니다!</p>
+        <p>신고가 완료되었습니다.</p>
       </div>
     </div>
 
@@ -66,6 +67,11 @@
     function endRide() {
   window.location.href = "mapfinish.html";
 }
+
+    // 뒤로 가기 기능
+    function goBack() {
+      window.history.back();
+    }
 
     // 닫기 버튼
     function closeOverlay(e) {

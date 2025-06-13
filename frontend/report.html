@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <title>주행 후 신고화면</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="imgs\logo2.png" type="image/x-icon">
   <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=ca66c24bcf740dae018b8f1511d02475&libraries=services,drawing"></script>
   <style>
     @font-face {
@@ -108,12 +109,32 @@
       width: 24px;
       height: 24px;
     }
+
+    /* 뒤로 가기 버튼 */
+    .back-btn {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      width: 36px;
+      height: 36px;
+      background-color: #efc327;
+      color: white;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      z-index: 3000;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
   </style>
 </head>
 <body>
   <div class="app-container">
     <!-- 지도 영역 -->
     <div id="map-container">
+      <button class="back-btn" onclick="goBack()">←</button>
       <div id="map"></div>
       <button class="map-button" onclick="endRide()">주행 종료</button>
     </div>
@@ -161,12 +182,14 @@
 
   <script>
     const container = document.getElementById('map');
-    const options = {
-      center: new kakao.maps.LatLng(37.5495, 126.9425),
-      level: 4
-    };
-    const map = new kakao.maps.Map(container, options);
 
+    // 마커 위치 배열 가져오기
+    const markerPositions = JSON.parse(localStorage.getItem('drivingMarkers') || '[]');
+
+    // 디버깅: 마커 위치 배열 확인
+    console.log('마커 위치 배열:', markerPositions);
+
+    // 경로 포인트 (기존 코드 유지)
     const path = [
       new kakao.maps.LatLng(37.5495, 126.9425),
       new kakao.maps.LatLng(37.5505, 126.944),
@@ -174,28 +197,159 @@
       new kakao.maps.LatLng(37.5525, 126.947)
     ];
 
-    const polyline = new kakao.maps.Polyline({
-      path: path,
-      strokeWeight: 5,
-      strokeColor: '#FF6600',
-      strokeOpacity: 0.8,
-      strokeStyle: 'solid'
-    });
-    polyline.setMap(map);
+    // 모든 좌표 포인트 (경로 + 마커)
+    const allPoints = [...path];
 
-    function addNumberMarker(position, number) {
+    // 마커 위치를 allPoints 배열에 추가
+    markerPositions.forEach(pos => {
+      allPoints.push(new kakao.maps.LatLng(pos.lat, pos.lng));
+    });
+
+    // 경로 포인트에 번호 마커 추가 (map 객체가 필요하므로 createMap 내에서 호출됨)
+    function addNumberMarker(position, number, mapObj) {
       const markerContent = `<div style="background:#f1c40f; color:#fff; padding:4px 8px; border-radius:20px; font-weight:bold;">${number}</div>`;
       const customOverlay = new kakao.maps.CustomOverlay({
         position: position,
         content: markerContent,
         yAnchor: 1
       });
-      customOverlay.setMap(map);
+      customOverlay.setMap(mapObj);
     }
 
-    path.forEach((pos, idx) => {
-      addNumberMarker(pos, idx + 1);
-    });
+    // 주행 중 생성된 마커 표시
+    function displayDrivingMarkers(mapObj) {
+      // 디버깅: displayDrivingMarkers 함수 호출됨
+      console.log('displayDrivingMarkers 함수 호출됨, 마커 수:', markerPositions.length);
+
+      // 마커 이미지 설정
+      const pinImage = new kakao.maps.MarkerImage(
+        "imgs/flag.png", // 깃발 이미지 사용
+        new kakao.maps.Size(40, 40),
+        { offset: new kakao.maps.Point(20, 40) }
+      );
+
+      // 각 위치에 마커 생성
+      markerPositions.forEach(position => {
+        const latlng = new kakao.maps.LatLng(position.lat, position.lng);
+
+        // 디버깅: 각 마커 위치 로그
+        console.log('마커 생성:', position);
+
+        // 마커 생성
+        const marker = new kakao.maps.Marker({
+          position: latlng,
+          map: mapObj,
+          image: pinImage
+        });
+
+        // 순서 번호 표시 (position.seq가 있는 경우에만)
+        if (position.seq !== undefined) {
+          // 마커 위에 순서 번호 표시
+          const markerContent = `<div style="background:#f1c40f; color:#fff; padding:4px 8px; border-radius:20px; font-weight:bold;">${position.seq}</div>`;
+          const customOverlay = new kakao.maps.CustomOverlay({
+            position: latlng,
+            content: markerContent,
+            yAnchor: 1
+          });
+          customOverlay.setMap(mapObj);
+        }
+      });
+    }
+
+    // 기본 중심점 (위치 정보를 가져오지 못하는 경우 사용)
+    let centerLat = 37.5495;
+    let centerLng = 126.9425;
+    let map;
+
+    // 지도 생성 함수
+    function createMap(lat, lng) {
+      centerLat = lat;
+      centerLng = lng;
+
+      const mapLevel = 4;
+
+      const options = {
+        center: new kakao.maps.LatLng(centerLat, centerLng),
+        level: mapLevel // 저장된 줌 레벨 사용
+      };
+      map = new kakao.maps.Map(container, options);
+
+      // 현재 위치 마커 생성
+      const currentLocationMarker = new kakao.maps.Marker({
+        position: new kakao.maps.LatLng(centerLat, centerLng),
+        map: map
+      });
+
+      // 현재 위치 마커 스타일 변경
+      const currentLocationImage = new kakao.maps.MarkerImage(
+        "imgs/marker-pin-03.png", // 현재 위치를 표시할 마커 이미지
+        new kakao.maps.Size(40, 40),
+        { offset: new kakao.maps.Point(20, 40) }
+      );
+      currentLocationMarker.setImage(currentLocationImage);
+
+      // 경로 그리기
+      const polyline = new kakao.maps.Polyline({
+        path: path,
+        strokeWeight: 5,
+        strokeColor: '#FF6600',
+        strokeOpacity: 0.8,
+        strokeStyle: 'solid'
+      });
+      polyline.setMap(map);
+
+      // 경로 포인트에 번호 마커 추가
+      path.forEach((pos, idx) => {
+        addNumberMarker(pos, idx + 1, map);
+      });
+
+      // 주행 중 생성된 마커 표시
+      displayDrivingMarkers(map);
+
+      // 모든 마커가 보이도록 지도 영역 설정
+      if (allPoints.length > 1) {
+        // 모든 좌표를 포함하는 영역 생성
+        const bounds = new kakao.maps.LatLngBounds();
+
+        // 모든 좌표를 영역에 추가
+        allPoints.forEach(point => {
+          bounds.extend(point);
+        });
+
+        // 중심점만 조정하고 줌 레벨은 유지
+        map.setCenter(bounds.getCenter());
+
+        // 저장된 줌 레벨이 없는 경우에만 bounds에 맞게 조정
+        if (!savedMapLevel) {
+          map.setBounds(bounds, 50);
+        }
+      }
+    }
+
+    // 현재 위치 가져오기
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          // 현재 위치로 지도 생성
+          createMap(position.coords.latitude, position.coords.longitude);
+        },
+        (error) => {
+          console.warn('위치 정보 가져오기 실패:', error);
+          // 위치 정보를 가져오지 못한 경우 기본 위치로 지도 생성
+          createMap(centerLat, centerLng);
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 5000,
+          maximumAge: 0
+        }
+      );
+    } else {
+      console.warn('이 브라우저는 Geolocation을 지원하지 않습니다.');
+      // Geolocation을 지원하지 않는 경우 기본 위치로 지도 생성
+      createMap(centerLat, centerLng);
+    }
+
 
     function endRide() {
       alert("주행을 종료합니다.");
@@ -203,6 +357,10 @@
 
     function goToDamagePage() {
       window.location.href = "report.html";
+    }
+
+    function goBack() {
+      window.history.back();
     }
   </script>
 </body>

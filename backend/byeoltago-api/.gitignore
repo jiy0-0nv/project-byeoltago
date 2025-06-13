@@ -35,3 +35,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+# 임시 폴더
+uploads/

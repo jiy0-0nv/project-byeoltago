@@ -17,13 +17,20 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @Slf4j
-@RestController
+@CrossOrigin(
+        origins = {
+                "http://localhost:3000",
+                "http://127.0.0.1:3000",
+                "https://jiy0-0nv.github.io",
+                "https://d1fkbh5rwn7h6q.cloudfront.net"
+        },
+        allowCredentials = "true"
+)@RestController
 @RequestMapping(Const.API_BASE_URL + "/auth")
 @RequiredArgsConstructor
 public class AuthController {
@@ -56,7 +63,7 @@ public class AuthController {
 
             response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
-            return ResponseEntity.ok("로그인 성공. 토큰이 쿠키에 설정되었습니다.");
+            return ResponseEntity.ok(Map.of("message", "로그인 성공", "status", "OK"));
 
         } catch (BadCredentialsException e) {
             log.warn("Login failed for email {}: Invalid credentials", loginRequestDto.getEmail());

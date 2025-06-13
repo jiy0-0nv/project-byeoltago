@@ -31,9 +31,20 @@ function initializeMap() {
 
 // 지도 생성 함수
 function createMap(center) {
+  // 현재 페이지가 mapdriving.html인 경우 최대 배율(level 1)로 설정
+  // 그 외의 경우 기본 배율(level 4)로 설정
+  const isDrivingPage = window.location.pathname.includes('mapdriving.html');
+  const zoomLevel = isDrivingPage ? 1 : 4;
+
+  // 주행 시작 시 이전 마커 데이터 초기화
+  if (isDrivingPage) {
+    localStorage.removeItem('drivingMarkers');
+  }
+
   const mapOption = {
     center: center,
-    level: 4
+    level: zoomLevel,  // 주행 시작 시 최대 배율로 확대 (level 1이 가장 확대된 상태)
+    disableDoubleClickZoom: true  // 더블클릭 줌 기능 비활성화
   };
   map = new kakao.maps.Map(mapContainer, mapOption);
 
@@ -41,11 +52,91 @@ function createMap(center) {
   marker = new kakao.maps.Marker({ position: center });
   marker.setMap(map);
 
+  // 주행 시작 시 3초마다 현재 위치로 지도 이동 (mapdriving.html 페이지에서만)
+  if (isDrivingPage) {
+    setInterval(() => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+            const newCenter = new kakao.maps.LatLng(lat, lng);
+            map.setCenter(newCenter);
+            marker.setPosition(newCenter);
+          },
+          (error) => {
+            console.warn('위치 정보 업데이트 실패:', error);
+          },
+          {
+            enableHighAccuracy: true,
+            timeout: 3000,
+            maximumAge: 0
+          }
+        );
+      }
+    }, 3000); // 3초마다 실행
+  }
+
   kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
     const latlng = mouseEvent.latLng;
     marker.setPosition(latlng);
-    document.getElementById('clickLatlng').innerText =
-      `클릭한 위치의 위도는 ${latlng.getLat().toFixed(5)} 이고, 경도는 ${latlng.getLng().toFixed(5)} 입니다`;
+
+    // clickLatlng 요소가 존재하는 경우에만 업데이트
+    const clickLatlngElement = document.getElementById('clickLatlng');
+    if (clickLatlngElement) {
+      clickLatlngElement.innerText =
+        `클릭한 위치의 위도는 ${latlng.getLat().toFixed(5)} 이고, 경도는 ${latlng.getLng().toFixed(5)} 입니다`;
+    }
+  });
+
+  // 더블클릭 이벤트 리스너 추가 - 핀 생성
+  kakao.maps.event.addListener(map, 'dblclick', function(mouseEvent) {
+    const latlng = mouseEvent.latLng;
+
+    // 현 위치의 좌표를 콘솔로 출력
+    // API 연동 부분
+    console.log(`더블클릭 위치 좌표 - 위도: ${latlng.getLat()}, 경도: ${latlng.getLng()}`);
+
+    // 핀 이미지 설정
+    const pinImage = new kakao.maps.MarkerImage(
+      "imgs/flag.png", // 깃발 이미지 사용
+      new kakao.maps.Size(40, 40),
+      { offset: new kakao.maps.Point(20, 40) }
+    );
+
+    // 마커 위치 저장 및 순서 번호 가져오기
+    const markerPositions = JSON.parse(localStorage.getItem('drivingMarkers') || '[]');
+    const seqNumber = markerPositions.length + 1; // 새 마커의 순서 번호
+
+    // 새 마커 생성
+    const newPin = new kakao.maps.Marker({
+      position: latlng,
+      map: map,
+      image: pinImage
+    });
+
+    // 마커 위치 저장
+    saveMarkerPosition(latlng);
+
+    // 마커 위에 순서 번호 표시
+    const markerContent = `<div style="background:#f1c40f; color:#fff; padding:4px 8px; border-radius:20px; font-weight:bold;">${seqNumber}</div>`;
+    const customOverlay = new kakao.maps.CustomOverlay({
+      position: latlng,
+      content: markerContent,
+      yAnchor: 1
+    });
+    customOverlay.setMap(map);
+
+    // 신고 완료 팝업 표시 (팝업 요소가 존재하는 경우에만)
+    const popup = document.getElementById("report-popup");
+    if (popup) {
+      popup.style.display = "flex";
+
+      // 2초 후 팝업 닫기
+      setTimeout(() => {
+        popup.style.display = "none";
+      }, 2000);
+    }
   });
 
   placeCustomDangerMarkers(); // 마커 생성
@@ -102,9 +193,28 @@ function startRide() {
   window.location.href = "mapdriving.html";
 }
 
-// 신고 → report2.html로 이동
+// 신고 → reportselect.html로 이동
 function reportNow() {
-  window.location.href = "report2.html";
+  // 마지막 마커 위치와 현재 지도 레벨 저장
+  saveLastMarkerAndLevel();
+  window.location.href = "reportselect.html";
+}
+
+// 마지막 마커 위치와 지도 레벨 저장 함수
+function saveLastMarkerAndLevel() {
+  // localStorage에서 마커 위치 배열 가져오기
+  const markerPositions = JSON.parse(localStorage.getItem('drivingMarkers') || '[]');
+
+  // 마커가 있는 경우 마지막 마커 위치 저장
+  if (markerPositions.length > 0) {
+    const lastMarker = markerPositions[markerPositions.length - 1];
+    localStorage.setItem('lastMarkerLat', lastMarker.lat);
+    localStorage.setItem('lastMarkerLng', lastMarker.lng);
+  }
+
+  // 현재 지도 레벨 저장
+  const currentLevel = map.getLevel();
+  localStorage.setItem('mapLevel', currentLevel);
 }
 
 // 사이드바 토글
@@ -113,6 +223,22 @@ const sidebar = document.getElementById("sidebar");
 menuToggle.addEventListener("click", () => {
   sidebar.classList.toggle("open");
 });
+
+// 마커 위치 저장 함수
+function saveMarkerPosition(latlng) {
+  // localStorage에서 기존 마커 위치 배열 가져오기
+  let markerPositions = JSON.parse(localStorage.getItem('drivingMarkers') || '[]');
+
+  // 새 마커 위치 추가 (순서 번호 포함)
+  markerPositions.push({
+    lat: latlng.getLat(),
+    lng: latlng.getLng(),
+    seq: markerPositions.length + 1 // 순서 번호 추가 (1부터 시작)
+  });
+
+  // 업데이트된 배열 저장
+  localStorage.setItem('drivingMarkers', JSON.stringify(markerPositions));
+}
 
 // 지도 초기화 실행
 initializeMap();

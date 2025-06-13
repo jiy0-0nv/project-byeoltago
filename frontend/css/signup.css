@@ -36,9 +36,31 @@
       align-items: center;
     }
 
+    .login-link {
+      margin-top: 10px;
+      font-size: 12px;
+      color: gray;
+      text-decoration: none;
+    }
+
+    .login-link:hover {
+      text-decoration: underline;
+    }
+
+    .warning-message {
+      color: red;
+      font-size: 12px;
+      margin-top: -5px;
+      margin-bottom: 8px;
+      display: none;
+      width: 240px;
+      text-align: left;
+    }
+
     input[type="text"],
     input[type="email"],
-    input[type="password"] {
+    input[type="password"],
+    input[type="tel"] {
       padding: 10px;
       margin: 8px 0;
       font-size: 16px;
@@ -83,4 +105,23 @@
     @keyframes moveBike {
       from { left: -100px; }
       to { left: 110%; }
+    }
+
+    /* 뒤로 가기 버튼 */
+    .back-btn {
+      position: absolute;
+      top: 20px;
+      left: 10px;
+      width: 36px;
+      height: 36px;
+      background-color: #efc327;
+      color: white;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      z-index: 3000;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }

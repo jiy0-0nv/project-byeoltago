@@ -6,12 +6,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=ca66c24bcf740dae018b8f1511d02475"></script>
   <link rel="stylesheet" href="css/newmapstyle2.css">
+  <link rel="icon" href="imgs\logo2.png" type="image/x-icon">
 </head>
 <body>
   <div class="app-container">
 
     <!-- 툴바 -->
     <button id="menu-toggle">☰</button>
+    <button class="back-btn" onclick="goBack()">←</button>
     <div id="sidebar">
       <h3>🏠 홈</h3>
       <div class="menu-item">
@@ -24,7 +26,7 @@
     내 정보
   </div>
     </div>
-    
+
     <div class="logo-area">
       <img src="imgs/logo.png" alt="별타고 로고" class="logo-img">
     </div>
@@ -52,9 +54,9 @@
 
   <script src="js/mapfinish.js"></script>
   <script>
-    function endRide() {
-        window.location.href = "report.html";
-}
+    function goBack() {
+      window.history.back();
+    }
   </script>
 </body>
 </html>

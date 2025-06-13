@@ -12,7 +12,6 @@ import lombok.Setter;
 public class PasswordResetRequestDto {
 
     @NotBlank(message = "휴대폰 번호는 필수입니다.")
-    @JsonProperty("phone_number") // 클라이언트가 스네이크 케이스로 보낼 경우
     private String phoneNumber;
 
     @NotBlank(message = "이메일은 필수 입력 항목입니다.")
@@ -21,10 +20,8 @@ public class PasswordResetRequestDto {
 
     @NotBlank(message = "새 비밀번호는 필수 입력 항목입니다.")
     @Size(min = 8, message = "새 비밀번호는 최소 8자 이상이어야 합니다.")
-    @JsonProperty("new_password")
     private String newPassword;
 
     @NotBlank(message = "새 비밀번호 확인은 필수 입력 항목입니다.")
-    @JsonProperty("new_password_confirmation")
     private String newPasswordConfirmation;
 }

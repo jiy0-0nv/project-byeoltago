@@ -3,179 +3,39 @@
 <head>
   <meta charset="UTF-8">
   <title>별타고 - 회원가입</title>
+  <link rel="stylesheet" href="css/signup.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #ffffff;
-      color: white;
-    }
-
-    .signup-section {
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-      align-items: center;
-      padding-top: 70px;
-      box-sizing: border-box;
-    }
-
-    .logo-img {
-      width: 120px;
-      margin-bottom: 20px;
-    }
-
-    .signup-box {
-      background-color: transparent;
-      padding: 20px;
-      border-radius: 10px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    input[type="text"],
-    input[type="email"],
-    input[type="password"],
-    input[type="tel"] {
-      padding: 10px;
-      margin: 8px 0;
-      font-size: 16px;
-      width: 240px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-
-    input[type="submit"] {
-      background-color: #efc327;
-      color: black;
-      border: none;
-      font-weight: bold;
-      cursor: pointer;
-      width: 240px;
-      padding: 10px;
-      margin-top: 16px;
-    }
-
-    label {
-      color: black;
-      font-size: 14px;
-      margin-top: 10px;
-      display: flex;
-      align-items: center;
-    }
-
-    .login-link {
-      margin-top: 10px;
-      font-size: 12px;
-      color: gray;
-      text-decoration: none;
-    }
-
-    .login-link:hover {
-      text-decoration: underline;
-    }
-
-    #bike-animation {
-      display: none;
-      position: fixed;
-      top: 40%;
-      left: -100px;
-      animation: moveBike 1s linear forwards;
-      z-index: 1000;
-    }
-
-    #bike-animation img {
-      width: 70px;
-      height: auto;
-    }
-
-    @keyframes moveBike {
-      from { left: -100px; }
-      to { left: 110%; }
-    }
-
-    .warning-message {
-      color: red;
-      font-size: 12px;
-      margin-top: -5px;
-      margin-bottom: 8px;
-      display: none;
-      width: 240px;
-      text-align: left;
-    }
-  </style>
-
-  <script>
-    function validateUsernameInput(event) {
-      const input = event.target.value;
-      const warning = document.getElementById('username-warning');
-      const isValid = /^[a-zA-Z0-9]*$/.test(input);
-
-      if (!isValid) {
-        warning.style.display = 'block';
-      } else {
-        warning.style.display = 'none';
-      }
-    }
-
-    function handleSignup(event) {
-      event.preventDefault();
-
-      const email = document.getElementById('email').value;
-      const username = document.getElementById('username').value;
-      const password = document.getElementById('password').value;
-      const confirmPassword = document.getElementById('confirm-password').value;
-      const phone = document.getElementById('phone').value;
-      const agree = document.getElementById('agree').checked;
-      const warning = document.getElementById('username-warning');
-
-      if (!/^[a-zA-Z0-9]+$/.test(username)) {
-        warning.style.display = 'block';
-        return;
-      }
-
-      if (email && username && password && confirmPassword && phone && agree) {
-        if (password !== confirmPassword) {
-          alert("비밀번호가 일치하지 않습니다.");
-          return;
-        }
-
-        const bike = document.getElementById("bike-animation");
-        bike.style.display = "inline";
-
-        setTimeout(() => {
-          window.location.href = "login.html";
-        }, 1000);
-      } else {
-        alert("모든 항목을 입력하고 개인정보 이용에 동의해주세요.");
-      }
-    }
-  </script>
+  <link rel="icon" href="imgs\logo2.png" type="image/x-icon">
 </head>
+
 <body>
-  <!-- 회원가입 섹션 -->
+  <button class="back-btn" onclick="goBack()">←</button>
   <div class="signup-section">
     <img src="imgs/logo.png" alt="별타고 로고" class="logo-img">
-    <form onsubmit="handleSignup(event)" class="signup-box">
-      <input type="email" id="email" placeholder="이메일" required>
-      <input type="text" id="username" placeholder="새 아이디" required oninput="validateUsernameInput(event)">
-      <div id="username-warning" class="warning-message">영어 대소문자와 숫자만 입력 가능합니다.</div>
-      <input type="password" id="password" placeholder="새 비밀번호" required>
-      <input type="password" id="confirm-password" placeholder="비밀번호 확인" required>
+
+    <form class="signup-box">
+      <input type="email" id="email" placeholder="이메일" required autocomplete="off">
+      <input type="password" id="password" placeholder="새 비밀번호" required autocomplete="new-password">
+      <input type="password" id="confirm-password" placeholder="비밀번호 확인" required autocomplete="new-password">
+      <input type="text" id="username" placeholder="닉네임" required autocomplete="off" inputmode="text">
+      <div id="username-warning" class="warning-message">한글, 영어 대소문자, 숫자만 입력 가능하며 2자 이상 100자 이하여야 합니다.</div>
       <input type="tel" id="phone" placeholder="전화번호" required>
       <label><input type="checkbox" id="agree"> 개인정보 수집 및 이용에 동의합니다.</label>
       <input type="submit" value="회원가입">
       <a href="login.html" class="login-link">이미 계정이 있으신가요?</a>
     </form>
+
+    <script type="module" src="js/signup.js"></script>
   </div>
 
-  <!-- 자전거 애니메이션 -->
   <div id="bike-animation">
     <img src="imgs/logo2.png" alt="애니메이션 로고">
   </div>
+
+  <script>
+    function goBack() {
+      window.history.back();
+    }
+  </script>
 </body>
 </html>
