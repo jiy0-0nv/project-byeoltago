@@ -4,16 +4,16 @@
   <meta charset="UTF-8">
   <title>별타고 주행 화면</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=ca66c24bcf740dae018b8f1511d02475"></script>
+  <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=ca66c24bcf740dae018b8f1511d02475&libraries=services"></script>
   <link rel="stylesheet" href="css/mapdriving.css">
-  <link rel="icon" href="imgs\logo2.png" type="image/x-icon">
+  <link rel="icon" href="imgs/logo2.png" type="image/x-icon">
 </head>
 <body>
   <div class="app-container">
-
     <!-- 툴바 -->
     <button id="menu-toggle">☰</button>
     <button class="back-btn" onclick="goBack()">←</button>
+
     <div id="sidebar">
       <h3>🏠 홈</h3>
       <div class="menu-item">
@@ -28,22 +28,22 @@
     </div>
 
     <!-- 지도 -->
-    <div id="map-container">
+    <div id="map-container" ontouchend="detectDoubleTap(event)">
       <div id="map"></div>
 
-      <!-- ✅ 주행 종료 버튼 -->
+      <!-- 주행 종료 버튼 -->
       <button class="map-button end-btn" onclick="endRide()">주행 종료</button>
 
-      <!-- ✅ 신고 오버레이 -->
-      <div id="report-overlay" onclick="detectDoubleTap(event)">
-        <button id="close-overlay" onclick="closeOverlay(event)">✕</button>
+      <!-- 신고 오버레이 -->
+      <div id="report-overlay" style="display: flex;" onclick="closeOverlay(event)">
+        <button id="close-overlay">✕</button>
         <div class="overlay-content">
           <img src="imgs/doubletap.png" alt="두 번 터치" class="tap-img">
           <p>도로 결함을 신고하고 싶다면<br><span class="highlight">화면을 두 번 터치</span> 해주세요!</p>
         </div>
       </div>
 
-      <!-- ✅ 신고 완료 팝업 -->
+      <!-- 신고 완료 팝업 -->
       <div id="report-popup">
         <p>신고가 완료되었습니다.</p>
       </div>
@@ -63,50 +63,6 @@
     </div>
   </div>
 
-  <script>
-    function endRide() {
-  window.location.href = "mapfinish.html";
-}
-
-    // 뒤로 가기 기능
-    function goBack() {
-      window.history.back();
-    }
-
-    // 닫기 버튼
-    function closeOverlay(e) {
-      e.stopPropagation(); // 오버레이 클릭 이벤트 방지
-      document.getElementById("report-overlay").style.display = "none";
-    }
-
-    // 더블탭 감지
-    let lastTap = 0;
-    function detectDoubleTap(e) {
-      const now = new Date().getTime();
-      const timeSince = now - lastTap;
-
-      if (timeSince < 400 && timeSince > 0) {
-        handleReport();
-        document.getElementById("report-overlay").style.display = "none";
-      }
-
-      lastTap = now;
-    }
-
-    function handleReport() {
-      const popup = document.getElementById("report-popup");
-      const overlay = document.getElementById("report-overlay");
-
-      // 신고 완료 팝업 표시
-      popup.style.display = "flex";
-
-      // 2초 후 팝업 닫고 오버레이 다시 표시
-      setTimeout(() => {
-        popup.style.display = "none";
-        overlay.style.display = "flex";
-      }, 2000);
-    }
-  </script>
-  <script src="js/mapdrive.js"></script>
+  <script src="js/mapdriving.js"></script>
 </body>
 </html>
