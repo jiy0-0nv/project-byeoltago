@@ -148,19 +148,19 @@ body {
 #sidebar {
   position: absolute;
   top: 0;
-  left: -999px;
+  right: -999px;
   width: 110px;
   height: 100%;
   background-color: #f8f8f8;
   color: black;
   padding: 20px;
-  box-shadow: 2px 0 5px rgba(0,0,0,0.3);
-  transition: left 0.3s ease;
+  box-shadow: -2px 0 5px rgba(0,0,0,0.3);
+  transition: right 0.3s ease;
   z-index: 999;
 }
 
 #sidebar.open {
-  left: 0;
+  right: 0;
 }
 
 /* ✅ 햄버거 메뉴 버튼 */
