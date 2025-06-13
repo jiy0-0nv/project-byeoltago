@@ -58,33 +58,45 @@ body {
   padding-left: 0;
 }
 
-/* 공통 버튼 스타일 */
-.map-button {
+/* ✅ 버튼 가로 정렬용 래퍼 */
+.button-row {
   position: absolute;
   bottom: 20px;
+  left: 5%;
+  width: 90%;
+  display: flex;
+  justify-content: space-between;
+  gap: 4%;
+  z-index: 2;
+}
+
+/* 공통 버튼 스타일 */
+.map-button {
   font-size: 16px;
   font-weight: bold;
   border: none;
   border-radius: 10px;
   cursor: pointer;
-  z-index: 2;
   padding: 10px 0;
   text-align: center;
+  flex: 1;
 }
 
-/* ✅ 중앙 정렬된 넓은 주행 시작 버튼 */
+/* 왼쪽: 주행 시작 버튼 */
 .start-btn {
-  left: 5%;
-  width: 90%;
-  font-size: 16px;
-  font-family: 'Pretendard-Regular', 'Segoe UI', sans-serif;
   background-color: #efc327;
-  color: white;
+  color: black;
+  font-family: 'Pretendard-Regular', 'Segoe UI', sans-serif;
 }
 
-/* ❌ 신고 버튼 완전히 제거됨 (report-btn 삭제됨) */
+/* 오른쪽: 도로 신고 버튼 */
+.report-btn {
+  background-color: #4b4a4a;
+  color: white
+  font-family: 'Pretendard-Regular', 'Segoe UI', sans-serif;
+}
 
-/* (기존 코드 유지) */
+/* 위치 선택 버튼 */
 .select-button {
   left: 60px;
   background-color: #6dbf2f;
@@ -133,7 +145,6 @@ body {
   cursor: pointer;
 }
 
-/* ✅ 뒤로 가기 버튼 */
 .back-btn {
   position: absolute;
   top: 28px;

@@ -213,11 +213,8 @@ function startRide() {
   window.location.href = "mapdriving.html";
 }
 
-// 신고 → reportselect.html로 이동
-function reportNow() {
-  // 마지막 마커 위치와 현재 지도 레벨 저장
-  saveLastMarkerAndLevel();
-  window.location.href = "reportselect.html";
+function goToWalkerReport() {
+  window.location.href = "walkerreport.html";
 }
 
 // 마지막 마커 위치와 지도 레벨 저장 함수
