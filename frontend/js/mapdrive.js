@@ -47,6 +47,31 @@ function createMap(center) {
   marker = new kakao.maps.Marker({ position: center });
   marker.setMap(map);
 
+  // 주행 시작 시 3초마다 현재 위치로 지도 이동 (mapdriving.html 페이지에서만)
+  if (isDrivingPage) {
+    setInterval(() => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+            const newCenter = new kakao.maps.LatLng(lat, lng);
+            map.setCenter(newCenter);
+            marker.setPosition(newCenter);
+          },
+          (error) => {
+            console.warn('위치 정보 업데이트 실패:', error);
+          },
+          {
+            enableHighAccuracy: true,
+            timeout: 3000,
+            maximumAge: 0
+          }
+        );
+      }
+    }, 3000); // 3초마다 실행
+  }
+
   kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
     const latlng = mouseEvent.latLng;
     marker.setPosition(latlng);
@@ -62,6 +87,10 @@ function createMap(center) {
   // 더블클릭 이벤트 리스너 추가 - 핀 생성
   kakao.maps.event.addListener(map, 'dblclick', function(mouseEvent) {
     const latlng = mouseEvent.latLng;
+
+    // 현 위치의 좌표를 콘솔로 출력
+    // API 연동 부분
+    console.log(`더블클릭 위치 좌표 - 위도: ${latlng.getLat()}, 경도: ${latlng.getLng()}`);
 
     // 핀 이미지 설정
     const pinImage = new kakao.maps.MarkerImage(
