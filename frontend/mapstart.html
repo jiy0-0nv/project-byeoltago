@@ -4,7 +4,10 @@
   <meta charset="UTF-8">
   <title>별타고 주행 화면</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Kakao Map SDK -->
   <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=ca66c24bcf740dae018b8f1511d02475&libraries=services"></script>
+  <!-- Kakao JavaScript SDK -->
   <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
   <script>
     Kakao.init("ca66c24bcf740dae018b8f1511d02475");
@@ -12,15 +15,18 @@
       console.error("Kakao init failed!");
     }
   </script>
+
   <link rel="stylesheet" href="css/newmapstyle3.css">
-  <link rel="icon" href="imgs\logo2.png" type="image/x-icon">
+  <link rel="icon" href="imgs/logo2.png" type="image/x-icon">
 </head>
 <body>
   <div class="app-container">
+
     <!-- 툴바 -->
     <button id="menu-toggle">☰</button>
     <button class="back-btn" onclick="goBack()">←</button>
 
+    <!-- 사이드바 -->
     <div id="sidebar">
       <h3>🏠 홈</h3>
       <div class="menu-item">
@@ -29,21 +35,25 @@
       </div>
       <div class="menu-item">사용 방법</div>
       <div class="menu-item">
-    <img src="imgs/mypage.png" alt="마이페이지 아이콘" class="menu-icon">
-    내 정보
-  </div>
+        <img src="imgs/mypage.png" alt="마이페이지 아이콘" class="menu-icon">
+        내 정보
+      </div>
     </div>
 
+    <!-- 로고 영역 -->
     <div class="logo-area">
       <img src="imgs/logo.png" alt="별타고 로고" class="logo-img">
     </div>
 
-    <!-- 지도 -->
+    <!-- 지도 영역 -->
     <div id="map-container">
       <div id="map"></div>
-      <!-- ✅ 신고 버튼 제거됨 -->
-      <!-- ✅ 주행 시작 버튼만 넓게, 중앙 배치 -->
-      <button class="map-button start-btn" onclick="startRide()">주행 시작</button>
+
+      <!-- 버튼 두 개를 나란히 정렬 -->
+      <div class="button-row">
+        <button class="map-button start-btn" onclick="startRide()">주행 시작</button>
+        <button class="map-button report-btn" onclick="goToWalkerReport()">도로 신고</button>
+      </div>
     </div>
 
     <!-- 슬라이딩 카드 -->
@@ -58,8 +68,10 @@
         <img src="imgs/pothole2.jpg" alt="위험1">
       </div>
     </div>
+
   </div>
 
+  <!-- 지도 및 인터랙션 스크립트 -->
   <script src="js/mapdrive.js"></script>
   <script>
     function goBack() {
@@ -68,6 +80,10 @@
 
     function startRide() {
       window.location.href = "mapdriving.html";
+    }
+
+    function goToWalkerReport() {
+      window.location.href = "walkerreport.html";
     }
   </script>
 </body>
