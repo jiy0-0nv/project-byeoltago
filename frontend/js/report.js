@@ -1,5 +1,6 @@
 import { API_BASE_URL } from './config.js';
 
+// 전역 변수
 const reportMode = localStorage.getItem('reportMode') || 'driving';
 let markerPositions = JSON.parse(localStorage.getItem('drivingMarkers') || '[]');
 if (reportMode === 'walker') {
@@ -9,6 +10,7 @@ const container = document.getElementById('map');
 
 let map;
 const path = markerPositions.map(pos => new kakao.maps.LatLng(pos.lat, pos.lng));
+let selectedDamageType = null;
 
 function createMap(centerLat, centerLng) {
   const options = {
@@ -78,28 +80,48 @@ if (markerPositions.length > 0) {
   createMap(37.5495, 126.9425);
 }
 
+// 위치 선택
 function populateLocationSelect() {
-  const select = document.getElementById('location-select');
-  select.innerHTML = '';
+  if (reportMode === 'walker') {
+    document.getElementById('location-select').style.display = 'none';
+    document.getElementById('location-text').style.display = 'block';
+  
+    const marker = markerPositions.find(m => m.seq === 0);
+    if (marker) {
+      const geocoder = new kakao.maps.services.Geocoder();
+      geocoder.coord2Address(marker.lng, marker.lat, (result, status) => {
+        if (status === kakao.maps.services.Status.OK) {
+          const address = result[0].address.address_name;
+          document.getElementById('location-text').textContent = address;
+        } else {
+          document.getElementById('location-text').textContent = "위치 정보를 불러올 수 없습니다.";
+        }
+      });
+    }
+  }
+  else {
+    const select = document.getElementById('location-select');
+    select.innerHTML = '';
 
-  const uniqueSeqs = [...new Set(markerPositions.map(m => m.seq))].sort((a, b) => a - b);
-  uniqueSeqs.forEach(seq => {
-    const option = document.createElement('option');
-    option.value = seq;
-    option.textContent = seq;
-    select.appendChild(option);
-  });
+    const uniqueSeqs = [...new Set(markerPositions.map(m => m.seq))].sort((a, b) => a - b);
+    uniqueSeqs.forEach(seq => {
+      const option = document.createElement('option');
+      option.value = seq;
+      option.textContent = seq;
+      select.appendChild(option);
+    });
+  }
 }
 
+// 선택된 타입 표시
 function updateDamageDisplay() {
-  const select = document.getElementById('location-select');
   const damageDisplay = document.getElementById('damage-display');
-  if (!select || !damageDisplay) return;
+  if (!damageDisplay) return;
 
-  const selectedSeq = parseInt(select.value);
   const reports = JSON.parse(localStorage.getItem('heldReports') || '[]');
+  const seq = reportMode === 'walker' ? 0 : parseInt(document.getElementById('location-select').value);
 
-  const match = reports.find(r => r.seq === selectedSeq);
+  const match = reports.find(r => r.seq === seq);
 
   if (match) {
     damageDisplay.textContent = match.damageType;
@@ -112,21 +134,19 @@ function updateDamageDisplay() {
   }
 }
 
+// 작성된 설명 표시
 function updateDescriptDisplay() {
-  const select = document.getElementById('location-select');
   const descriptDisplay = document.getElementById('description-display');
-  if (!select || !descriptDisplay) return;
+  if (!descriptDisplay) return;
 
-  const selectedSeq = parseInt(select.value);
   const reports = JSON.parse(localStorage.getItem('heldReports') || '[]');
+  const seq = reportMode === 'walker' ? 0 : parseInt(document.getElementById('location-select').value);
 
-  const match = reports.find(r => r.seq === selectedSeq);
+  const match = reports.find(r => r.seq === seq);
 
   if (match) {
     descriptDisplay.textContent = match.description
-      ? (match.description.length > 10
-          ? match.description.slice(0, 10) + '...'
-          : match.description)
+      ? (match.description.length > 10 ? match.description.slice(0, 10) + '...' : match.description)
       : '';
     descriptDisplay.style.color = '#333';
     descriptDisplay.style.fontSize = '12px';
@@ -138,7 +158,14 @@ function updateDescriptDisplay() {
 document.addEventListener('DOMContentLoaded', () => {
   populateLocationSelect();
 
-  const select = document.getElementById('location-select');
+  let seq;
+  let select;
+  if (reportMode === 'walker') {
+    seq = 0;
+  } else {
+    select = document.getElementById('location-select');
+    seq = parseInt(select.value);
+  }
   if (select) {
     select.addEventListener('change', () => {
       updateDamageDisplay();
@@ -176,17 +203,23 @@ function holdReportData(seq, damageType) {
 
 // 결함 종류 선택 모달
 function selectChoice(elem) {
-  const damage = elem.innerText.trim();
-  selectedDamageType = damage;
+  selectedDamageType = elem.innerText.trim();
   closeModal();
 
-  const seq = parseInt(document.getElementById('location-select').value);
-  
+  let seq;
+  if (reportMode === 'walker') {
+    seq = 0;
+  } else {
+    const select = document.getElementById('location-select');
+    seq = parseInt(select.value);
+  }
+
   holdReportData(seq, selectedDamageType);
 
   updateDamageDisplay();
   updateDescriptDisplay();
 }
+
 document.addEventListener('DOMContentLoaded', () => {
   const choiceElements = document.querySelectorAll('.choice');
   choiceElements.forEach(choice => {
@@ -198,7 +231,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // 설명 입력 모달
 document.getElementById('save-description-btn-2').addEventListener('click', () => {
-  const seq = parseInt(document.getElementById('location-select').value);
+  let seq;
+  if (reportMode === 'walker') {
+    seq = 0;
+  } else {
+    const select = document.getElementById('location-select');
+    seq = parseInt(select.value);
+  }
   const textarea = document.getElementById('custom-description');
   const description = textarea.value.trim();
 

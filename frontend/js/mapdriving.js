@@ -9,6 +9,7 @@ const BOUNDS_CHANGE_THRESHOLD = 0.002; // 위경도 기준 약 200m
 
 let userMarker = null;
 let autoTracking = true;
+let watchId = null;
 
 // 지도 초기화 함수
 function initializeMap() {
@@ -435,11 +436,6 @@ function handleReport() {
   popup.style.display = "flex";
   setTimeout(() => popup.style.display = "none", 2000);
 }
-
-// 슬라이딩 카드 닫기
-document.querySelector('#info-card .handle').addEventListener('click', () => {
-  document.getElementById('info-card').classList.remove('show');
-});
 
 // 사이드바 토글
 document.getElementById("menu-toggle").addEventListener("click", () => {

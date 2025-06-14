@@ -10,6 +10,7 @@ const BOUNDS_CHANGE_THRESHOLD = 0.002; // 위경도 기준 약 200m
 let userMarker = null;
 let autoTracking = true;
 let userLatLng = null; // 전역 사용자 위치 변수
+let watchId = null;
 
 localStorage.clear();
 
@@ -432,7 +433,7 @@ async function goToWalkerReport() {
     localStorage.setItem('drivingMarkers', JSON.stringify(positions));
     localStorage.setItem('reportMode', 'walker');
 
-    window.location.href = "reportwalker.html";
+    window.location.href = "report.html";
 
   } catch {
     alert("로그인이 필요합니다.");
