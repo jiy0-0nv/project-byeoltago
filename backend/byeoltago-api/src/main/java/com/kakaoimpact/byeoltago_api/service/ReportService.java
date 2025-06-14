@@ -16,6 +16,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -39,11 +41,19 @@ public class ReportService {
 
         // 유저 아이디
         long currentUserId = request.getUserId();
+
         // 타임스탬프
-        Long currentTime = request.getTimestamp();
-        if (currentTime == null) {
-            currentTime = System.currentTimeMillis(); // 현재 시간으로 설정
+        Long currentTime = null;
+        if (request.getTimestamp() != null) {
+            try {
+                currentTime = Instant.parse(request.getTimestamp()).toEpochMilli();
+            } catch (DateTimeParseException e) {
+                currentTime = System.currentTimeMillis();
+            }
+        } else {
+            currentTime = System.currentTimeMillis(); // fallback
         }
+
         // 이미지 경로
         String imagePath = null;
 
