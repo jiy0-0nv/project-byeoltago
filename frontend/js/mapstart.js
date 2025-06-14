@@ -3,15 +3,13 @@ import { API_BASE_URL } from './config.js';
 const mapContainer = document.getElementById('map');
 const defaultCenter = new kakao.maps.LatLng(37.55445080992788, 126.93453008736239);
 
-const geocoder = new kakao.maps.services.Geocoder();
-
 let map;
 let lastBounds = null;
 const BOUNDS_CHANGE_THRESHOLD = 0.002; // 위경도 기준 약 200m
 
-let watchId = null;
 let userMarker = null;
 let autoTracking = true;
+let userLatLng = null; // 전역 사용자 위치 변수
 
 localStorage.clear();
 
@@ -78,14 +76,14 @@ function startTracking() {
     (position) => {
       const lat = position.coords.latitude;
       const lng = position.coords.longitude;
-      const latlng = new kakao.maps.LatLng(lat, lng);
+      userLatLng = new kakao.maps.LatLng(lat, lng);
 
       // 기존 마커 제거
       if (userMarker) userMarker.setMap(null);
 
       // 현재 위치 마커 생성 (파란 점)
       userMarker = new kakao.maps.Circle({
-        center: latlng,
+        center: userLatLng,
         radius: 10,
         strokeWeight: 0,
         fillColor: '#3498db',
@@ -94,7 +92,7 @@ function startTracking() {
       });
 
       if (autoTracking) {
-        map.setCenter(latlng);
+        map.setCenter(userLatLng);
       }
     },
     (error) => console.error('위치 추적 실패:', error),
@@ -402,12 +400,26 @@ async function goToWalkerReport() {
 
     if (!res.ok) throw new Error();
 
-    // 현재 위치 가져오기 (latlng 정의 필요)
-    if (typeof latlng === 'undefined') {
+    // 현재 위치 가져오기
+    let latlng = userLatLng;
+
+    if (!latlng) {
+      // fallback: 즉시 geolocation 호출
+      const pos = await new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(
+          resolve,
+          reject,
+          { enableHighAccuracy: true, timeout: 5000 }
+        );
+      });
+
+      latlng = new kakao.maps.LatLng(pos.coords.latitude, pos.coords.longitude);
+    }
+
+    if (!latlng) {
       alert("현재 위치를 가져올 수 없습니다.");
       return;
     }
-
     const positions = JSON.parse(localStorage.getItem('drivingMarkers') || '[]');
     const now = new Date();
     positions.push({
