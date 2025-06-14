@@ -35,7 +35,10 @@ function handleLogin(event) {
         return res.json();
       })
       .then(data => {
-        console.log(" 로그인 성공! 응답 데이터:", data);
+        // 로그인 성공 후 1초 후 페이지 이동
+        setTimeout(() => {
+          window.location.href = "mapstart.html";
+        }, 1000);
       })
       .catch(err => {
         console.error("Login failed:", err);
