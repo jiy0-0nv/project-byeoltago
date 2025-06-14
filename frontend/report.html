@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>주행 후 신고화면</title>
+  <title>별타고 - 도로 신고하기</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" href="imgs/logo2.png" type="image/x-icon">
   <link rel="stylesheet" href="css/report.css">
@@ -10,14 +10,18 @@
 </head>
 <body>
   <div class="app-container">
+    <!-- 헤더 -->
+    <header class="header">
+        <button class="back-btn" onclick="goBack()">←</button>
+        <div class="header-title"> 도로 신고하기</div>
+        <button class="home-btn" onclick="confirmHomeNavigation()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2L2 7.5V22H10V16H14V22H22V7.5L12 2Z" fill="white"/>
+            </svg>
+        </button>
+    </header>
     <!-- 지도 영역 -->
     <div id="map-container">
-      <button class="back-btn" onclick="goBack()">←</button>
-      <button class="home-btn" onclick="confirmHomeNavigation()">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M12 2L2 7.5V22H10V16H14V22H22V7.5L12 2Z" fill="white"/>
-        </svg>
-      </button>
       <div id="map"></div>
     </div>
 
@@ -145,7 +149,7 @@
     }
 
     function confirmHomeNavigation() {
-      const confirmed = confirm("신고를 취소하고 홈으로 이동하겠습니까?");
+      const confirmed = confirm("신고를 취소하고 홈으로 이동할까요?");
       if (confirmed) {
         window.location.href = "mapstart.html";
       }

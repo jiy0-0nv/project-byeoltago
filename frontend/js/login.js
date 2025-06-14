@@ -37,7 +37,14 @@ function handleLogin(event) {
       .then(data => {
         // 로그인 성공 후 1초 후 페이지 이동
         setTimeout(() => {
-          window.location.href = "mapstart.html";
+          const mode = localStorage.getItem('reportMode');
+          const redirect = localStorage.getItem('redirect');
+      
+          if (mode === 'driver' && redirect === 'driver-report') {
+            window.location.href = "report.html";
+          } else {
+            window.location.href = "mapstart.html";
+          }
         }, 1000);
       })
       .catch(err => {

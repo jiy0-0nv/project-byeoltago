@@ -16,9 +16,39 @@ body {
     height: 100vh;
 }
 
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 12px;
+    border-bottom: 1px solid #eee;
+}
+  
+.header-title {
+    flex: 1;
+    text-align: center;
+    font-size: 16px;
+    font-weight: bold;
+}
+  
+.back-btn,
+.home-btn {
+    width: 36px;
+    height: 36px;
+    background-color: #efc327;
+    color: white;
+    font-size: 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 #map-container {
     position: relative;
-    height: 50%;
+    height: 40%;
 }
 
 #map {
@@ -99,42 +129,6 @@ select {
 .arrow-button img {
     width: 24px;
     height: 24px;
-}
-
-/* 뒤로 가기 버튼 */
-.back-btn {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    width: 36px;
-    height: 36px;
-    background-color: #efc327;
-    color: white;
-    font-size: 16px;
-    border: none;
-    border-radius: 6px;
-    z-index: 3000;
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-.home-btn {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    width: 36px;
-    height: 36px;
-    background-color: #efc327;
-    color: white;
-    font-size: 16px;
-    border: none;
-    border-radius: 6px;
-    z-index: 3000;
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
 }
 
 .section {

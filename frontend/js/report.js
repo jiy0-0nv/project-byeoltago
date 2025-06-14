@@ -1,6 +1,10 @@
 import { API_BASE_URL } from './config.js';
 
+const reportMode = localStorage.getItem('reportMode') || 'driving';
 const markerPositions = JSON.parse(localStorage.getItem('drivingMarkers') || '[]');
+if (reportMode === 'walker') {
+  markerPositions = markerPositions.filter(m => m.seq === 0);
+}
 const container = document.getElementById('map');
 
 let map;
@@ -40,14 +44,15 @@ function createMap(centerLat, centerLng) {
       map: map,
       image: pinImage
     });
-
-    const markerContent = `<div style="background:#f1c40f; color:#fff; padding:4px 8px; border-radius:20px; font-weight:bold;">${position.seq ?? idx + 1}</div>`;
-    const customOverlay = new kakao.maps.CustomOverlay({
-      position: latlng,
-      content: markerContent,
-      yAnchor: 1
-    });
-    customOverlay.setMap(map);
+    if (reportMode === 'driving') {
+      const markerContent = `<div style="background:#f1c40f; color:#fff; padding:4px 8px; border-radius:20px; font-weight:bold;">${position.seq ?? idx + 1}</div>`;
+      const customOverlay = new kakao.maps.CustomOverlay({
+        position: latlng,
+        content: markerContent,
+        yAnchor: 1
+      });
+      customOverlay.setMap(map);
+  }
   });
 
   // 전체 bounds로 조정
@@ -74,7 +79,6 @@ if (markerPositions.length > 0) {
 }
 
 function populateLocationSelect() {
-  const markerPositions = JSON.parse(localStorage.getItem('drivingMarkers') || '[]');
   const select = document.getElementById('location-select');
   select.innerHTML = '';
 
@@ -256,7 +260,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const reports = JSON.parse(localStorage.getItem('heldReports') || '[]');
 
     if (reports.length === 0) {
-      const confirmed = confirm("신고할 정보가 없습니다. 주행을 종료하고 홈으로 이동할까요?");
+      const confirmed = confirm("신고할 정보가 없습니다. 신고를 취소하고 홈으로 이동할까요?");
       if (confirmed) {
         window.location.href = "mapstart.html";
       }

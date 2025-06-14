@@ -388,3 +388,45 @@ document.getElementById("carousel-next").addEventListener("click", () => {
   currentSlide = Math.min(totalSlides - 1, currentSlide + 1);
   updateCarousel();
 });
+
+function startRide() {
+  window.location.href = "mapdriving.html";
+}
+
+async function goToWalkerReport() {
+  try {
+    const res = await fetch(`${API_BASE_URL}/auth/check`, {
+      method: 'GET',
+      credentials: 'include',
+    });
+
+    if (!res.ok) throw new Error();
+
+    // 현재 위치 가져오기 (latlng 정의 필요)
+    if (typeof latlng === 'undefined') {
+      alert("현재 위치를 가져올 수 없습니다.");
+      return;
+    }
+
+    const positions = JSON.parse(localStorage.getItem('drivingMarkers') || '[]');
+    const now = new Date();
+    positions.push({
+      lat: latlng.getLat(),
+      lng: latlng.getLng(),
+      seq: 0,
+      timestamp: now.toISOString()
+    });
+
+    localStorage.setItem('drivingMarkers', JSON.stringify(positions));
+    localStorage.setItem('reportMode', 'walker');
+
+    window.location.href = "reportwalker.html";
+
+  } catch {
+    alert("로그인이 필요합니다.");
+    window.location.href = "login.html";
+  }
+}
+
+document.getElementById('start-btn')?.addEventListener('click', startRide);
+document.getElementById('report-btn')?.addEventListener('click', goToWalkerReport);

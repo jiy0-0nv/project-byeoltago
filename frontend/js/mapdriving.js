@@ -4,11 +4,9 @@ import { API_BASE_URL } from './config.js';
 const mapContainer = document.getElementById('map');
 const defaultCenter = new kakao.maps.LatLng(37.55445080992788, 126.93453008736239);
 let map;
-let marker;
 let lastBounds = null;
 const BOUNDS_CHANGE_THRESHOLD = 0.002; // 위경도 기준 약 200m
 
-let watchId = null;
 let userMarker = null;
 let autoTracking = true;
 
@@ -450,6 +448,22 @@ document.getElementById("menu-toggle").addEventListener("click", () => {
 
 // 주행 종료 이동
 function endRide() {
+  localStorage.setItem('reportMode', 'driver');
+
+  const cookies = document.cookie
+    .split('; ')
+    .reduce((acc, cur) => {
+      const [key, val] = cur.split('=');
+      acc[key] = val;
+      return acc;
+    }, {});
+
+  if (!cookies['byeoltago-jwt']) {
+    alert("로그인 정보가 만료되었습니다. 로그인 페이지로 이동합니다.");
+    localStorage.setItem('redirect', 'driver-report');
+    window.location.href = "login.html";
+    return;
+  }
   window.location.href = "report.html";
 }
 
