@@ -41,6 +41,12 @@
         </div>
       </div>
 
+      <div class="info-row" id="custom-description-row" style="display:none">
+        <div class="info-label">📝 설명 입력</div>
+        <div class="info-value">
+          <textarea id="custom-description" rows="3" placeholder="상세 설명을 입력해주세요 (선택사항)"></textarea>
+        </div>
+      </div>
       <div class="info-row photo-preview">
         <div class="info-label">📸 사진(선택사항)</div>
       </div>
@@ -96,7 +102,7 @@
       document.getElementById('modal-overlay').classList.remove("show");
       document.getElementById('report-modal').classList.remove("show");
     }
-    
+
     function goBack() {
       window.history.back();
     }

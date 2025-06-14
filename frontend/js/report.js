@@ -10,20 +10,20 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const testMarkers = [
       {
-        lat: 37.56577,
-        lng: 126.9368989,
+        lat: 37.565572,
+        lng: 126.930062,
         seq: 1,
         timestamp: new Date().toISOString()
       },
       {
         lat: 37.564,
-        lng: 126.93500,
+        lng: 126.930700,
         seq: 2,
         timestamp: new Date().toISOString()
       },
       {
-        lat: 37.564800,
-        lng: 126.9300,
+        lat: 37.561001,
+        lng: 126.932563,
         seq: 3,
         timestamp: new Date().toISOString()
       }
@@ -135,10 +135,17 @@ function updateDamageDisplay() {
     damageDisplay.textContent = match.damageType;
     damageDisplay.style.color = '#333';
     damageDisplay.style.fontWeight = 'bold';
+    if (match.damageType === "직접 입력") {
+      document.getElementById("custom-description-row").style.display = "flex";
+      document.getElementById("custom-description").value = match.description || "";
+    } else {
+      document.getElementById("custom-description-row").style.display = "none";
+    }
   } else {
     damageDisplay.textContent = '(종류 선택)';
     damageDisplay.style.color = 'gray';
     damageDisplay.style.fontWeight = 'normal';
+    document.getElementById("custom-description-row").style.display = "none";
   }
 }
 
@@ -156,29 +163,37 @@ document.addEventListener('DOMContentLoaded', () => {
   updateDamageDisplay();
 });
 
+// localStorage에 작성 중 데이터 보관
 function holdReportData(seq, damageType) {
   const reports = JSON.parse(localStorage.getItem('heldReports') || '[]');
   const marker = markerPositions.find(m => m.seq === seq);
   if (!marker) return;
 
   const filtered = reports.filter(r => r.seq !== seq); // 기존 같은 seq 제거
+  const description = damageType === "직접 입력"
+      ? document.getElementById("custom-description").value.trim()
+      : null;
+  
   const newReport = {
     seq: seq,
     lat: marker.lat,
     lng: marker.lng,
     timestamp: marker.timestamp,
-    damageType: damageType
+    damageType: damageType,
+    description: description
   };
   filtered.push(newReport); // 새 항목 추가
   localStorage.setItem('heldReports', JSON.stringify(filtered));
 }
 
+// 결함 종류 선택 모달
 function selectChoice(elem) {
   const damage = elem.innerText.trim();
   selectedDamageType = damage;
   closeModal();
 
   const seq = parseInt(document.getElementById('location-select').value);
+  
   holdReportData(seq, selectedDamageType);
 
   updateDamageDisplay();
@@ -234,6 +249,9 @@ document.addEventListener('DOMContentLoaded', () => {
       formData.append('longitude', report.lng);
       formData.append('timestamp', report.timestamp);
       formData.append('typeId', types[report.damageType]);
+      if (report.description) {
+        formData.append('description', report.description);
+      }
 
       // localStorage에 저장된 이미지가 있다면 추가
       const imageKey = `image_${report.seq}`;

@@ -287,3 +287,12 @@ select {
     padding: 10px 0;
     text-align: center;
 }
+
+#custom-description{
+    border-radius: 6px;
+    border: none;
+    font-size: 14px;
+    font-family: 'Pretendard-Regular', 'Segoe UI', sans-serif;
+    height: 28px;
+    width: 250px;
+}
