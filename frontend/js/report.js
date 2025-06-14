@@ -1,54 +1,256 @@
-  // 지도 생성
-  const mapContainer = document.getElementById('map');
-  const mapOption = {
-    center: new kakao.maps.LatLng(37.56461040983631, 126.93610015875485),
+import { API_BASE_URL } from './config.js';
+
+// 테스트용 마커 데이터 3개 추가
+document.addEventListener('DOMContentLoaded', () => {
+  const reportBtn = document.getElementById('testdata');
+  if (!reportBtn) return;
+  reportBtn.addEventListener('click', () => {
+    localStorage.clear();
+    alert("로컬 스토리지 초기화됨. 테스트 데이터가 추가되었습니다.");
+    
+    const testMarkers = [
+      {
+        lat: 37.56577,
+        lng: 126.9368989,
+        seq: 1,
+        timestamp: new Date().toISOString()
+      },
+      {
+        lat: 37.564,
+        lng: 126.93500,
+        seq: 2,
+        timestamp: new Date().toISOString()
+      },
+      {
+        lat: 37.564800,
+        lng: 126.9300,
+        seq: 3,
+        timestamp: new Date().toISOString()
+      }
+    ];
+    
+    localStorage.setItem('drivingMarkers', JSON.stringify(testMarkers));
+    location.reload();
+  });
+});
+
+const markerPositions = JSON.parse(localStorage.getItem('drivingMarkers') || '[]');
+const container = document.getElementById('map');
+
+let map;
+const path = markerPositions.map(pos => new kakao.maps.LatLng(pos.lat, pos.lng));
+
+function createMap(centerLat, centerLng) {
+  const options = {
+    center: new kakao.maps.LatLng(centerLat, centerLng),
     level: 4
   };
-  const map = new kakao.maps.Map(mapContainer, mapOption);
+  map = new kakao.maps.Map(container, options);
 
-  const marker = new kakao.maps.Marker({
-    position: map.getCenter(),
-    map: map
+  // Polyline 그리기
+  if (path.length > 1) {
+    const polyline = new kakao.maps.Polyline({
+      path: path,
+      strokeWeight: 5,
+      strokeColor: '#FF6600',
+      strokeOpacity: 0.8,
+      strokeStyle: 'solid'
+    });
+    polyline.setMap(map);
+  }
+
+  // 마커 + 번호 오버레이
+  const pinImage = new kakao.maps.MarkerImage(
+    "imgs/flag.png",
+    new kakao.maps.Size(40, 40),
+    { offset: new kakao.maps.Point(20, 40) }
+  );
+
+  markerPositions.forEach((position, idx) => {
+    const latlng = new kakao.maps.LatLng(position.lat, position.lng);
+    
+    const marker = new kakao.maps.Marker({
+      position: latlng,
+      map: map,
+      image: pinImage
+    });
+
+    const markerContent = `<div style="background:#f1c40f; color:#fff; padding:4px 8px; border-radius:20px; font-weight:bold;">${position.seq ?? idx + 1}</div>`;
+    const customOverlay = new kakao.maps.CustomOverlay({
+      position: latlng,
+      content: markerContent,
+      yAnchor: 1
+    });
+    customOverlay.setMap(map);
   });
 
-  kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
-    const latlng = mouseEvent.latLng;
-    marker.setPosition(latlng);
+  // 전체 bounds로 조정
+  if (path.length > 1) {
+    const bounds = new kakao.maps.LatLngBounds();
+    path.forEach(point => bounds.extend(point));
+    map.setBounds(bounds, 50);
+  }
+}
+
+if (markerPositions.length > 0) {
+  // 첫 마커를 기준으로 지도 초기화
+  createMap(markerPositions[0].lat, markerPositions[0].lng);
+} else if (navigator.geolocation) {
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      createMap(position.coords.latitude, position.coords.longitude);
+    },
+    () => createMap(37.5495, 126.9425),
+    { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+  );
+} else {
+  createMap(37.5495, 126.9425);
+}
+
+function populateLocationSelect() {
+  const markerPositions = JSON.parse(localStorage.getItem('drivingMarkers') || '[]');
+  const select = document.getElementById('location-select');
+  select.innerHTML = '';
+
+  const uniqueSeqs = [...new Set(markerPositions.map(m => m.seq))].sort((a, b) => a - b);
+  uniqueSeqs.forEach(seq => {
+    const option = document.createElement('option');
+    option.value = seq;
+    option.textContent = seq;
+    select.appendChild(option);
   });
+}
 
-  // 결함 선택 토글
-  function selectChoice(el) {
-    document.querySelectorAll('.choice').forEach(c => c.classList.remove('active'));
-    el.classList.add('active');
+function updateDamageDisplay() {
+  const select = document.getElementById('location-select');
+  const damageDisplay = document.getElementById('damage-display');
+  if (!select || !damageDisplay) return;
+
+  const selectedSeq = parseInt(select.value);
+  const reports = JSON.parse(localStorage.getItem('heldReports') || '[]');
+
+  const match = reports.find(r => r.seq === selectedSeq);
+
+  if (match) {
+    damageDisplay.textContent = match.damageType;
+    damageDisplay.style.color = '#333';
+    damageDisplay.style.fontWeight = 'bold';
+  } else {
+    damageDisplay.textContent = '(종류 선택)';
+    damageDisplay.style.color = 'gray';
+    damageDisplay.style.fontWeight = 'normal';
   }
-  function goNextPage() {
-    window.location.href = "afterreport.html";  // 원하는 페이지로 이동
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  populateLocationSelect();
+
+  const select = document.getElementById('location-select');
+  if (select) {
+    select.addEventListener('change', () => {
+      updateDamageDisplay();
+    });
   }
-  function placeCustomDangerMarkers(count = 40) { //마커 생성 수 조정가능 
-      const bounds = map.getBounds();
-      const sw = bounds.getSouthWest();
-      const ne = bounds.getNorthEast();
 
-      const icons = [
-        "imgs/marker-pin-01.png", // 초록
-        "imgs/marker-pin-02.png", // 주황
-        "imgs/marker-pin-03.png"  // 빨강
-      ] ;
-  for (let i = 0; i < count; i++) {
-        const lat = Math.random() * (ne.getLat() - sw.getLat()) + sw.getLat();
-        const lng = Math.random() * (ne.getLng() - sw.getLng()) + sw.getLng();
-        const icon = icons[Math.floor(Math.random() * icons.length)];
+  // 초기 상태 반영
+  updateDamageDisplay();
+});
 
-        const markerImage = new kakao.maps.MarkerImage(
-          icon,
-          new kakao.maps.Size(40, 40),
-          { offset: new kakao.maps.Point(20, 40) }
-        );
+function holdReportData(seq, damageType) {
+  const reports = JSON.parse(localStorage.getItem('heldReports') || '[]');
+  const marker = markerPositions.find(m => m.seq === seq);
+  if (!marker) return;
 
-        const marker = new kakao.maps.Marker({
-          position: new kakao.maps.LatLng(lat, lng),
-          map: map,
-          image: markerImage
+  const filtered = reports.filter(r => r.seq !== seq); // 기존 같은 seq 제거
+  const newReport = {
+    seq: seq,
+    lat: marker.lat,
+    lng: marker.lng,
+    timestamp: marker.timestamp,
+    damageType: damageType
+  };
+  filtered.push(newReport); // 새 항목 추가
+  localStorage.setItem('heldReports', JSON.stringify(filtered));
+}
+
+function selectChoice(elem) {
+  const damage = elem.innerText.trim();
+  selectedDamageType = damage;
+  closeModal();
+
+  const seq = parseInt(document.getElementById('location-select').value);
+  holdReportData(seq, selectedDamageType);
+
+  updateDamageDisplay();
+
+  alert(`결함 저장됨: 위치 ${seq}, 종류 ${selectedDamageType}`);
+}
+document.addEventListener('DOMContentLoaded', () => {
+  const choiceElements = document.querySelectorAll('.choice');
+  choiceElements.forEach(choice => {
+    choice.addEventListener('click', () => {
+      selectChoice(choice);
+    });
+  });
+});
+
+if (navigator.geolocation) {
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      createMap(position.coords.latitude, position.coords.longitude);
+    },
+    () => createMap(37.5495, 126.9425),
+    { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+  );
+} else {
+  createMap(37.5495, 126.9425);
+}
+
+
+document.addEventListener('DOMContentLoaded', () => {
+  const reportBtn = document.getElementById('submit-report');
+  if (!reportBtn) return;
+
+  reportBtn.addEventListener('click', async () => {
+    const reports = JSON.parse(localStorage.getItem('heldReports') || '[]');
+
+    if (reports.length === 0) {
+      alert("신고할 정보가 없습니다.");
+      return;
+    }
+
+    for (const report of reports) {
+      const formData = new FormData();
+
+      formData.append('lat', report.latitude);
+      formData.append('lng', report.longitude);
+      formData.append('timestamp', report.timestamp);
+      formData.append('damageType', report.type_id);
+
+      // localStorage에 저장된 이미지가 있다면 추가
+      const imageKey = `image_${report.seq}`;
+      const imageDataUrl = localStorage.getItem(imageKey);
+      if (imageDataUrl) {
+        const blob = await (await fetch(imageDataUrl)).blob();
+        formData.append('image', blob, `image_${report.seq}.png`);
+      }
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/auth/reports/report`, {
+          method: 'POST',
+          body: formData
         });
+
+        if (!response.ok) {
+          console.error(`신고 실패 (seq: ${report.seq})`, await response.text());
+        } else {
+          console.log(`신고 완료 (seq: ${report.seq})`);
+        }
+      } catch (err) {
+        console.error(`네트워크 오류 (seq: ${report.seq})`, err);
       }
     }
+
+    alert("모든 신고가 전송되었습니다.");
+  });
+})

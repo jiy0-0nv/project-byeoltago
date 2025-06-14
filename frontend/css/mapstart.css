@@ -1,0 +1,409 @@
+@font-face {
+  font-family: 'Pretendard-Regular';
+  src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background-color: #f5f5f5;
+  display: flex;
+  justify-content: center;
+  font-family: 'Pretendard-Regular', 'Segoe UI', sans-serif;
+}
+
+.app-container {
+  width: 100%;
+  max-width: 390px;
+  height: 100%;
+  margin: 0 auto;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  background-color: white;
+  position: relative;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.logo-area {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+  padding: 10px 0;
+}
+
+.logo-img {
+  height: 40px;
+  object-fit: contain;
+}
+
+#map-container {
+  flex: 1;
+  position: relative;
+  width: 100%;
+  height: 500px;
+  border-radius: 0;
+  overflow: hidden;
+  margin-left: 0;
+  padding-left: 0;
+}
+
+#map {
+  width: 100%;
+  height: 100%;
+  margin-left: 0;
+  padding-left: 0;
+}
+
+/* ✅ 버튼 가로 정렬용 래퍼 */
+.button-row {
+  position: absolute;
+  bottom: 20px;
+  left: 5%;
+  width: 90%;
+  display: flex;
+  justify-content: space-between;
+  gap: 4%;
+  z-index: 2;
+}
+
+/* 공통 버튼 스타일 */
+.map-button {
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  padding: 10px 0;
+  text-align: center;
+  flex: 1;
+}
+
+/* 왼쪽: 주행 시작 버튼 */
+.start-btn {
+  background-color: #efc327;
+  color: black;
+  font-family: 'Pretendard-Regular', 'Segoe UI', sans-serif;
+}
+
+/* 오른쪽: 도로 신고 버튼 */
+.report-btn {
+  background-color: #4b4a4a;
+  color: white;
+  font-family: 'Pretendard-Regular', 'Segoe UI', sans-serif;
+}
+
+/* 위치 선택 버튼 */
+.select-button {
+  left: 60px;
+  background-color: #6dbf2f;
+  color: white;
+}
+
+#clickLatlng {
+  margin-top: 10px;
+  font-size: 16px;
+  background-color: #ffffff;
+  padding: 8px 16px;
+  border-radius: 8px;
+  color: #333;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+#sidebar {
+  position: absolute;
+  top: 0;
+  right: -999px;
+  width: 110px;
+  height: 100%;
+  background-color: #f8f8f8;
+  color: black;
+  padding: 20px;
+  box-shadow: -2px 0 5px rgba(0,0,0,0.3);
+  transition: right 0.3s ease;
+  z-index: 999;
+}
+#sidebar.open {
+  right: 0;
+}
+
+#menu-toggle {
+  position: absolute;
+  top: 28px;
+  right: 10px;
+  width: 36px;
+  height: 36px;
+  background-color: #efc327;
+  color: white;
+  font-size: 20px;
+  border: none;
+  border-radius: 6px;
+  z-index: 3000;
+  cursor: pointer;
+}
+
+.back-btn {
+  position: absolute;
+  top: 28px;
+  left: 10px;
+  width: 36px;
+  height: 36px;
+  background-color: #efc327;
+  color: white;
+  font-size: 16px;
+  border: none;
+  border-radius: 6px;
+  z-index: 3000;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#info-card {
+  position: absolute;
+  bottom: -300px;
+  left: 0;
+  right: 0;
+  background: white;
+  border-radius: 20px 20px 0 0;
+  padding: 20px;
+  box-shadow: 0 -2px 10px rgba(0,0,0,0.2);
+  transition: bottom 0.4s ease;
+  z-index: 1000;
+}
+
+#info-card.show {
+  bottom: 0;
+}
+
+#info-card .handle {
+  width: 40px;
+  height: 5px;
+  background: #ccc;
+  border-radius: 5px;
+  margin: 0 auto 10px;
+}
+
+#info-card h3 {
+  margin: 5px 0;
+  font-size: 18px;
+}
+
+#info-card p {
+  font-size: 14px;
+  color: #555;
+}
+
+#info-card .images {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  overflow-x: auto;
+}
+
+#info-card .images img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.icon-img {
+  height: 20px;
+  width: 20px;
+  vertical-align: middle;
+  margin-right: 6px;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #efc327;
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  text-align: left;
+  font-weight: bold;
+}
+
+.menu-item .menu-icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+
+#center-user-button {
+  position: absolute;
+  bottom: 70px;
+  left: 20px;
+  z-index: 10;
+  background-color: #fff;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 20px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4); /* 어두운 배경 */
+  z-index: 999;
+  display: none; /* 기본 숨김 */
+}
+
+.modal-overlay.show {
+  display: block;
+}
+
+.modal {
+  position: fixed;
+  bottom: -100%;
+  left: 0;
+  width: 100%;
+  background: #fff;
+  box-shadow: 0 -2px 10px rgba(0,0,0,0.2);
+  transition: bottom 0.3s ease-out;
+  z-index: 1000;
+  padding: 16px;
+}
+.modal.show {
+  bottom: 0;
+}
+.modal-handle {
+  display: block;
+  margin: 0 auto 8px;
+  width: 40px;
+  height: 4px;
+  background: #ccc;
+  border-radius: 2px;
+}
+.images img {
+  width: 100%;
+  margin-top: 10px;
+  border-radius: 6px;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+#modal-icon {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+}
+
+#modal-title {
+  flex: 1;
+  font-size: 16px;
+  margin: 0;
+  word-break: break-word;
+}
+
+.carousel {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  overflow: hidden;
+}
+
+.carousel-track {
+  display: flex;
+  transition: transform 0.3s ease-in-out;
+  width: 100%;
+  overflow: hidden;
+}
+
+.carousel-track img {
+  flex-shrink: 0;
+  width: 200px;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-right: 10px;
+}
+
+#carousel-prev, #carousel-next {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+
+.pill-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.pill {
+  border-radius: 12px;
+  padding: 6px 12px;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.pill-green {
+  background-color: #e0f7e9;
+  color: #1b5e20;
+}
+
+.pill-yellow {
+  background-color: #fff8e1;
+  color: #f57f17;
+}
+
+.pill-red {
+  background-color: #fdecea;
+  color: #c62828;
+}
+
+.pill-gray {
+  background-color: #f2f2f2;
+  color: #666666;
+}
+
+.pill-blue {
+  background-color: #e3f2fd;
+  color: #1565c0;
+}
+
+.pill-default {
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+.circle-button {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.circle-button:hover {
+  background: #f0f0f0;
+}
+.icon {
+  width: 24px;
+  height: 24px;
+}
