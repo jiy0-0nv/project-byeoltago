@@ -1,39 +1,5 @@
 import { API_BASE_URL } from './config.js';
 
-// 테스트용 마커 데이터 3개 추가
-document.addEventListener('DOMContentLoaded', () => {
-  const reportBtn = document.getElementById('testdata');
-  if (!reportBtn) return;
-  reportBtn.addEventListener('click', () => {
-    localStorage.clear();
-    alert("로컬 스토리지 초기화됨. 테스트 데이터가 추가되었습니다.");
-    
-    const testMarkers = [
-      {
-        lat: 37.565572,
-        lng: 126.930062,
-        seq: 1,
-        timestamp: new Date().toISOString()
-      },
-      {
-        lat: 37.564,
-        lng: 126.930700,
-        seq: 2,
-        timestamp: new Date().toISOString()
-      },
-      {
-        lat: 37.561001,
-        lng: 126.932563,
-        seq: 3,
-        timestamp: new Date().toISOString()
-      }
-    ];
-    
-    localStorage.setItem('drivingMarkers', JSON.stringify(testMarkers));
-    location.reload();
-  });
-});
-
 const markerPositions = JSON.parse(localStorage.getItem('drivingMarkers') || '[]');
 const container = document.getElementById('map');
 
@@ -142,6 +108,29 @@ function updateDamageDisplay() {
   }
 }
 
+function updateDescriptDisplay() {
+  const select = document.getElementById('location-select');
+  const descriptDisplay = document.getElementById('description-display');
+  if (!select || !descriptDisplay) return;
+
+  const selectedSeq = parseInt(select.value);
+  const reports = JSON.parse(localStorage.getItem('heldReports') || '[]');
+
+  const match = reports.find(r => r.seq === selectedSeq);
+
+  if (match) {
+    descriptDisplay.textContent = match.description
+      ? (match.description.length > 10
+          ? match.description.slice(0, 10) + '...'
+          : match.description)
+      : '';
+    descriptDisplay.style.color = '#333';
+    descriptDisplay.style.fontSize = '12px';
+  } else {
+    descriptDisplay.textContent = '';
+  }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   populateLocationSelect();
 
@@ -149,11 +138,13 @@ document.addEventListener('DOMContentLoaded', () => {
   if (select) {
     select.addEventListener('change', () => {
       updateDamageDisplay();
+      updateDescriptDisplay();
     });
   }
 
   // 초기 상태 반영
   updateDamageDisplay();
+  updateDescriptDisplay();
 });
 
 // localStorage에 작성 중 데이터 보관
@@ -162,10 +153,10 @@ function holdReportData(seq, damageType) {
   const marker = markerPositions.find(m => m.seq === seq);
   if (!marker) return;
 
-  const filtered = reports.filter(r => r.seq !== seq); // 기존 같은 seq 제거
-  const description = damageType === "직접 입력"
-      ? document.getElementById("custom-description").value.trim()
-      : null;
+  const prevReport = reports.find(r => r.seq === seq);
+  const existingDescription = prevReport?.description ?? null;
+
+  const filtered = reports.filter(r => r.seq !== seq);
   
   const newReport = {
     seq: seq,
@@ -173,7 +164,7 @@ function holdReportData(seq, damageType) {
     lng: marker.lng,
     timestamp: marker.timestamp,
     damageType: damageType,
-    description: description
+    description: existingDescription
   };
   filtered.push(newReport); // 새 항목 추가
   localStorage.setItem('heldReports', JSON.stringify(filtered));
@@ -190,8 +181,7 @@ function selectChoice(elem) {
   holdReportData(seq, selectedDamageType);
 
   updateDamageDisplay();
-
-  alert(`결함 저장됨: 위치 ${seq}, 종류 ${selectedDamageType}`);
+  updateDescriptDisplay();
 }
 document.addEventListener('DOMContentLoaded', () => {
   const choiceElements = document.querySelectorAll('.choice');
@@ -200,6 +190,41 @@ document.addEventListener('DOMContentLoaded', () => {
       selectChoice(choice);
     });
   });
+});
+
+// 설명 입력 모달
+document.getElementById('save-description-btn-2').addEventListener('click', () => {
+  const seq = parseInt(document.getElementById('location-select').value);
+  const textarea = document.getElementById('custom-description');
+  const description = textarea.value.trim();
+
+  const damageType = document.getElementById('damage-display').textContent.trim();
+  if (!damageType || damageType === '(종류 선택)') {
+    alert('결함 종류를 먼저 선택해주세요.');
+    return;
+  }
+
+  const reports = JSON.parse(localStorage.getItem('heldReports') || '[]');
+  const marker = markerPositions.find(m => m.seq === seq);
+  if (!marker) return;
+
+  const filtered = reports.filter(r => r.seq !== seq);
+
+  const newReport = {
+    seq: seq,
+    lat: marker.lat,
+    lng: marker.lng,
+    timestamp: marker.timestamp,
+    damageType: damageType,
+    description: description || null
+  };
+
+  filtered.push(newReport);
+  localStorage.setItem('heldReports', JSON.stringify(filtered));
+
+  closeModal2();
+  updateDamageDisplay();
+  updateDescriptDisplay();
 });
 
 if (navigator.geolocation) {
@@ -231,8 +256,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const reports = JSON.parse(localStorage.getItem('heldReports') || '[]');
 
     if (reports.length === 0) {
-      alert("신고할 정보가 없습니다.");
+      const confirmed = confirm("신고할 정보가 없습니다. 주행을 종료하고 홈으로 이동할까요?");
+      if (confirmed) {
+        window.location.href = "mapstart.html";
+      }
       return;
+    } else {
+      const confirmed = confirm(`총 ${reports.length}건의 결함을 신고합니다. 계속하시겠습니까?`);
+      if (!confirmed) return;
     }
 
     for (const report of reports) {
@@ -272,5 +303,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     alert("모든 신고가 전송되었습니다.");
+    setTimeout(() => {
+      window.location.href = "mapstart.html";
+    }, 1000);
   });
 })

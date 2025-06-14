@@ -13,6 +13,8 @@ let watchId = null;
 let userMarker = null;
 let autoTracking = true;
 
+localStorage.clear();
+
 // 위치 기반 지도 초기화
 function initializeMap() {
   if (navigator.geolocation) {

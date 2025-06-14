@@ -13,7 +13,11 @@
     <!-- 지도 영역 -->
     <div id="map-container">
       <button class="back-btn" onclick="goBack()">←</button>
-      <button id="testdata", class="test-btn" onclick="testdata()">test data 불러오기</button>
+      <button class="home-btn" onclick="confirmHomeNavigation()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2L2 7.5V22H10V16H14V22H22V7.5L12 2Z" fill="white"/>
+        </svg>
+      </button>
       <div id="map"></div>
     </div>
 
@@ -103,6 +107,7 @@
         <div class="info-value">
           <textarea id="custom-description" placeholder="상세 설명을 입력해주세요"></textarea>
         </div>
+        <button id="save-description-btn-2">설명 저장</button>
       </div>
     </div>
   </div>
@@ -121,6 +126,11 @@
     }
 
     function openModal2() {
+    const damageType = document.getElementById('damage-display').textContent.trim();
+    if (!damageType || damageType === '(종류 선택)') {
+      alert('결함 종류를 먼저 선택해주세요.');
+      return;
+    }
       document.getElementById('modal-overlay-2').classList.add("show");
       document.getElementById('report-modal-2').classList.add("show");
     }
@@ -132,6 +142,13 @@
 
     function goBack() {
       window.history.back();
+    }
+
+    function confirmHomeNavigation() {
+      const confirmed = confirm("신고를 취소하고 홈으로 이동하겠습니까?");
+      if (confirmed) {
+        window.location.href = "mapstart.html";
+      }
     }
   </script>
   <script type="module" src="js/report.js"></script>

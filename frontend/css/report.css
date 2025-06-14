@@ -119,12 +119,13 @@ select {
     justify-content: center;
     align-items: center;
 }
-.test-btn {
+.home-btn {
     position: absolute;
     top: 10px;
     right: 10px;
+    width: 36px;
     height: 36px;
-    background-color: #13b0db;
+    background-color: #efc327;
     color: white;
     font-size: 16px;
     border: none;
@@ -253,6 +254,27 @@ select {
     line-height: 1.4;
     overflow: auto;
 }
+
+#save-description-btn-2 {
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    right: 0;
+    width: 100%;
+    margin: 0 auto;
+  
+    background-color: #efc327;
+    color: black;
+    font-family: 'Pretendard-Regular', 'Segoe UI', sans-serif;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    padding: 10px 0;
+    text-align: center;
+    position: static; 
+  }
   
 #location-select {
     width: 100%;
