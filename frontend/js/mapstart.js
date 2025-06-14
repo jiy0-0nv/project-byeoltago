@@ -443,3 +443,20 @@ async function goToWalkerReport() {
 
 document.getElementById('start-btn')?.addEventListener('click', startRide);
 document.getElementById('report-btn')?.addEventListener('click', goToWalkerReport);
+document.getElementById("logout-btn").addEventListener("click", async () => {
+  try {
+    const res = await fetch(`${API_BASE_URL}/auth/logout`, {
+      method: "POST",
+      credentials: "include"
+    });
+    if (res.ok) {
+      alert("로그아웃 되었습니다.");
+      window.location.href = "login.html";
+    } else {
+      alert("로그아웃 실패. 다시 시도해주세요.");
+    }
+  } catch (error) {
+    console.error("Logout error:", error);
+    alert("에러가 발생했습니다. 콘솔 확인 요망");
+  }
+});
