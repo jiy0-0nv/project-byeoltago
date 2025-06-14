@@ -438,24 +438,21 @@ function handleReport() {
 }
 
 // 주행 종료 이동
-function endRide() {
+async function endRide() {
   localStorage.setItem('reportMode', 'driver');
 
-  const cookies = document.cookie
-    .split('; ')
-    .reduce((acc, cur) => {
-      const [key, val] = cur.split('=');
-      acc[key] = val;
-      return acc;
-    }, {});
+  try {
+    const res = await fetch(`${API_BASE_URL}/auth/check`, {
+      method: 'GET',
+      credentials: 'include',
+    });
 
-  if (!cookies['byeoltago-jwt']) {
-    alert("로그인 정보가 만료되었습니다. 로그인 페이지로 이동합니다.");
-    localStorage.setItem('redirect', 'driver-report');
+    if (!res.ok) throw new Error();
+    window.location.href = "report.html";
+  } catch {
+    alert("로그인이 필요합니다.");
     window.location.href = "login.html";
-    return;
   }
-  window.location.href = "report.html";
 }
 
 // 뒤로 가기
