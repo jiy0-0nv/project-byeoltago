@@ -5,10 +5,17 @@
   font-style: normal;
 }
 
+html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+}
 body {
   margin: 0;
   padding: 0;
   height: 100%;
+  overflow: hidden;
   background-color: #f5f5f5;
   display: flex;
   justify-content: center;
@@ -17,21 +24,50 @@ body {
 
 .app-container {
   width: 100%;
-  max-width: 390px;
-  height: 100%;
-  margin: 0 auto;
+  max-width: 100%;
+  height: 100dvh;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
   background-color: white;
   position: relative;
   overflow: hidden;
+  box-sizing: border-box;
+}
+
+.header {
+  position: relative;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 12px;
+  border-bottom: 1px solid #eee;
 }
 
 .logo-area {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+}
+
+/* 뒤로 가기 버튼 */
+.back-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 36px;
+  height: 36px;
+  background-color: #efc327;
+  color: white;
+  font-size: 16px;
+  border: none;
+  border-radius: 6px;
+  z-index: 3000;
+  cursor: pointer;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 10px;
-  padding: 10px 0;
 }
 
 .logo-img {
@@ -50,7 +86,7 @@ body {
   height: 100%;
 }
 
-/* ✅ 주행 종료 버튼 */
+/* 주행 종료 버튼 */
 .map-button.end-btn {
   position: absolute;
   bottom: 20px;
@@ -68,7 +104,7 @@ body {
   z-index: 2;
 }
 
-/* ✅ 신고 오버레이 */
+/* 신고 오버레이 */
 #report-overlay {
   position: absolute;
   top: 0;
@@ -109,13 +145,12 @@ body {
   line-height: 1.6;
   margin: 0;
 }
-
 .overlay-content .highlight {
   color: #ffd700;
   font-weight: bold;
 }
 
-/* ✅ 신고 완료 팝업 */
+/* 신고 완료 팝업 */
 #report-popup {
   position: absolute;
   top: 35%;
@@ -131,116 +166,11 @@ body {
   z-index: 4000;
   font-family: 'Pretendard-Regular', sans-serif;
 }
-
 #report-popup p {
   margin: 0;
   font-size: 15px;
   font-weight: bold;
   text-align: center;
-}
-
-/* ✅ 사이드바 */
-#sidebar {
-  position: absolute;
-  top: 0;
-  right: -999px;
-  width: 110px;
-  height: 100%;
-  background-color: #f8f8f8;
-  color: black;
-  padding: 20px;
-  box-shadow: -2px 0 5px rgba(0,0,0,0.3);
-  transition: right 0.3s ease;
-  z-index: 999;
-}
-
-#sidebar.open {
-  right: 0;
-}
-
-/* ✅ 햄버거 메뉴 버튼 */
-#menu-toggle {
-  position: absolute;
-  top: 28px;
-  right: 10px;
-  width: 36px;
-  height: 36px;
-  background-color: #efc327;
-  color: white;
-  font-size: 20px;
-  border: none;
-  border-radius: 6px;
-  z-index: 3000;
-  cursor: pointer;
-}
-
-/* ✅ 뒤로 가기 버튼 */
-.back-btn {
-  position: absolute;
-  top: 28px;
-  left: 10px;
-  width: 36px;
-  height: 36px;
-  background-color: #efc327;
-  color: white;
-  font-size: 16px;
-  border: none;
-  border-radius: 6px;
-  z-index: 3000;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-/* ✅ 슬라이딩 정보 카드 */
-#info-card {
-  position: absolute;
-  bottom: -300px;
-  left: 0;
-  right: 0;
-  background: white;
-  border-radius: 20px 20px 0 0;
-  padding: 20px;
-  box-shadow: 0 -2px 10px rgba(0,0,0,0.2);
-  transition: bottom 0.4s ease;
-  z-index: 1000;
-}
-
-#info-card.show {
-  bottom: 0;
-}
-
-#info-card .handle {
-  width: 40px;
-  height: 5px;
-  background: #ccc;
-  border-radius: 5px;
-  margin: 0 auto 10px;
-}
-
-#info-card h3 {
-  margin: 5px 0;
-  font-size: 18px;
-}
-
-#info-card p {
-  font-size: 14px;
-  color: #555;
-}
-
-#info-card .images {
-  display: flex;
-  gap: 8px;
-  margin-top: 10px;
-  overflow-x: auto;
-}
-
-#info-card .images img {
-  width: 80px;
-  height: 80px;
-  object-fit: cover;
-  border-radius: 8px;
 }
 
 /* 아이콘 공통 */
@@ -250,27 +180,6 @@ body {
   vertical-align: middle;
   margin-right: 6px;
 }
-
-/* 사이드바 메뉴 */
-.menu-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background-color: #efc327;
-  margin-bottom: 10px;
-  padding: 10px;
-  border-radius: 6px;
-  cursor: pointer;
-  text-align: left;
-  font-weight: bold;
-}
-
-.menu-item .menu-icon {
-  width: 20px;
-  height: 20px;
-  object-fit: contain;
-}
-
 
 #center-user-button {
   position: absolute;
@@ -293,7 +202,6 @@ body {
   z-index: 999;
   display: none; /* 기본 숨김 */
 }
-
 .modal-overlay.show {
   display: block;
 }
@@ -360,7 +268,6 @@ body {
   width: 100%;
   overflow: hidden;
 }
-
 .carousel-track img {
   flex-shrink: 0;
   width: 200px;
@@ -391,32 +298,26 @@ body {
   font-size: 14px;
   white-space: nowrap;
 }
-
 .pill-green {
   background-color: #e0f7e9;
   color: #1b5e20;
 }
-
 .pill-yellow {
   background-color: #fff8e1;
   color: #f57f17;
 }
-
 .pill-red {
   background-color: #fdecea;
   color: #c62828;
 }
-
 .pill-gray {
   background-color: #f2f2f2;
   color: #666666;
 }
-
 .pill-blue {
   background-color: #e3f2fd;
   color: #1565c0;
 }
-
 .pill-default {
   background-color: #f0f0f0;
   color: #333;

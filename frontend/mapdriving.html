@@ -34,23 +34,13 @@
   </div>
   
   <div class="app-container">
-    <!-- 툴바 -->
-    <button id="menu-toggle">☰</button>
-    <button class="back-btn" onclick="goBack()">←</button>
-
-    <div id="sidebar">
-      <img src="imgs/homeicon.svg" alt="홈 아이콘" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 5px;">
-  홈
-      <div class="menu-item">
-        <img src="imgs/communityicon.png" alt="커뮤니티 아이콘" class="menu-icon">
-        커뮤니티
+    <header class="header">
+      <!-- 로고 영역 -->
+      <div class="logo-area">
+        <img src="imgs/logo.png" alt="별타고 로고" class="logo-img">
       </div>
-      <div class="menu-item">내비게이션</div>
-    </div>
-
-    <div class="logo-area">
-      <img src="imgs/logo.png" alt="별타고 로고" class="logo-img">
-    </div>
+      <button class="back-btn" onclick="goBack()">←</button>
+    </header>
 
     <!-- 지도 -->
     <div id="map-container">

@@ -35,17 +35,14 @@ function handleLogin(event) {
         return res.json();
       })
       .then(data => {
-        // 로그인 성공 후 1초 후 페이지 이동
-        setTimeout(() => {
-          const mode = localStorage.getItem('reportMode');
-          const redirect = localStorage.getItem('redirect');
+        const mode = localStorage.getItem('reportMode');
+        const redirect = localStorage.getItem('redirect');
       
-          if (mode === 'driver' && redirect === 'driver-report') {
-            window.location.href = "report.html";
-          } else {
-            window.location.href = "mapstart.html";
-          }
-        }, 1000);
+        if (mode === 'driver' && redirect === 'driver-report') {
+          window.location.href = "report.html";
+        } else {
+          window.location.href = "mapstart.html";
+        }
       })
       .catch(err => {
         console.error("Login failed:", err);

@@ -437,11 +437,6 @@ function handleReport() {
   setTimeout(() => popup.style.display = "none", 2000);
 }
 
-// 사이드바 토글
-document.getElementById("menu-toggle").addEventListener("click", () => {
-  document.getElementById("sidebar").classList.toggle("open");
-});
-
 // 주행 종료 이동
 function endRide() {
   localStorage.setItem('reportMode', 'driver');

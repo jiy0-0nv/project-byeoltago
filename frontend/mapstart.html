@@ -46,32 +46,28 @@
   </div>
 
   <div class="app-container">
-
-    <!-- 툴바 -->
-    <button id="menu-toggle">☰</button>
+    <header class="header">
+      <!-- 로고 영역 -->
+      <div class="logo-area">
+        <img src="imgs/logo.png" alt="별타고 로고" class="logo-img">
+      </div>
+      <!-- 툴바 -->
+      <button id="menu-toggle">☰</button>
+    </header>
 
     <!-- 사이드바 -->
     <div id="sidebar">
       <h3>
-        <img src="imgs/homeicon.svg" alt="홈 아이콘" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 5px;">
-        홈
+        <img src="imgs/homeicon.svg" alt="홈 아이콘" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 5px;"> 홈
       </h3>
-      <div class="menu-item">
-        <img src="imgs/communityicon.png" alt="커뮤니티 아이콘" class="menu-icon">
-        커뮤니티
+      <div class="menu-item" id="menu-community">
+        <img src="imgs/communityicon.png" alt="커뮤니티 아이콘" class="menu-icon"> 커뮤니티
       </div>
       <div class="menu-item">사용 방법</div>
-      <div class="menu-item">
-        <img src="imgs/mypage.png" alt="마이페이지 아이콘" class="menu-icon">
-        내 정보
+      <div class="menu-item" id="menu-mypage">
+        <img src="imgs/mypage.png" alt="마이페이지 아이콘" class="menu-icon"> 내 정보
       </div>
     </div>
-
-    <!-- 로고 영역 -->
-    <div class="logo-area">
-      <img src="imgs/logo.png" alt="별타고 로고" class="logo-img">
-    </div>
-
     <!-- 지도 영역 -->
     <div id="map-container">
       <div id="map"></div>
@@ -93,7 +89,15 @@
       </div>
     </div>
   </div>
-
+  <script>
+    document.getElementById("menu-community").addEventListener("click", () => {
+      alert("서비스 준비중입니다.");
+    });
+  
+    document.getElementById("menu-mypage").addEventListener("click", () => {
+      alert("서비스 준비중입니다.");
+    });
+  </script>
   <script type="module" src="js/mapstart.js"></script>
 </body>
 </html>
