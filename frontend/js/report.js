@@ -206,6 +206,14 @@ if (navigator.geolocation) {
   createMap(37.5495, 126.9425);
 }
 
+const types = {
+  "차도와 구분 어려움":1,
+  "도로 융기":2,
+  "도로 파임":3,
+  "불법 주차":4,
+  "공사 구간":5,
+  "직접 입력":6
+};
 
 document.addEventListener('DOMContentLoaded', () => {
   const reportBtn = document.getElementById('submit-report');
@@ -222,17 +230,17 @@ document.addEventListener('DOMContentLoaded', () => {
     for (const report of reports) {
       const formData = new FormData();
 
-      formData.append('lat', report.latitude);
-      formData.append('lng', report.longitude);
+      formData.append('latitude', report.lat);
+      formData.append('longitude', report.lng);
       formData.append('timestamp', report.timestamp);
-      formData.append('damageType', report.type_id);
+      formData.append('type_id', types[report.damageType]);
 
       // localStorage에 저장된 이미지가 있다면 추가
       const imageKey = `image_${report.seq}`;
       const imageDataUrl = localStorage.getItem(imageKey);
       if (imageDataUrl) {
         const blob = await (await fetch(imageDataUrl)).blob();
-        formData.append('image', blob, `image_${report.seq}.png`);
+        formData.append('image', blob, `image_${report.lat}_${report.lng}_${report.seq}.png`);
       }
 
       try {
