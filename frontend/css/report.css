@@ -233,6 +233,27 @@ select {
     color: #111;
 }
   
+.section2 {
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#custom-description {
+    border-radius: 6px;
+    border: none;
+    font-size: 14px;
+    font-family: 'Pretendard-Regular', 'Segoe UI', 'sans-serif';
+    width: 100%;
+    min-height: 80px;
+    resize: vertical;
+    box-sizing: border-box;
+    padding: 8px;
+    line-height: 1.4;
+    overflow: auto;
+}
+  
 #location-select {
     width: 100%;
     padding: 8px;
@@ -263,7 +284,7 @@ select {
     justify-content: flex-end; /* 우측 정렬 */
 }
   
-.damage-display {
+.data-display {
     line-height: 1.5;
     font-size: 14px;
     color: gray;
@@ -286,13 +307,4 @@ select {
     cursor: pointer;
     padding: 10px 0;
     text-align: center;
-}
-
-#custom-description{
-    border-radius: 6px;
-    border: none;
-    font-size: 14px;
-    font-family: 'Pretendard-Regular', 'Segoe UI', sans-serif;
-    height: 28px;
-    width: 250px;
 }

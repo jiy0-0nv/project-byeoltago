@@ -135,17 +135,10 @@ function updateDamageDisplay() {
     damageDisplay.textContent = match.damageType;
     damageDisplay.style.color = '#333';
     damageDisplay.style.fontWeight = 'bold';
-    if (match.damageType === "직접 입력") {
-      document.getElementById("custom-description-row").style.display = "flex";
-      document.getElementById("custom-description").value = match.description || "";
-    } else {
-      document.getElementById("custom-description-row").style.display = "none";
-    }
   } else {
     damageDisplay.textContent = '(종류 선택)';
     damageDisplay.style.color = 'gray';
     damageDisplay.style.fontWeight = 'normal';
-    document.getElementById("custom-description-row").style.display = "none";
   }
 }
 

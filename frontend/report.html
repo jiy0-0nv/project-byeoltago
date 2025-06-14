@@ -34,27 +34,31 @@
       <div class="info-row">
         <div class="info-label">🚗 결함 종류</div>
         <div class="info-value">
-          <div id="damage-display" class="damage-display">(종류 선택)</div>
+          <div id="damage-display" class="data-display">(종류 선택)</div>
           <button class="arrow-button" onclick="openModal()">
             <img src="imgs/choice.png" alt="선택화살표">
           </button>
         </div>
       </div>
 
-      <div class="info-row" id="custom-description-row" style="display:none">
-        <div class="info-label">📝 설명 입력</div>
-        <div class="info-value">
-          <textarea id="custom-description" rows="3" placeholder="상세 설명을 입력해주세요 (선택사항)"></textarea>
-        </div>
+      <div class="info-row" id="custom-description-row">
+        <div class="info-label">📝 설명 입력 (선택 사항)</div>
+        <div id="description-display" class="data-display"></div>
+        <button class="arrow-button" onclick="openModal2()">
+          <img src="imgs/choice.png" alt="선택화살표">
+        </button>
       </div>
       <div class="info-row photo-preview">
-        <div class="info-label">📸 사진(선택사항)</div>
+        <div class="info-label">📸 사진 (선택사항)</div>
+        <button class="arrow-button">
+          <img src="imgs/choice.png" alt="선택화살표">
+        </button>
       </div>
     </div>
     <button id="submit-report">신고하기</button>
   </div>
 
-  <!-- 모달 -->
+  <!-- 결함 종류 모달 -->
   <div id="modal-overlay" class="modal-overlay">
     <div id="report-modal" class="modal">
       <button class="modal-close" onclick="closeModal()">×</button>
@@ -90,6 +94,19 @@
     </div>
   </div>
 
+  <!-- 설명 입력 모달 -->
+  <div id="modal-overlay-2" class="modal-overlay">
+    <div id="report-modal-2" class="modal">
+      <button class="modal-close" onclick="closeModal2()">×</button>
+      <div class="section2">
+        <div class="section-title">결함에 대한 설명을 입력해주세요.</div>
+        <div class="info-value">
+          <textarea id="custom-description" placeholder="상세 설명을 입력해주세요"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
     let selectedDamageType = null;
 
@@ -101,6 +118,16 @@
     function closeModal() {
       document.getElementById('modal-overlay').classList.remove("show");
       document.getElementById('report-modal').classList.remove("show");
+    }
+
+    function openModal2() {
+      document.getElementById('modal-overlay-2').classList.add("show");
+      document.getElementById('report-modal-2').classList.add("show");
+    }
+
+    function closeModal2() {
+      document.getElementById('modal-overlay-2').classList.remove("show");
+      document.getElementById('report-modal-2').classList.remove("show");
     }
 
     function goBack() {
