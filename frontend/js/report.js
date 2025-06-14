@@ -233,7 +233,7 @@ document.addEventListener('DOMContentLoaded', () => {
       formData.append('latitude', report.lat);
       formData.append('longitude', report.lng);
       formData.append('timestamp', report.timestamp);
-      formData.append('type_id', types[report.damageType]);
+      formData.append('typeId', types[report.damageType]);
 
       // localStorage에 저장된 이미지가 있다면 추가
       const imageKey = `image_${report.seq}`;
