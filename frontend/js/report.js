@@ -1,7 +1,7 @@
 import { API_BASE_URL } from './config.js';
 
 const reportMode = localStorage.getItem('reportMode') || 'driving';
-const markerPositions = JSON.parse(localStorage.getItem('drivingMarkers') || '[]');
+let markerPositions = JSON.parse(localStorage.getItem('drivingMarkers') || '[]');
 if (reportMode === 'walker') {
   markerPositions = markerPositions.filter(m => m.seq === 0);
 }
