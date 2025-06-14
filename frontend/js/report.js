@@ -238,7 +238,8 @@ document.addEventListener('DOMContentLoaded', () => {
       try {
         const response = await fetch(`${API_BASE_URL}/auth/reports/report`, {
           method: 'POST',
-          body: formData
+          body: formData,
+          credentials: 'include'
         });
 
         if (!response.ok) {

@@ -204,6 +204,4 @@ public class ReportService {
         if (count >= 4) return 2;
         return 1;
     }
-
-    // getReportDetails를 위한 주소 역변환 가능한지 확인하여 추가
 }
