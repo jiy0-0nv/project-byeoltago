@@ -60,7 +60,7 @@ public class AuthController {
                     .sameSite("None")
                     .path("/")            // 쿠키 유효 경로
                     .maxAge(jwtExpirationMs / 1000) // 쿠키 만료 시간 (초 단위)
-                    .domain("jiy0-0nv.github.io") // 필요시 도메인 설정
+                    // .domain("jiy0-0nv.github.io") // 필요시 도메인 설정
                     .build();
 
             response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
