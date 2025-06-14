@@ -14,4 +14,7 @@ async function loginCheck() {
   }
   window.location.href = "../login.html";
 }
-document.getElementById('start-btn')?.addEventListener('click', loginCheck);
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('start-btn')?.addEventListener('click', loginCheck);
+});
