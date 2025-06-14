@@ -60,10 +60,10 @@
       <h3>
         <img src="imgs/homeicon.svg" alt="홈 아이콘" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 5px;"> 홈
       </h3>
+      <div class="menu-item" id="menu-intro">서비스 소개</div>
       <div class="menu-item" id="menu-community">
         <img src="imgs/communityicon.png" alt="커뮤니티 아이콘" class="menu-icon"> 커뮤니티
       </div>
-      <div class="menu-item">사용 방법</div>
       <div class="menu-item" id="menu-mypage">
         <img src="imgs/mypage.png" alt="마이페이지 아이콘" class="menu-icon"> 내 정보
       </div>
@@ -90,6 +90,10 @@
     </div>
   </div>
   <script>
+    document.getElementById("menu-intro").addEventListener("click", () => {
+      window.location.href = "intros/intro1.html";
+    });
+
     document.getElementById("menu-community").addEventListener("click", () => {
       alert("서비스 준비중입니다.");
     });
