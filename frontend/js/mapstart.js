@@ -12,15 +12,7 @@ let autoTracking = true;
 let userLatLng = null; // 전역 사용자 위치 변수
 let watchId = null;
 
-const preservedKeys = ["accessToken"];
-for (let i = 0; i < localStorage.length; ) {
-  const key = localStorage.key(i);
-  if (!preservedKeys.includes(key)) {
-    localStorage.removeItem(key);
-  } else {
-    i++;
-  }
-}
+["reportMode", "redirect", "drivingMarkers", "heldReports"].forEach(key => localStorage.removeItem(key));
 
 // 위치 기반 지도 초기화
 function initializeMap() {
