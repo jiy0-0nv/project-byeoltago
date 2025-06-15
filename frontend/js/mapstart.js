@@ -398,7 +398,9 @@ async function goToWalkerReport() {
   try {
     const res = await fetch(`${API_BASE_URL}/auth/check`, {
       method: 'GET',
-      credentials: 'include',
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
     });
 
     if (!res.ok) throw new Error();
