@@ -45,15 +45,14 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://127.0.0.1:3000", "http://localhost:3000", "https://jiy0-0nv.github.io", "https://d1fkbh5rwn7h6q.cloudfront.net"));
+        config.setAllowedOrigins(List.of(
+                "http://127.0.0.1:3000",
+                "http://localhost:3000",
+                "https://jiy0-0nv.github.io",
+                "https://d1fkbh5rwn7h6q.cloudfront.net"
+        ));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
-            .requestMatchers(
-                "/api/v1/auth/**",
-                "/api/v1/users/**",
-                "/swagger-ui/**",
-                "/v3/api-docs/**"
-            ).permitAll()
         config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
