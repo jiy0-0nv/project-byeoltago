@@ -36,22 +36,29 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        // String token = extractTokenFromCookies(request);
         String token = extractTokenFromHeader(request);
 
         if (StringUtils.hasText(token)) {
             try {
+                log.debug("JWT token received: {}", token);
+
                 if (jwtUtil.validateToken(token)) {
                     String username = jwtUtil.getUsernameFromToken(token);
+                    log.debug("Token validated. Extracted username/email: {}", username);
+
                     Collection<? extends GrantedAuthority> authorities = jwtUtil.getAuthoritiesFromToken(token);
                     Optional<User> user = userRepository.findUserByEmail(username);
                     if (user.isPresent()) {
+                        log.debug("User found: {} (ID: {})", user.get().getEmail(), user.get().getId());
+
                         SecurityContextHolder.getContext().setAuthentication(
                                 new UsernamePasswordAuthenticationToken(username, null, authorities)
                         );
                         log.debug("Authenticated user: {}, authorities: {}", username, authorities);
 
                         UserContext.setUserId(user.get().getId().toString());
+                        log.debug("UserContext userId set to: {}", UserContext.getUserId());
+
                     } else {
                         log.warn("User not found for username: {}", username);
                     }
@@ -62,13 +69,15 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 log.error("JWT token processing error: {}", e.getMessage(), e);
                 SecurityContextHolder.clearContext();
             }
+        } else {
+            log.debug("No JWT token found in Authorization header.");
         }
         try {
             filterChain.doFilter(request, response);
         } finally {
             UserContext.clear();
+            log.debug("UserContext cleared after request.");
         }
-
     }
 
     // private String extractTokenFromCookies(HttpServletRequest request) {

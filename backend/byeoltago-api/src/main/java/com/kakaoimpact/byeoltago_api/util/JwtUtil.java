@@ -92,9 +92,11 @@ public class JwtUtil {
                     .build()
                     .parseClaimsJws(token)
                     .getBody();
-            return claims.getSubject();
+
+            String subject = claims.getSubject();
+            logger.debug("Extracted subject from token: {}", subject);
+            return subject;
         } catch (JwtException e) {
-            // 일반적으로 validateToken에서 처리되지만, 직접 호출 시 예외 발생 가능
             logger.warn("Could not get username from token: {}", e.getMessage());
             return null;
         }

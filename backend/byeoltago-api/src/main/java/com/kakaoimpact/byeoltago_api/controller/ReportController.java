@@ -32,7 +32,10 @@ public class ReportController {
     public ResponseEntity<Report> submitReport(@ModelAttribute ReportRequestDto request,
                                                @RequestPart(required = false) MultipartFile image) {
         String userIdStr = UserContext.getUserId();
+        log.debug("UserContext.getUserId(): {}", userIdStr);
+
         if (userIdStr == null || userIdStr.isBlank()) {
+            log.warn("Unauthorized: userId not found in UserContext");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
@@ -40,11 +43,16 @@ public class ReportController {
         try {
             userId = Long.parseLong(userIdStr);
         } catch (NumberFormatException e) {
+            log.error("Invalid userId format: {}", userIdStr);
             userId = 0L;
         }
 
         request.setUserId(userId);
+        log.debug("Set userId in request: {}", userId);
+
         Report result = reportService.submitReport(request, image);
+        log.debug("Report submitted successfully. Report ID: {}", result.getId());
+
         return ResponseEntity.ok(result);
     }
 
