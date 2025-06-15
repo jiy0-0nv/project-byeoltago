@@ -441,6 +441,7 @@ function handleReport() {
 async function endRide() {
   localStorage.setItem('reportMode', 'driver');
   const token = localStorage.getItem("accessToken");
+  if (!token) return;
 
   try {
     const res = await fetch(`${API_BASE_URL}/auth/check`, {

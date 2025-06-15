@@ -394,6 +394,10 @@ function startRide() {
 
 async function goToWalkerReport() {
   const token = localStorage.getItem("accessToken");
+  if (!token) {
+    log.console('token error')
+    return;
+  }
 
   try {
     const res = await fetch(`${API_BASE_URL}/auth/check`, {
@@ -403,7 +407,10 @@ async function goToWalkerReport() {
       }
     });
 
-    if (!res.ok) throw new Error();
+    if (!res.ok) {
+      console.log('response error')
+      throw new Error();
+    }
 
     // 현재 위치 가져오기
     let latlng = userLatLng;
