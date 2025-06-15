@@ -36,11 +36,11 @@ public class ReportController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        long userId;
+        Long userId;
         try {
             userId = Long.parseLong(userIdStr);
         } catch (NumberFormatException e) {
-            userId = 0;
+            userId = 0L;
         }
 
         request.setUserId(userId);
