@@ -2,6 +2,9 @@ package com.kakaoimpact.byeoltago_api.controller;
 
 import com.kakaoimpact.byeoltago_api.common.Const;
 import com.kakaoimpact.byeoltago_api.dto.req.LoginRequestDto;
+import com.kakaoimpact.byeoltago_api.dto.req.LoginResponseDto;
+import com.kakaoimpact.byeoltago_api.model.User;
+import com.kakaoimpact.byeoltago_api.repository.UserRepository;
 import com.kakaoimpact.byeoltago_api.util.JwtUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -17,6 +20,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -37,6 +41,7 @@ public class AuthController {
 
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil; // JwtUtil 주입
+    private final UserRepository userRepository;
 
     private final String jwtCookieName = "byeoltago-jwt";
 
@@ -65,8 +70,18 @@ public class AuthController {
 
             // response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
-            return ResponseEntity.ok(Map.of("message", "로그인 성공", "status", "OK"));
+            User user = userRepository.findUserByEmail(userDetails.getUsername())
+                    .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
 
+            LoginResponseDto responseDto = new LoginResponseDto(
+                    "로그인 성공",
+                    "OK",
+                    accessToken,
+                    user.getId(),
+                    user.getEmail()
+            );
+
+            return ResponseEntity.ok(responseDto);
         } catch (BadCredentialsException e) {
             log.warn("Login failed for email {}: Invalid credentials", loginRequestDto.getEmail());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("이메일 또는 비밀번호가 일치하지 않습니다.");
