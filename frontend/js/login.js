@@ -28,7 +28,7 @@ function handleLogin(event) {
     headers: {
       "Content-Type": "application/json"
     },
-    credentials: "include", // 쿠키를 포함하여 요청
+    // credentials: "include", // 쿠키를 포함하여 요청
     body: JSON.stringify({ email, password })
   })
     .then(res => {
@@ -36,6 +36,7 @@ function handleLogin(event) {
       return res.json();
     })
     .then(data => {
+      localStorage.setItem('accessToken', data.token);
       const mode = localStorage.getItem('reportMode');
       const redirect = localStorage.getItem('redirect');
       
@@ -53,13 +54,19 @@ function handleLogin(event) {
 }
 
 async function loginCheck() {
+  const token = localStorage.getItem('accessToken');
+  if (!token) return;
+
   try {
     const res = await fetch(`${API_BASE_URL}/auth/check`, {
       method: 'GET',
-      credentials: 'include',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     });
 
     if (!res.ok) return;
+
     alert("로그인 정보가 존재합니다. 지도 홈으로 이동합니다.");
     window.location.href = "mapstart.html";
 

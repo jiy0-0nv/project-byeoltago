@@ -53,17 +53,17 @@ public class AuthController {
             // JwtUtil을 사용하여 토큰 생성
             String accessToken = jwtUtil.generateToken(userDetails.getUsername());
 
-            // 쿠키 생성 (Spring의 ResponseCookie 사용)
-            ResponseCookie cookie = ResponseCookie.from(jwtCookieName, accessToken)
-                    .httpOnly(true)       // JavaScript에서 접근 불가
-                    .secure(true)         // HTTPS 환경 필수
-                    .sameSite("None")
-                    .path("/")            // 쿠키 유효 경로
-                    .maxAge(jwtExpirationMs / 1000) // 쿠키 만료 시간 (초 단위)
-                    // .domain("jiy0-0nv.github.io") // 필요시 도메인 설정
-                    .build();
+            // // 쿠키 생성 (Spring의 ResponseCookie 사용)
+            // ResponseCookie cookie = ResponseCookie.from(jwtCookieName, accessToken)
+            //         .httpOnly(true)       // JavaScript에서 접근 불가
+            //         .secure(true)         // HTTPS 환경 필수
+            //         .sameSite("None")
+            //         .path("/")            // 쿠키 유효 경로
+            //         .maxAge(jwtExpirationMs / 1000) // 쿠키 만료 시간 (초 단위)
+            //         // .domain("jiy0-0nv.github.io") // 필요시 도메인 설정
+            //         .build();
 
-            response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+            // response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
             return ResponseEntity.ok(Map.of("message", "로그인 성공", "status", "OK"));
 
