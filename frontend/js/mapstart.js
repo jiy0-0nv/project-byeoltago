@@ -393,7 +393,7 @@ function startRide() {
 }
 
 async function goToWalkerReport() {
-  localStorage.setItem('reportMode', 'driver');
+  const token = localStorage.getItem("accessToken");
 
   try {
     const res = await fetch(`${API_BASE_URL}/auth/check`, {

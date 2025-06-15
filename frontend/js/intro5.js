@@ -2,6 +2,7 @@ import { API_BASE_URL } from './config.js';
 
 async function loginCheck() {
   localStorage.setItem('reportMode', 'driver');
+  const token = localStorage.getItem('accessToken');
 
   try {
     const res = await fetch(`${API_BASE_URL}/auth/check`, {

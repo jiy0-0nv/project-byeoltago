@@ -440,6 +440,7 @@ function handleReport() {
 // 주행 종료 이동
 async function endRide() {
   localStorage.setItem('reportMode', 'driver');
+  const token = localStorage.getItem("accessToken");
 
   try {
     const res = await fetch(`${API_BASE_URL}/auth/check`, {
