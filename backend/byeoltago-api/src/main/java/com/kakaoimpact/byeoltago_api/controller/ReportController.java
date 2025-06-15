@@ -40,7 +40,7 @@ public class ReportController {
         try {
             userId = Long.parseLong(userIdStr);
         } catch (NumberFormatException e) {
-            return ResponseEntity.badRequest().body(null);
+            userId = 0;
         }
 
         request.setUserId(userId);
