@@ -33,10 +33,9 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 // JWT를 사용하므로 세션은 STATELESS로 설정하는 것이 일반적입니다.
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // ✅ CORS 설정 추가
+                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // CORS 설정 추가
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v1/auth/**", "/api/v1/users/**", "/swagger-ui/**", "/v3/api-docs/**",
-                                        "/api/v1/**").permitAll() // Swagger 경로도 허용
+                        .requestMatchers("/api/v1/auth/**", "/api/v1/users/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll() // Swagger 경로도 허용
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
@@ -48,7 +47,13 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(List.of("http://127.0.0.1:3000", "http://localhost:3000", "https://jiy0-0nv.github.io", "https://d1fkbh5rwn7h6q.cloudfront.net"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        config.setAllowedHeaders(List.of("*"));
+        config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+            .requestMatchers(
+                "/api/v1/auth/**",
+                "/api/v1/users/**",
+                "/swagger-ui/**",
+                "/v3/api-docs/**"
+            ).permitAll()
         config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

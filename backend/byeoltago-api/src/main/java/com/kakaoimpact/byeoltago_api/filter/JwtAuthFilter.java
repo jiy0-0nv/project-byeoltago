@@ -30,13 +30,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
-    private static final String JWT_TOKEN_COOKIE_NAME = "byeoltago-jwt";
+    // private static final String JWT_TOKEN_COOKIE_NAME = "byeoltago-jwt";
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        String token = extractTokenFromCookies(request);
+        // String token = extractTokenFromCookies(request);
+        String token = extractTokenFromHeader(request);
 
         if (StringUtils.hasText(token)) {
             try {
@@ -77,6 +78,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     .map(Cookie::getValue)
                     .findFirst()
                     .orElse(null);
+        }
+        return null;
+    }
+
+    private String extractTokenFromHeader(HttpServletRequest request) {
+        String authHeader = request.getHeader("Authorization");
+        if (StringUtils.hasText(authHeader) && authHeader.startsWith("Bearer ")) {
+            return authHeader.substring(7); // "Bearer " 이후의 토큰 반환
         }
         return null;
     }
