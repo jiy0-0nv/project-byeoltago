@@ -328,6 +328,8 @@ document.addEventListener('DOMContentLoaded', () => {
         formData.append('image', blob, `image_${report.lat}_${report.lng}_${report.seq}.png`);
       }
 
+      const token = localStorage.getItem('accessToken');
+      
       try {
         const response = await fetch(`${API_BASE_URL}/reports/report`, {
           method: 'POST',
