@@ -35,7 +35,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // CORS 설정 추가
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v1/auth/**", "/api/v1/users/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll() // Swagger 경로도 허용
+                        .requestMatchers("/api/v1/**", "/api/v1/auth/**", "/api/v1/users/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll() // Swagger 경로도 허용
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
