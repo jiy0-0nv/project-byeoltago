@@ -10,6 +10,7 @@ import com.kakaoimpact.byeoltago_api.service.ReportService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -30,9 +31,19 @@ public class ReportController {
     @PostMapping("/report")
     public ResponseEntity<Report> submitReport(@ModelAttribute ReportRequestDto request,
                                                @RequestPart(required = false) MultipartFile image) {
-        Long userId = Long.valueOf(UserContext.getUserId());
-        request.setUserId(userId);
+        String userIdStr = UserContext.getUserId();
+        if (userIdStr == null || userIdStr.isBlank()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
 
+        long userId;
+        try {
+            userId = Long.parseLong(userIdStr);
+        } catch (NumberFormatException e) {
+            return ResponseEntity.badRequest().body(null);
+        }
+
+        request.setUserId(userId);
         Report result = reportService.submitReport(request, image);
         return ResponseEntity.ok(result);
     }

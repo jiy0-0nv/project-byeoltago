@@ -45,14 +45,15 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     String username = jwtUtil.getUsernameFromToken(token);
                     Collection<? extends GrantedAuthority> authorities = jwtUtil.getAuthoritiesFromToken(token);
                     Optional<User> user = userRepository.findUserByEmail(username);
-                    if (username != null) {
-                        UsernamePasswordAuthenticationToken authentication =
-                                new UsernamePasswordAuthenticationToken(username, null, authorities);
-                        SecurityContextHolder.getContext().setAuthentication(authentication);
+                    if (user.isPresent()) {
+                        SecurityContextHolder.getContext().setAuthentication(
+                                new UsernamePasswordAuthenticationToken(username, null, authorities)
+                        );
                         log.debug("Authenticated user: {}, authorities: {}", username, authorities);
 
-                        // Set user ID in UserContext if user exists
-                        user.ifPresent(u -> UserContext.setUserId(u.getId().toString()));
+                        UserContext.setUserId(user.get().getId().toString());
+                    } else {
+                        log.warn("User not found for username: {}", username);
                     }
                 } else {
                     log.warn("Invalid JWT token received: {}", token);
