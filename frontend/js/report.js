@@ -331,8 +331,11 @@ document.addEventListener('DOMContentLoaded', () => {
       try {
         const response = await fetch(`${API_BASE_URL}/reports/report`, {
           method: 'POST',
-          body: formData,
-          credentials: 'include'
+          headers: {
+            Authorization: `Bearer ${token}` // 토큰용
+          },
+          // credentials: 'include',  // 쿠키용
+          body: formData
         });
 
         if (!response.ok) {
