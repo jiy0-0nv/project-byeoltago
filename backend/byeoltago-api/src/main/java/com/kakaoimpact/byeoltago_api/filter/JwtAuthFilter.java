@@ -70,17 +70,17 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     }
 
-    private String extractTokenFromCookies(HttpServletRequest request) {
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            return Arrays.stream(cookies)
-                    .filter(cookie -> JWT_TOKEN_COOKIE_NAME.equals(cookie.getName()))
-                    .map(Cookie::getValue)
-                    .findFirst()
-                    .orElse(null);
-        }
-        return null;
-    }
+    // private String extractTokenFromCookies(HttpServletRequest request) {
+    //     Cookie[] cookies = request.getCookies();
+    //     if (cookies != null) {
+    //         return Arrays.stream(cookies)
+    //                 .filter(cookie -> JWT_TOKEN_COOKIE_NAME.equals(cookie.getName()))
+    //                 .map(Cookie::getValue)
+    //                 .findFirst()
+    //                 .orElse(null);
+    //     }
+    //     return null;
+    // }
 
     private String extractTokenFromHeader(HttpServletRequest request) {
         String authHeader = request.getHeader("Authorization");
