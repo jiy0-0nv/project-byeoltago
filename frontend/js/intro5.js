@@ -2,7 +2,7 @@ import { API_BASE_URL } from './config.js';
 
 async function loginCheck() {
   const token = localStorage.getItem('accessToken');
-  if (!token) return;
+  if (!token) window.location.href = "../login.html";
 
   try {
     const res = await fetch(`${API_BASE_URL}/auth/check`, {
