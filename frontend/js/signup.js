@@ -6,12 +6,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const usernameInput = document.getElementById("username");
   usernameInput.addEventListener("input", validateUsernameInput);
+
+  const passwordInput = document.getElementById("password");
+  passwordInput.addEventListener("input", validatePasswordInput);
 });
 
 function validateUsernameInput(event) {
   const input = event.target.value;
   const warning = document.getElementById('username-warning');
   const isValid = /^[가-힣a-zA-Z0-9]{2,100}$/u.test(input);
+  warning.style.display = isValid ? 'none' : 'block';
+}
+
+function validatePasswordInput(event) {
+  const input = event.target.value;
+  const warning = document.getElementById('password-warning');
+  const isValid = input.length == 0 || input.length >= 8;
   warning.style.display = isValid ? 'none' : 'block';
 }
 
@@ -27,6 +37,11 @@ function handleSignup(event) {
 
   if (!/^[가-힣a-zA-Z0-9]{2,100}$/u.test(username)) {
     document.getElementById('username-warning').style.display = 'block';
+    return;
+  }
+
+  if (password.length > 0 && password.length < 8) {
+    document.getElementById('password-warning').style.display = 'block';
     return;
   }
 

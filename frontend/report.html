@@ -54,7 +54,7 @@
       </div>
       <div class="info-row photo-preview">
         <div class="info-label">📸 사진 (선택사항)</div>
-        <button class="arrow-button">
+        <button class="arrow-button" id="photo-button">
           <img src="imgs/choice.png" alt="선택화살표">
         </button>
       </div>
@@ -150,6 +150,10 @@
         window.location.href = "mapstart.html";
       }
     }
+    document.getElementById('photo-button').addEventListener('click', (e) => {
+      e.preventDefault();
+      alert("사진 첨부 기능이 추가될 예정이에요!");
+    });
   </script>
   <script type="module" src="js/report.js"></script>
 </body>
