@@ -74,3 +74,11 @@ async function loginCheck() {
     return;
   }
 }
+
+document.getElementById('guest-login-btn').addEventListener('click', () => {
+  document.getElementById('email').value = 'byeoltago@gmail.com';
+  document.getElementById('password').value = '20250620';
+
+  // 로그인 form submit 트리거
+  document.querySelector('.login-box').dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+});
