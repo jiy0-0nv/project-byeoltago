@@ -2,12 +2,12 @@
  ## 📌 Overview
  2025 Spring 테크포임팩트 프로젝트
  <p align="center">
-<img width="586" alt="별타고 로고" src="<img src="frontend/imgs/logo.png"/>
-" />
-**안전한 자전거 주행을 위한 서비스**  
+<img width="586" alt="별타고 로고" src="./frontend/imgs/logo.png" />
+<b>안전한 자전거 주행을 위한 서비스</b><br>
+<a href="https://jiy0-0nv.github.io/project-byeoltago/frontend/">별타고 사이트 바로가기</a>
 
 ---
- ## 🧑‍🤝‍🧑 Roles 
+## 🧑‍🤝‍🧑 Roles 
  | 이름   | 역할     |
 | ------ | -------- |
 | 장선아 | PM       | 
@@ -20,7 +20,7 @@
 - **Fellow**: 김경목 펠로우님 (별따러가자)
 - **Mentor**: 민경훈 멘토님 (카카오모빌리티)
 
- ## 🎯Goal 
+## 🎯Goal 
  **별타고** 는 도심 속 자전거와 킥보드 사용자의 안전을 도모합니다. 
 
 ## 주요 기능 (Key Features)
@@ -37,9 +37,6 @@
 | Category   | Stack / Tool |
 |------------|--------------|
 | **Frontend** | HTML+CSS, Javascript  |
-| **Backend** | Java, Python |
-| **Deployment** |AWS, Docker|
-
-
-
+| **Backend** | Spring Boot |
+| **Deployment** | Github, AWS, Docker|
 
