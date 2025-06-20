@@ -2,7 +2,7 @@
  ## 📌 Overview
  2025 Spring 테크포임팩트 프로젝트
  <p align="center">
-<img width="586" alt="별타고 로고" src="./frontend/imgs/logo.png" />
+<img width="480px" alt="별타고 로고" src="./frontend/imgs/logo.png" /><br>
 <b>안전한 자전거 주행을 위한 서비스</b><br>
 <a href="https://jiy0-0nv.github.io/project-byeoltago/frontend/">별타고 사이트 바로가기</a>
 
@@ -39,4 +39,3 @@
 | **Frontend** | HTML+CSS, Javascript  |
 | **Backend** | Spring Boot |
 | **Deployment** | Github, AWS, Docker|
-
