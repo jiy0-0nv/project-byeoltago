@@ -5,7 +5,7 @@
       font-style: normal;
     }
 
-    body {
+    body {  
       font-family: 'Pretendard-Regular', 'Segoe UI', sans-serif;
       margin: 0;
       padding: 0;
@@ -14,7 +14,7 @@
     }
 
     .login-section {
-      min-height: 100vh;
+      min-height: 90vh;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -90,4 +90,19 @@
       from { left: -100px; }
       to { left: 110%; }
     }
-  
+
+.footer {
+  text-align: center;
+  padding: 10px 0;
+  font-size: 13px;
+  color: #666;
+}
+
+.footer-link {
+  color: #efc327;
+  text-decoration: none;
+}
+
+.footer-link:hover {
+  text-decoration: underline;
+}

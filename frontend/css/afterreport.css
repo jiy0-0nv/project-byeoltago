@@ -154,3 +154,18 @@ body {
   font-weight: bold;
   cursor: not-allowed;
 }
+.footer {
+  text-align: center;
+  padding: 10px 0;
+  font-size: 13px;
+  color: #666;
+}
+
+.footer-link {
+  color: #efc327;
+  text-decoration: none;
+}
+
+.footer-link:hover {
+  text-decoration: underline;
+}
